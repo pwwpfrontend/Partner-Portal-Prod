@@ -33,7 +33,9 @@ const RequestQuote = () => {
 
       console.log('Attempting to refresh token...');
       
-      const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/auth/refresh', {
+      // const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/auth/refresh', {
+      const response = await fetch('https://njs-01.optimuslab.space/partners/auth/refresh', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -154,7 +156,9 @@ const RequestQuote = () => {
     if (!isAuthenticated) return null;
     
     try {
-      const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/auth/me');
+      // const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/auth/me');
+      const response = await fetchWithAuth('https://njs-01.optimuslab.space/partners/auth/me');
+
       
       if (!response.ok) {
         throw new Error(`Failed to fetch user details: ${response.status}`);
@@ -330,7 +334,9 @@ const RequestQuote = () => {
 
       // Submit to API
       const response = await fetchWithAuth(
-        'http://optimus-india-njs-01.netbird.cloud:3006/quotes',
+        // 'http://optimus-india-njs-01.netbird.cloud:3006/quotes',
+        'https://njs-01.optimuslab.space/partners/quotes',
+
         {
           method: 'POST',
           body: JSON.stringify(quoteData),

@@ -9,7 +9,9 @@ const APITest = () => {
     setResult('Testing login endpoint...');
     
     try {
-      const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/login', {
+      // const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/login', {
+      const response = await fetch('https://njs-01.optimuslab.space/partners/auth/login', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,7 +42,9 @@ const APITest = () => {
     setResult('Testing products endpoint...');
     
     try {
-      const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/webhook/all_products');
+      // const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/webhook/all_products');
+      const response = await fetch('https://njs-01.optimuslab.space/partners/products');
+
       
       if (response.ok) {
         const data = await response.json();
@@ -62,7 +66,9 @@ const APITest = () => {
     setResult('Testing HTTPS endpoint...');
     
     try {
-      const response = await fetch('https://njs-01.optimuslab.space/webhook/all_products');
+      // const response = await fetch('https://njs-01.optimuslab.space/webhook/all_products');
+      const response = await fetch('https://njs-01.optimuslab.space/partners/products');
+
       
       if (response.ok) {
         const data = await response.json();

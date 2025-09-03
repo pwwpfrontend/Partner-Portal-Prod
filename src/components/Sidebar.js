@@ -66,7 +66,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         throw new Error('No refresh token available');
       }
 
-      const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/auth/refresh', {
+      // const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/auth/refresh', {
+      const response = await fetch('https://njs-01.optimuslab.space/partners/auth/refresh', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -149,7 +151,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     if (!isAuthenticated) return null;
     
     try {
-      const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/auth/me');
+      // const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/auth/me');
+      const response = await fetchWithAuth('https://njs-01.optimuslab.space/partners/auth/me');
+
       
       if (!response.ok) {
         throw new Error(`Failed to fetch user details: ${response.status}`);

@@ -12,13 +12,11 @@ import AdminUsers from "./components/AdminUsers";
 import PrivateRoute from "./components/PrivateRoute";
 import RoleGuard from "./components/RoleGuard";
 import Unauthorized from "./components/Unauthorized";
-import { ProductProvider } from "./context/ProductContext";
 
 function App() {
   return (
-    <ProductProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Routes>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/application" element={<PartnerApplication />} />
@@ -35,12 +33,10 @@ function App() {
 
         {/* Admin-only routes */}
         <Route path="/admin/products" element={<RoleGuard allowedRoles={["admin"]}><AdminProducts /></RoleGuard>} />
-        {/* AdminPricing route removed */}
         <Route path="/admin/users" element={<RoleGuard allowedRoles={["admin"]}><AdminUsers /></RoleGuard>} />
         <Route path="/admin/quotes" element={<RoleGuard allowedRoles={["admin"]}><ManageQuotes /></RoleGuard>} />
-        </Routes>
-      </Router>
-    </ProductProvider>
+      </Routes>
+    </Router>
   );
 }
 

@@ -26,6 +26,8 @@ const PartnerApplication = () => {
 
   const handleNext = () => setStep(step + 1);
   const handlePrevious = () => setStep(step - 1);
+  const handleBack = () => navigate(-1); // Navigate back to previous page
+  
   const handleFileChange = (e) => {
     const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
     setCertificateFile(file);
@@ -128,7 +130,14 @@ const PartnerApplication = () => {
               </div>
 
               {/* Buttons */}
-              <div className="flex justify-end mt-8">
+              <div className="flex justify-between mt-8">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="px-5 py-2 bg-gray-100 rounded-md text-sm font-medium hover:bg-gray-200"
+                >
+                  Back
+                </button>
                 <button
                   type="button"
                   onClick={handleNext}

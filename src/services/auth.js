@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://optimus-india-njs-01.netbird.cloud:3006";
+const API_BASE_URL = "https://njs-01.optimuslab.space/partners";
 
 // Storage keys
 const ACCESS_TOKEN_KEY = "token";

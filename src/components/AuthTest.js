@@ -49,7 +49,9 @@ Email: ${email || 'None'}`);
     setResult('Testing direct API call...');
     
     try {
-      const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/login', {
+      // const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/login', {
+      const response = await fetch('https://njs-01.optimuslab.space/partners/auth/login', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -70,7 +70,9 @@ const Products = () => {
 
       console.log('Attempting to refresh token...');
       
-      const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/auth/refresh', {
+      // const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/auth/refresh', {
+      const response = await fetch('https://njs-01.optimuslab.space/partners/auth/refresh', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -227,234 +229,167 @@ const Products = () => {
     return 'Other';
   };
 
-  // Handle product selection
-  const handleProductClick = (product, event) => {
-    if (event.target.closest('button')) {
-      return;
-    }
-    
-    setSelectedProduct(selectedProduct?.id === product.id ? null : product);
-    
-    if (selectedProduct?.id !== product.id) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
+// Handle product selection
+const handleProductClick = (product, event) => {
+  if (event.target.closest('button')) {
+    return;
+  }
+  
+  // Only set the product if it's different from the currently selected one
+  // Don't close the modal if clicking on the same product
+  if (selectedProduct?.id !== product.id) {
+    setSelectedProduct(product);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+};
 
-  // Generate Word document function
-  const generateWordDocument = (product) => {
-    try {
-      const currentDate = new Date().toLocaleDateString();
-      const savings = product.msrp - product.netPrice;
+  // Generate PDF document function using jsPDF
+const generatePDFDocument = (product) => {
+  try {
+    // Access jsPDF from window object (when using CDN) or import it
+    const doc = new window.jspdf.jsPDF();
+    
+    const currentDate = new Date().toLocaleDateString();
+    const savings = product.msrp - product.netPrice;
+    
+    // Set up fonts and colors
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor(64, 89, 82); // #405952
+    
+    // Header
+    doc.text('Product Datasheet', 20, 30);
+    
+    // Product name
+    doc.setFontSize(16);
+    doc.text(product.name, 20, 50);
+    
+    // Draw a line under product name
+    doc.setDrawColor(64, 89, 82);
+    doc.line(20, 55, 190, 55);
+    
+    // Product Information Section
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Product Information', 20, 75);
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    let yPosition = 85;
+    
+    // Product details
+    doc.text(`SKU: ${product.sku}`, 20, yPosition);
+    yPosition += 8;
+    doc.text(`Category: ${product.category}`, 20, yPosition);
+    yPosition += 8;
+    doc.text(`Brand: ${product.brand}`, 20, yPosition);
+    yPosition += 15;
+    
+    // Description section
+    if (product.description) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.text('Description', 20, yPosition);
+      yPosition += 10;
       
-      // Create HTML content for the Word document
-      let htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>${product.name} - Product Datasheet</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      
+      // Split long description into multiple lines
+      const splitDescription = doc.splitTextToSize(product.description, 170);
+      doc.text(splitDescription, 20, yPosition);
+      yPosition += splitDescription.length * 5 + 10;
     }
-    .header {
-      background: linear-gradient(135deg, #405952, #30423f);
-      color: white;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 30px;
-      border-radius: 8px;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .product-title {
-      color: #405952;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #405952;
-      padding-bottom: 10px;
-    }
-    .info-section {
-      margin-bottom: 25px;
-    }
-    .info-section h3 {
-      color: #405952;
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      border-left: 4px solid #405952;
-      padding-left: 10px;
-    }
-    .pricing-box {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 20px;
-      margin: 20px 0;
-    }
-    .pricing-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      padding: 5px 0;
-    }
-    .pricing-row.total {
-      border-top: 2px solid #405952;
-      padding-top: 10px;
-      font-weight: bold;
-      font-size: 18px;
-      color: #405952;
-    }
-    .pricing-row.savings {
-      color: #22c55e;
-      font-weight: bold;
-    }
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
-    .info-label {
-      font-weight: bold;
-      color: #555;
-    }
-    .info-value {
-      color: #333;
-    }
-    .footer {
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid #e9ecef;
-      text-align: center;
-      color: #666;
-      font-size: 12px;
-    }
-    @media print {
-      body { margin: 0; }
-      .header { background: #405952 !important; }
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1>Product Datasheet</h1>
-  </div>
-
-  <div class="product-title">${product.name}</div>
-
-  <div class="info-section">
-    <h3>Product Information</h3>
-    <div class="info-grid">
-      <div class="info-label">SKU:</div>
-      <div class="info-value">${product.sku}</div>
-      <div class="info-label">Category:</div>
-      <div class="info-value">${product.category}</div>
-      <div class="info-label">Brand:</div>
-      <div class="info-value">${product.brand}</div>
-    </div>
-  </div>
-
-  ${product.description ? `
-  <div class="info-section">
-    <h3>Description</h3>
-    <p>${product.description}</p>
-  </div>
-  ` : ''}
-
-  <div class="info-section">
-    <h3>Pricing Information</h3>
-    <div class="pricing-box">
-      <div class="pricing-row">
-        <span>MSRP:</span>
-        <span>${product.msrp.toFixed(2)}</span>
-      </div>
-      <div class="pricing-row">
-        <span>Discount:</span>
-        <span>${product.discount.toFixed(0)}%</span>
-      </div>
-      <div class="pricing-row total">
-        <span>Your Price:</span>
-        <span>${product.netPrice.toFixed(2)}</span>
-      </div>
-      <div class="pricing-row savings">
-        <span>You Save:</span>
-        <span>${savings.toFixed(2)}</span>
-      </div>
-    </div>
-  </div>
-
-  ${Object.keys(product.extraFields).length > 0 ? `
-  <div class="info-section">
-    <h3>Additional Information</h3>
-    <div class="info-grid">
-      ${Object.entries(product.extraFields)
-        .filter(([key, value]) => key !== 'brand' && value && key !== 'extraFields')
-        .map(([key, value]) => {
+    
+    // Pricing Information Section
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Pricing Information', 20, yPosition);
+    yPosition += 15;
+    
+    // Create pricing table background
+    doc.setFillColor(248, 249, 250); // Light gray background
+    doc.rect(20, yPosition - 5, 170, 40, 'F');
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    
+    doc.text(`MSRP: $${product.msrp.toFixed(2)}`, 25, yPosition + 5);
+    doc.text(`Discount: ${product.discount.toFixed(0)}%`, 25, yPosition + 15);
+    
+    // Your Price - highlighted
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(64, 89, 82);
+    doc.text(`Your Price: $${product.netPrice.toFixed(2)}`, 25, yPosition + 25);
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(34, 197, 94); // Green color for savings
+    doc.text(`You Save: $${savings.toFixed(2)}`, 25, yPosition + 35);
+    
+    yPosition += 50;
+    
+    // Additional Information Section
+    if (Object.keys(product.extraFields).length > 0) {
+      doc.setTextColor(0, 0, 0); // Reset to black
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.text('Additional Information', 20, yPosition);
+      yPosition += 10;
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      
+      Object.entries(product.extraFields).forEach(([key, value]) => {
+        if (key !== 'brand' && value && key !== 'extraFields' && yPosition < 270) {
           const formattedKey = key.replace(/([A-Z])/g, ' $1').trim();
           const displayValue = typeof value === 'boolean' ? 
             (value ? 'Yes' : 'No') : 
             String(value);
-          return `
-          <div class="info-label">${formattedKey}:</div>
-          <div class="info-value">${displayValue}</div>
-          `;
-        }).join('')}
-    </div>
-  </div>
-  ` : ''}
-
-  <div class="footer">
-    <p>Generated on ${currentDate}</p>
-    <p>Product Catalog - ${currentRole === 'admin' ? 'Administrator' : (currentRole || 'Partner')} Level</p>
-  </div>
-</body>
-</html>`;
-
-      // Create and download the Word document
-      const blob = new Blob([htmlContent], { 
-        type: 'application/msword' 
+          
+          doc.setFont('helvetica', 'bold');
+          doc.text(`${formattedKey}:`, 20, yPosition);
+          doc.setFont('helvetica', 'normal');
+          
+          // Handle long values
+          const splitValue = doc.splitTextToSize(displayValue, 120);
+          doc.text(splitValue, 80, yPosition);
+          yPosition += Math.max(splitValue.length * 5, 8);
+        }
       });
-      
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${product.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_datasheet.doc`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      
-      return true;
-    } catch (error) {
-      console.error('Error generating Word document:', error);
-      throw error;
     }
-  };
-
-  // Handle download with Word document generation
-  const handleDownload = async (product) => {
-    setDownloadLoading(product.id);
     
-    try {
-      generateWordDocument(product);
-      showToast(`${product.name} datasheet downloaded successfully!`);
-    } catch (error) {
-      console.error('Error downloading datasheet:', error);
-      showToast('Failed to generate document. Please try again.', 'error');
-    } finally {
-      setDownloadLoading(null);
-    }
-  };
+    // Footer
+    doc.setTextColor(102, 102, 102); // Gray color
+    doc.setFontSize(8);
+    doc.text(`Generated on ${currentDate}`, 20, 285);
+    doc.text(`Product Catalog - ${currentRole === 'admin' ? 'Administrator' : (currentRole || 'Partner')} Level`, 20, 290);
+    
+    // Save the PDF
+    const fileName = `${product.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_datasheet.pdf`;
+    doc.save(fileName);
+    
+    return true;
+  } catch (error) {
+    console.error('Error generating PDF document:', error);
+    throw error;
+  }
+};
+// Handle download with PDF document generation
+const handleDownload = async (product) => {
+  setDownloadLoading(product.id);
+  
+  try {
+    generatePDFDocument(product);  // <-- Fixed: changed from generateWordDocument to generatePDFDocument
+    showToast(`Datasheet downloaded for ${product.name} `);
+  } catch (error) {
+    console.error('Error downloading datasheet:', error);
+    showToast('Failed to generate document. Please try again.', 'error');
+  } finally {
+    setDownloadLoading(null);
+  }
+};
 
   // Toast notification state
   const [toast, setToast] = useState(null);
@@ -547,7 +482,9 @@ const Products = () => {
         console.log('Fetching products...');
 
         const response = await fetchWithAuth(
-          'http://optimus-india-njs-01.netbird.cloud:3006/products',
+          // 'http://optimus-india-njs-01.netbird.cloud:3006/products',
+          'https://njs-01.optimuslab.space/partners/products',
+
           {
             method: 'GET',
             signal: AbortSignal.timeout(30000)

@@ -42,7 +42,8 @@ const AdminProducts = () => {
   const itemsPerPage = 10;
 
   // API Base URL
-  const BASE_URL = 'http://optimus-india-njs-01.netbird.cloud:3006';
+  // const BASE_URL = 'http://optimus-india-njs-01.netbird.cloud:3006';
+  const BASE_URL = 'https://njs-01.optimuslab.space/partners';
 
   // Get token from auth service
   const getToken = () => {

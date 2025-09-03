@@ -29,7 +29,9 @@ const ManageQuotes = () => {
 
       console.log('Attempting to refresh token...');
       
-      const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/auth/refresh', {
+      // const response = await fetch('http://optimus-india-njs-01.netbird.cloud:3006/auth/refresh', {
+      const response = await fetch('https://njs-01.optimuslab.space/partners/auth/refresh', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -143,7 +145,9 @@ const ManageQuotes = () => {
   const fetchQuotes = async () => {
     try {
       console.log('Fetching quotes from backend...');
-      const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/quotes');
+      // const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/quotes');
+      const response = await fetchWithAuth('https://njs-01.optimuslab.space/partners/quotes');
+
       
       if (!response.ok) {
         throw new Error(`Failed to fetch quotes: ${response.status}`);
@@ -165,7 +169,9 @@ const ManageQuotes = () => {
   const fetchUsers = async () => {
     try {
       console.log('Fetching users from backend...');
-      const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/admin/users');
+      // const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/admin/users');
+      const response = await fetchWithAuth('https://njs-01.optimuslab.space/partners/admin/users');
+
       
       if (!response.ok) {
         throw new Error(`Failed to fetch users: ${response.status}`);
@@ -188,7 +194,9 @@ const ManageQuotes = () => {
   const fetchProducts = async () => {
     try {
       console.log('Fetching products from backend...');
-      const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/products');
+      // const response = await fetchWithAuth('http://optimus-india-njs-01.netbird.cloud:3006/products');
+      const response = await fetchWithAuth('https://njs-01.optimuslab.space/partners/products');
+
       
       if (!response.ok) {
         throw new Error(`Failed to fetch products: ${response.status}`);
