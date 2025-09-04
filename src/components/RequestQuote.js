@@ -247,7 +247,7 @@ const RequestQuote = () => {
     }, 0);
   };
 
-  // Submit quote request using POST API
+  // Submit quote request using POST API (Database and Email)
   const handleSubmitQuote = async () => {
     if (cartItems.length === 0) {
       setError('Please add at least one product to your quote.');
@@ -274,7 +274,7 @@ const RequestQuote = () => {
     setSuccess(false);
 
     try {
-      // Prepare quote data with user information
+      // Prepare quote data for database API
       const quoteData = {
         type: 'quote',
         
@@ -330,28 +330,104 @@ const RequestQuote = () => {
         requirements: 'Customer quote request from web portal'
       };
 
-      console.log('Submitting quote with user details:', quoteData);
-
-      // Submit to API
-      const response = await fetchWithAuth(
-        // 'http://optimus-india-njs-01.netbird.cloud:3006/quotes',
-        'https://njs-01.optimuslab.space/partners/quotes',
-
-        {
-          method: 'POST',
-          body: JSON.stringify(quoteData),
-          signal: AbortSignal.timeout(50000)
+      // Prepare mail data with user schema format
+      const mailData = {
+        _id: userDetails.id || userDetails._id,
+        companyName: userDetails.companyName || userDetails.name,
+        companyAddress: userDetails.address || '',
+        businessType: userDetails.businessType || 'integrator',
+        contactPersonName: userDetails.name || userDetails.companyName,
+        email: userDetails.email,
+        phoneNumber: userDetails.phone || '',
+        position: userDetails.position || userDetails.role || currentRole,
+        certificateUrl: userDetails.certificateUrl || null,
+        role: userDetails.role || currentRole,
+        date: new Date().toISOString(),
+        cart: {
+          type: 'cart',
+          status: 'cart',
+          items: cartItems.map(item => ({
+            productId: item.productId || item.id,
+            name: item.name,
+            sku: item.sku,
+            brand: item.brand,
+            category: item.category,
+            description: item.description || '',
+            msrp: item.msrp || 0,
+            netPrice: item.netPrice || item.price || 0,
+            discount: item.discount || 0,
+            picture: item.picture || '',
+            quantity: item.quantity || 1,
+            totalPrice: item.totalPrice || (item.netPrice || item.price || 0) * (item.quantity || 1)
+          })),
+          userLevel: userDetails.role || currentRole,
+          totalAmount: calculateTotal()
         }
-      );
+      };
 
-      if (!response.ok) {
-        const errorText = await response.text().catch(() => 'Unable to read error response');
-        console.error('Quote submission failed:', response.status, errorText);
-        throw new Error(`Failed to submit quote request. Status: ${response.status}. ${errorText || ''}`);
+      console.log('Submitting quote to database:', quoteData);
+      console.log('Submitting quote to mail:', mailData);
+
+      // Submit to both APIs simultaneously
+      const [quoteResponse, mailResponse] = await Promise.allSettled([
+        // Submit to quotes database API
+        fetchWithAuth(
+          // 'http://optimus-india-njs-01.netbird.cloud:3006/quotes',
+          'https://njs-01.optimuslab.space/partners/quotes',
+          {
+            method: 'POST',
+            body: JSON.stringify(quoteData),
+            signal: AbortSignal.timeout(50000)
+          }
+        ),
+        // Submit to mail API with different schema
+        fetchWithAuth(
+          'http://optimus-india-njs-01.netbird.cloud:3006/partners/mail',
+          {
+            method: 'POST',
+            body: JSON.stringify(mailData),
+            signal: AbortSignal.timeout(50000)
+          }
+        )
+      ]);
+
+      // Check quotes API response
+      if (quoteResponse.status === 'rejected') {
+        console.error('Quote submission to database failed:', quoteResponse.reason);
+        throw new Error(`Failed to submit quote to database: ${quoteResponse.reason.message}`);
       }
 
-      const result = await response.json();
-      console.log('Quote submitted successfully:', result);
+      if (!quoteResponse.value.ok) {
+        const errorText = await quoteResponse.value.text().catch(() => 'Unable to read error response');
+        console.error('Quote database submission failed:', quoteResponse.value.status, errorText);
+        throw new Error(`Failed to submit quote request to database. Status: ${quoteResponse.value.status}. ${errorText || ''}`);
+      }
+
+      // Check mail API response
+      if (mailResponse.status === 'rejected') {
+        console.warn('Mail submission failed:', mailResponse.reason);
+        // Don't throw error for mail failure - log warning but continue
+      } else if (!mailResponse.value.ok) {
+        const mailErrorText = await mailResponse.value.text().catch(() => 'Unable to read mail error response');
+        console.warn('Mail API submission failed:', mailResponse.value.status, mailErrorText);
+        // Don't throw error for mail failure - log warning but continue
+      } else {
+        console.log('Mail sent successfully');
+      }
+
+      // Get the quote result from database API
+      const quoteResult = await quoteResponse.value.json();
+      console.log('Quote submitted successfully to database:', quoteResult);
+
+      // Log mail result if successful
+      if (mailResponse.status === 'fulfilled' && mailResponse.value.ok) {
+        try {
+          const mailResult = await mailResponse.value.json();
+          console.log('Mail API response:', mailResult);
+        } catch (e) {
+          console.log('Mail sent successfully (no JSON response)');
+        }
+      }
 
       // Clear cart and show success
       setCartItems([]);
