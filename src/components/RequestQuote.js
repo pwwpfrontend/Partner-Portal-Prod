@@ -277,6 +277,7 @@ const RequestQuote = () => {
       // Prepare quote data for database API
       const quoteData = {
         type: 'quote',
+        status: 'New', // Default status for new quotes
         
         // User information from /auth/me
         userId: userDetails.id || userDetails._id,
@@ -330,7 +331,7 @@ const RequestQuote = () => {
         requirements: 'Customer quote request from web portal'
       };
 
-      // Prepare mail data with user schema format
+      // Prepare mail data with user schema format - INCLUDING status field
       const mailData = {
         _id: userDetails.id || userDetails._id,
         companyName: userDetails.companyName || userDetails.name,
@@ -343,9 +344,10 @@ const RequestQuote = () => {
         certificateUrl: userDetails.certificateUrl || null,
         role: userDetails.role || currentRole,
         date: new Date().toISOString(),
+        status: 'New', // Add status field to mail data
         cart: {
           type: 'cart',
-          status: 'cart',
+          status: 'New', // Add status field to cart object
           items: cartItems.map(item => ({
             productId: item.productId || item.id,
             name: item.name,
@@ -461,16 +463,16 @@ const RequestQuote = () => {
 
   if (fetchingCart) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50/30 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-[#FAFAFB] via-white to-[#FAFAFB]">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <Header toggleSidebar={toggleSidebar} />
         <main className="pt-16 relative z-10">
           <div className="p-4">
             <div className="flex items-center justify-center h-32">
               <div className="relative">
-                <div className="animate-spin rounded-full h-12 w-12 border-3 border-gray-200 border-t-[#405952]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-3 border-gray-200 border-t-[#1B2150]"></div>
               </div>
-              <span className="ml-3 text-sm font-medium text-gray-700">
+              <span className="ml-3 text-sm font-medium text-[#818181]">
                 Loading your quote cart...
               </span>
             </div>
@@ -481,7 +483,7 @@ const RequestQuote = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50/30 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#FAFAFB] via-white to-[#FAFAFB]">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <Header toggleSidebar={toggleSidebar} />
 
@@ -492,16 +494,16 @@ const RequestQuote = () => {
           <div className={`mb-4 transform transition-all duration-700 ${
             isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}>
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-gray-100/50">
+            <div className="bg-white backdrop-blur-sm rounded-xl shadow-sm p-4 border border-[#FAFAFB]">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-[#405952] bg-clip-text text-transparent">
+                  <h1 className="text-3xl font-bold text-[#1B2150]">
                     Request Quote
                   </h1>
-                  <p className="text-base text-gray-600 mt-1">Review selected products and submit quote request</p>
+                  <p className="text-base text-[#818181] mt-1">Review selected products and submit quote request</p>
                   {currentUser && (
-                    <div className="mt-2 inline-flex items-center px-3 py-1 bg-[#405952]/10 rounded-md text-sm">
-                      <span className="text-[#405952] font-medium">
+                    <div className="mt-2 inline-flex items-center px-3 py-1 bg-[#1B2150]/10 rounded-md text-sm">
+                      <span className="text-[#1B2150] font-medium">
                         Submitting as: {currentUser.name || currentUser.companyName} ({currentUser.role || currentRole})
                       </span>
                     </div>
@@ -509,16 +511,16 @@ const RequestQuote = () => {
                 </div>
                 {cartItems.length > 0 && (
                   <div className="flex items-center gap-3">
-                    <div className="text-right bg-[#405952]/5 p-3 rounded-lg">
-                      <div className="text-sm text-gray-600">Total</div>
-                      <div className="text-xl font-bold text-[#405952]">
+                    <div className="text-right bg-[#1B2150]/5 p-3 rounded-lg">
+                      <div className="text-sm text-[#818181]">Total</div>
+                      <div className="text-xl font-bold text-[#1B2150]">
                         ${calculateTotal().toFixed(2)}
                       </div>
                     </div>
                     <button
                       onClick={handleSubmitQuote}
                       disabled={loading || !isAuthenticated}
-                      className="bg-[#405952] text-white px-5 py-2.5 rounded-lg hover:bg-[#30423f] transition-colors duration-200 font-medium text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-[#E22400] transition-colors duration-200 font-medium text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {loading ? (
                         <>
@@ -584,10 +586,10 @@ const RequestQuote = () => {
           <div className={`transform transition-all duration-700 delay-200 ${
             isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}>
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-gray-100/50">
+            <div className="bg-white backdrop-blur-sm rounded-xl shadow-sm p-4 border border-[#FAFAFB]">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                  <div className="bg-[#405952] rounded-lg p-2">
+                <h2 className="text-xl font-bold text-[#1B2150] flex items-center gap-2">
+                  <div className="bg-[#1B2150] rounded-lg p-2">
                     <ShoppingCart className="w-5 h-5 text-white" />
                   </div>
                   Quote Items ({getCartItemsCount()})
@@ -596,7 +598,7 @@ const RequestQuote = () => {
                 {cartItems.length === 0 && (
                   <a
                     href="/products"
-                    className="bg-[#405952] text-white px-5 py-2.5 rounded-lg hover:bg-[#30423f] transition-colors duration-200 font-medium text-base"
+                    className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-[#E22400] transition-colors duration-200 font-medium text-base"
                   >
                     Browse Products
                   </a>
@@ -635,16 +637,16 @@ const RequestQuote = () => {
 
               {cartItems.length === 0 ? (
                 <div className="text-center py-8">
-                  <div className="bg-gray-100 rounded-2xl p-4 inline-block mb-3">
-                    <ShoppingCart className="w-12 h-12 text-gray-400" />
+                  <div className="bg-[#FAFAFB] rounded-2xl p-4 inline-block mb-3">
+                    <ShoppingCart className="w-12 h-12 text-[#818181]" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                  <h3 className="text-lg font-semibold text-[#1B2150] mb-2">
                     Your quote cart is empty
                   </h3>
-                  <p className="text-base text-gray-600 mb-4">Add products from the Products page to create your quote</p>
+                  <p className="text-base text-[#818181] mb-4">Add products from the Products page to create your quote</p>
                   <a
                     href="/products"
-                    className="inline-flex items-center px-5 py-2.5 bg-[#405952] text-white rounded-lg hover:bg-[#30423f] transition-colors duration-200 font-medium text-base"
+                    className="inline-flex items-center px-5 py-2.5 bg-[#1B2150] text-white rounded-lg hover:bg-[#E22400] transition-colors duration-200 font-medium text-base"
                   >
                     Browse Products
                   </a>
@@ -660,14 +662,14 @@ const RequestQuote = () => {
                     return (
                       <div 
                         key={productId} 
-                        className={`bg-white border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-all duration-200 transform ${
+                        className={`bg-white border border-[#FAFAFB] rounded-lg p-3 hover:shadow-sm hover:border-[#E22400] transition-all duration-200 transform ${
                           isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
                         }`}
                         style={{ transitionDelay: `${300 + index * 50}ms` }}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3 flex-1 min-w-0">
-                            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div className="w-12 h-12 bg-[#FAFAFB] rounded-lg flex items-center justify-center flex-shrink-0">
                               {product.picture ? (
                                 <img 
                                   src={product.picture} 
@@ -680,22 +682,22 @@ const RequestQuote = () => {
                                 />
                               ) : null}
                               <div 
-                                className="w-10 h-10 flex items-center justify-center text-[#405952]"
+                                className="w-10 h-10 flex items-center justify-center text-[#1B2150]"
                                 style={{ display: product.picture ? 'none' : 'flex' }}
                               >
                                 <Package className="w-6 h-6" />
                               </div>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-gray-900 text-base truncate">{product.name}</h3>
-                              <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
-                                <span className="bg-[#405952]/10 px-2 py-1 rounded text-[#405952] font-medium">
+                              <h3 className="font-semibold text-[#1B2150] text-base truncate">{product.name}</h3>
+                              <div className="flex items-center gap-2 text-sm text-[#818181] mt-1">
+                                <span className="bg-[#1B2150]/10 px-2 py-1 rounded text-[#1B2150] font-medium">
                                   {product.sku}
                                 </span>
-                                <span className="bg-gray-100 px-2 py-1 rounded">
+                                <span className="bg-[#FAFAFB] px-2 py-1 rounded">
                                   {product.brand}
                                 </span>
-                                <span className="bg-blue-50 px-2 py-1 rounded text-blue-700">
+                                <span className="bg-[#5F6485]/10 px-2 py-1 rounded text-[#5F6485]">
                                   {product.category}
                                 </span>
                               </div>
@@ -704,14 +706,14 @@ const RequestQuote = () => {
                           
                           <div className="flex items-center gap-4 flex-shrink-0">
                             {/* Quantity Controls */}
-                            <div className="flex items-center bg-gray-50 rounded-lg p-1">
+                            <div className="flex items-center bg-[#FAFAFB] rounded-lg p-1">
                               <button
                                 onClick={() => updateQuantity(productId, quantity - 1)}
                                 className="w-8 h-8 bg-white rounded flex items-center justify-center hover:bg-red-50 hover:text-red-600 text-base font-bold transition-colors duration-200"
                               >
                                 -
                               </button>
-                              <span className="w-10 text-center text-base font-medium">{quantity}</span>
+                              <span className="w-10 text-center text-base font-medium text-[#818181]">{quantity}</span>
                               <button
                                 onClick={() => updateQuantity(productId, quantity + 1)}
                                 className="w-8 h-8 bg-white rounded flex items-center justify-center hover:bg-green-50 hover:text-green-600 text-base font-bold transition-colors duration-200"
@@ -722,10 +724,10 @@ const RequestQuote = () => {
                             
                             {/* Price */}
                             <div className="text-right min-w-0">
-                              <div className="text-sm text-gray-600">
+                              <div className="text-sm text-[#818181]">
                                 ${netPrice.toFixed(2)} × {quantity}
                               </div>
-                              <div className="text-base font-bold text-[#405952]">
+                              <div className="text-base font-bold text-[#1B2150]">
                                 ${totalPrice.toFixed(2)}
                               </div>
                             </div>
@@ -742,7 +744,7 @@ const RequestQuote = () => {
                         </div>
                         
                         {product.description && (
-                          <p className="text-sm text-gray-600 mt-3 ml-15 bg-gray-50 rounded p-2">
+                          <p className="text-sm text-[#818181] mt-3 ml-15 bg-[#FAFAFB] rounded p-2">
                             {product.description}
                           </p>
                         )}
@@ -759,13 +761,13 @@ const RequestQuote = () => {
             <div className={`mt-4 transform transition-all duration-700 delay-300 ${
               isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}>
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-gray-100/50 text-center">
+              <div className="bg-white backdrop-blur-sm rounded-xl shadow-sm p-4 border border-[#FAFAFB] text-center">
                 <div className="flex items-center justify-center gap-4 mb-4">
-                  <div className="bg-[#405952]/10 px-4 py-2 rounded-lg">
-                    <div className="text-lg font-bold text-[#405952]">
+                  <div className="bg-[#1B2150]/10 px-4 py-2 rounded-lg">
+                    <div className="text-lg font-bold text-[#1B2150]">
                       Total: ${calculateTotal().toFixed(2)}
                     </div>
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-[#818181]">
                       {getCartItemsCount()} {getCartItemsCount() === 1 ? 'product' : 'products'} in quote
                     </div>
                   </div>
@@ -774,7 +776,7 @@ const RequestQuote = () => {
                 <button
                   onClick={handleSubmitQuote}
                   disabled={loading || !isAuthenticated}
-                  className="w-full max-w-sm bg-[#405952] text-white py-3 rounded-lg hover:bg-[#30423f] transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium mx-auto"
+                  className="w-full max-w-sm bg-[#1B2150] text-white py-3 rounded-lg hover:bg-[#E22400] transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium mx-auto"
                 >
                   {loading ? (
                     <>
@@ -789,7 +791,7 @@ const RequestQuote = () => {
                   )}
                 </button>
 
-                <p className="text-xs text-gray-500 mt-3">
+                <p className="text-xs text-[#818181] mt-3">
                   By submitting this quote request, you agree to be contacted by our sales team.
                 </p>
               </div>

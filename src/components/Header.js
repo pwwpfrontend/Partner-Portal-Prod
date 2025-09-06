@@ -21,10 +21,10 @@ const Header = ({ toggleSidebar }) => {
         <div className="flex items-center space-x-2">
           <img
             src="/logo192.png"
-            alt="Partner Portal Logo"
+            alt="Partner’s Marketplace Logo"
             className="h-8 w-8"
           />
-          <span className="font-bold text-lg text-gray-800">PARTNER PORTAL</span>
+          <span className="font-bold text-lg text-gray-800">Partner’s Marketplace</span>
         </div>
 
         {/* Right: Empty for now */}
