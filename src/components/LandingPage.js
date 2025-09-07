@@ -95,7 +95,7 @@ const LandingPage = () => {
             
             <button
               onClick={() => navigate("/application")}
-              className="group relative px-8 py-4 bg-[#1B2150] text-white font-bold rounded-xl shadow-2xl hover:shadow-lg hover:bg-[#E22400] transition-all duration-300"
+              className="group relative px-8 py-4 bg-[#1B2150] text-white font-bold rounded-xl shadow-2xl hover:shadow-lg hover:bg-[#EB664D] transition-all duration-300"
             >
               <span className="relative z-10 text-lg">Apply for Partnership</span>
             </button>
@@ -131,7 +131,7 @@ const LandingPage = () => {
             
             {/* Icon with blue styling */}
             <div className="relative z-10 mb-6">
-              <div className="w-16 h-16 bg-[#1B2150] rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-[#E22400] transition-colors duration-300">
+              <div className="w-16 h-16 bg-[#1B2150] rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-[#EB664D] transition-colors duration-300">
                 <Percent className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -146,7 +146,7 @@ const LandingPage = () => {
             </div>
             
             {/* Bottom accent line with orange accent */}
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-[#E22400] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-[#EB664D] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
           </div>
 
           {/* Card 2 */}
@@ -154,7 +154,7 @@ const LandingPage = () => {
             <div className="absolute inset-0 bg-[#1B2150]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             
             <div className="relative z-10 mb-6">
-              <div className="w-16 h-16 bg-[#5F6485] rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-[#E22400] transition-colors duration-300">
+              <div className="w-16 h-16 bg-[#5F6485] rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-[#EB664D] transition-colors duration-300">
                 <Headphones className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -168,7 +168,7 @@ const LandingPage = () => {
               </p>
             </div>
             
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-[#E22400] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-[#EB664D] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
           </div>
 
           {/* Card 3 */}
@@ -176,7 +176,7 @@ const LandingPage = () => {
             <div className="absolute inset-0 bg-[#1B2150]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             
             <div className="relative z-10 mb-6">
-              <div className="w-16 h-16 bg-[#1B2150] rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-[#E22400] transition-colors duration-300">
+              <div className="w-16 h-16 bg-[#1B2150] rounded-2xl flex items-center justify-center shadow-lg group-hover:bg-[#EB664D] transition-colors duration-300">
                 <Package className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -190,7 +190,7 @@ const LandingPage = () => {
               </p>
             </div>
             
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-[#E22400] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-[#EB664D] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
           </div>
         </div>
       </section>

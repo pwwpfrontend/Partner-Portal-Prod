@@ -520,7 +520,7 @@ const RequestQuote = () => {
                     <button
                       onClick={handleSubmitQuote}
                       disabled={loading || !isAuthenticated}
-                      className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-[#E22400] transition-colors duration-200 font-medium text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-[#EB664D] transition-colors duration-200 font-medium text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {loading ? (
                         <>
@@ -598,7 +598,7 @@ const RequestQuote = () => {
                 {cartItems.length === 0 && (
                   <a
                     href="/products"
-                    className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-[#E22400] transition-colors duration-200 font-medium text-base"
+                    className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-[#EB664D] transition-colors duration-200 font-medium text-base"
                   >
                     Browse Products
                   </a>
@@ -646,7 +646,7 @@ const RequestQuote = () => {
                   <p className="text-base text-[#818181] mb-4">Add products from the Products page to create your quote</p>
                   <a
                     href="/products"
-                    className="inline-flex items-center px-5 py-2.5 bg-[#1B2150] text-white rounded-lg hover:bg-[#E22400] transition-colors duration-200 font-medium text-base"
+                    className="inline-flex items-center px-5 py-2.5 bg-[#1B2150] text-white rounded-lg hover:bg-[#EB664D] transition-colors duration-200 font-medium text-base"
                   >
                     Browse Products
                   </a>
@@ -662,7 +662,7 @@ const RequestQuote = () => {
                     return (
                       <div 
                         key={productId} 
-                        className={`bg-white border border-[#FAFAFB] rounded-lg p-3 hover:shadow-sm hover:border-[#E22400] transition-all duration-200 transform ${
+                        className={`bg-white border border-[#FAFAFB] rounded-lg p-3 hover:shadow-sm hover:border-[#EB664D] transition-all duration-200 transform ${
                           isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
                         }`}
                         style={{ transitionDelay: `${300 + index * 50}ms` }}
@@ -776,7 +776,7 @@ const RequestQuote = () => {
                 <button
                   onClick={handleSubmitQuote}
                   disabled={loading || !isAuthenticated}
-                  className="w-full max-w-sm bg-[#1B2150] text-white py-3 rounded-lg hover:bg-[#E22400] transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium mx-auto"
+                  className="w-full max-w-sm bg-[#1B2150] text-white py-3 rounded-lg hover:bg-[#EB664D] transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium mx-auto"
                 >
                   {loading ? (
                     <>

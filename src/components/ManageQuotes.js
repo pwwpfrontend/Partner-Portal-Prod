@@ -498,7 +498,7 @@ const ManageQuotes = () => {
     <div className="min-h-screen bg-gradient-to-br from-white via-[#FAFAFB] to-white">
       {/* Animated background elements */}
       <div className="absolute top-20 left-10 w-96 h-96 bg-[#1B2150]/5 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#E22400]/5 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#EB664D]/5 rounded-full blur-3xl animate-pulse"></div>
       
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <Header toggleSidebar={toggleSidebar} />
@@ -522,7 +522,7 @@ const ManageQuotes = () => {
                 <button
                   onClick={handleRefresh}
                   disabled={loading}
-                  className="bg-[#1B2150] text-white px-6 py-3 rounded-xl hover:bg-[#E22400] hover:shadow-lg hover:shadow-[#E22400]/25 transition-all duration-200 transform hover:scale-105 flex items-center gap-2 disabled:opacity-50 disabled:transform-none"
+                  className="bg-[#1B2150] text-white px-6 py-3 rounded-xl hover:bg-[#EB664D] hover:shadow-lg hover:shadow-[#EB664D]/25 transition-all duration-200 transform hover:scale-105 flex items-center gap-2 disabled:opacity-50 disabled:transform-none"
                 >
                   <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                   Refresh
@@ -673,7 +673,7 @@ const ManageQuotes = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button
                               onClick={() => handleViewDetails(quote)}
-                              className="text-[#1B2150] hover:text-[#E22400] flex items-center transition-colors duration-200"
+                              className="text-[#1B2150] hover:text-[#EB664D] flex items-center transition-colors duration-200"
                             >
                               <Eye className="w-4 h-4 mr-1" />
                               View
@@ -693,7 +693,7 @@ const ManageQuotes = () => {
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#FAFAFB]">
                 {/* Decorative gradient overlay */}
-                <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#E22400]"></div>
+                <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#EB664D]"></div>
                 
                 <div className="p-8">
                   <div className="flex items-center justify-between mb-8">
@@ -702,7 +702,7 @@ const ManageQuotes = () => {
                     </h2>
                     <button
                       onClick={() => setShowQuoteDetails(false)}
-                      className="text-[#818181] hover:text-[#E22400] text-2xl transition-colors duration-200"
+                      className="text-[#818181] hover:text-[#EB664D] text-2xl transition-colors duration-200"
                     >
                       ×
                     </button>
@@ -834,7 +834,7 @@ const ManageQuotes = () => {
                             <div className="text-sm text-[#818181]">Total Qty</div>
                           </div>
                           <div className="bg-white rounded-lg p-3">
-                            <div className="text-2xl font-bold text-[#E22400]">
+                            <div className="text-2xl font-bold text-[#EB664D]">
                               ${(selectedQuote.totalAmount || selectedQuote.total || 0).toFixed(2)}
                             </div>
                             <div className="text-sm text-[#818181]">Total Value</div>

@@ -160,7 +160,7 @@ const Dashboard = () => {
                 <div className="flex items-center gap-6 mb-6">
                   <div className="relative flex-shrink-0">
                     <div className="absolute inset-0 bg-[#FAFAFB] rounded-xl blur-sm"></div>
-                    <div className="relative p-3 bg-[#1B2150] hover:bg-[#E22400] transition-colors duration-300 rounded-xl shadow-md">
+                    <div className="relative p-3 bg-[#1B2150] hover:bg-[#EB664D] transition-colors duration-300 rounded-xl shadow-md">
                       <roleInfo.icon className="h-8 w-8 text-white" />
                     </div>
                   </div>
@@ -200,22 +200,22 @@ const Dashboard = () => {
                   <Link
                     key={index}
                     to={link.href}
-                    className={`group bg-white hover:bg-[#FAFAFB] rounded-3xl shadow-2xl p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-[#FAFAFB] hover:border-[#E22400] relative overflow-hidden transform transition-all duration-700 delay-${(index + 1) * 200} ${
+                    className={`group bg-white hover:bg-[#FAFAFB] rounded-3xl shadow-2xl p-8 hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-[#FAFAFB] hover:border-[#EB664D] relative overflow-hidden transform transition-all duration-700 delay-${(index + 1) * 200} ${
                       isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                     }`}
                   >
                     {/* Decorative accent line */}
-                    <div className="absolute top-0 left-0 w-full h-1 bg-[#E22400] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute top-0 left-0 w-full h-1 bg-[#EB664D] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     
                     <div className="relative z-10">
                       <div className="flex items-start justify-between mb-6">
                         <div className="relative">
                           <div className="absolute inset-0 bg-[#FAFAFB] rounded-2xl blur-md"></div>
-                          <div className="relative p-4 bg-[#1B2150] group-hover:bg-[#E22400] rounded-2xl shadow-lg transform group-hover:scale-110 transition-all duration-300">
+                          <div className="relative p-4 bg-[#1B2150] group-hover:bg-[#EB664D] rounded-2xl shadow-lg transform group-hover:scale-110 transition-all duration-300">
                             <LinkIcon className="w-8 h-8 text-white" />
                           </div>
                         </div>
-                        <ArrowRight className="w-6 h-6 text-[#1B2150] group-hover:text-[#E22400] opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                        <ArrowRight className="w-6 h-6 text-[#1B2150] group-hover:text-[#EB664D] opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
                       </div>
                       
                       <div className="space-y-3">
@@ -228,7 +228,7 @@ const Dashboard = () => {
                       </div>
                       
                       {/* Bottom accent line */}
-                      <div className="absolute bottom-0 left-0 w-full h-1 bg-[#E22400] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-b-3xl"></div>
+                      <div className="absolute bottom-0 left-0 w-full h-1 bg-[#EB664D] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-b-3xl"></div>
                     </div>
                   </Link>
                 );

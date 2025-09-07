@@ -138,10 +138,10 @@ const PartnerApplication = () => {
           <div className="flex items-center space-x-3">
             <div className="relative">
               <div className="absolute inset-0 bg-[#1B2150]/10 rounded-full blur-md"></div>
-              <img src="/logo192.png" alt="Partner’s Marketplace Logo" className="h-10 w-10 relative z-10 drop-shadow-lg" />
+              <img src="/logo192.png" alt="Partner's Marketplace Logo" className="h-10 w-10 relative z-10 drop-shadow-lg" />
             </div>
             <span className="font-semibold text-lg text-[#1B2150]">
-              Power Workplace Partner’s Marketplace
+              Power Workplace Partner's Marketplace
             </span>
           </div>
           <button
@@ -153,12 +153,12 @@ const PartnerApplication = () => {
         </div>
       </header>
 
-      <div className={`max-w-4xl mx-auto px-6 py-12 transform transition-all duration-1000 ${
+      <div className={`max-w-4xl mx-auto px-6 py-8 transform transition-all duration-1000 ${
         isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
       }`}>
-        {/* Progress Steps */}
-        <div className="flex justify-center mb-16">
-          <div className="flex items-center space-x-8">
+        {/* Progress Steps - More compact */}
+        <div className="flex justify-center mb-10">
+          <div className="flex items-center space-x-6">
             {steps.map((stepInfo, index) => {
               const IconComponent = stepInfo.icon;
               const isActive = step === stepInfo.number;
@@ -167,27 +167,27 @@ const PartnerApplication = () => {
               return (
                 <div key={stepInfo.number} className="flex items-center">
                   <div className="flex flex-col items-center">
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
                       isCompleted 
                         ? 'bg-[#1B2150] text-white shadow-lg' 
                         : isActive 
-                          ? 'bg-[#E22400] text-white shadow-lg animate-pulse' 
+                          ? 'bg-[#EB664D] text-white shadow-lg animate-pulse' 
                           : 'bg-[#FAFAFB] text-[#818181] border-2 border-[#FAFAFB]'
                     }`}>
                       {isCompleted ? (
-                        <CheckCircle className="h-8 w-8" />
+                        <CheckCircle className="h-6 w-6" />
                       ) : (
-                        <IconComponent className="h-8 w-8" />
+                        <IconComponent className="h-6 w-6" />
                       )}
                     </div>
-                    <span className={`mt-2 text-sm font-medium ${
+                    <span className={`mt-2 text-xs font-medium ${
                       isActive || isCompleted ? 'text-[#1B2150]' : 'text-[#818181]'
                     }`}>
                       {stepInfo.title}
                     </span>
                   </div>
                   {index < steps.length - 1 && (
-                    <div className={`w-24 h-1 mx-4 rounded-full transition-all duration-500 ${
+                    <div className={`w-16 h-1 mx-3 rounded-full transition-all duration-500 ${
                       step > stepInfo.number 
                         ? 'bg-[#1B2150]' 
                         : 'bg-[#FAFAFB]'
@@ -199,54 +199,54 @@ const PartnerApplication = () => {
           </div>
         </div>
 
-        {/* Main Content Area - Single centered form */}
+        {/* Main Content Area - More compact form */}
         <div className="flex justify-center">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl p-10 border border-[#FAFAFB] relative overflow-hidden">
+          <div className="w-full max-w-xl bg-white rounded-3xl shadow-2xl p-6 border border-[#FAFAFB] relative overflow-hidden">
             {/* Decorative top accent */}
             <div className="absolute top-0 left-0 w-full h-2 bg-[#1B2150]"></div>
             
             {step === 1 && (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div className="text-center">
-                  <div className="w-20 h-20 bg-[#1B2150] rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <Building2 className="h-10 w-10 text-white" />
+                  <div className="w-16 h-16 bg-[#1B2150] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Building2 className="h-8 w-8 text-white" />
                   </div>
-                  <h2 className="text-3xl font-bold text-[#1B2150] mb-3">Company Information</h2>
-                  <p className="text-[#818181]">Tell us about your business</p>
+                  <h2 className="text-2xl font-bold text-[#1B2150] mb-2">Company Information</h2>
+                  <p className="text-[#818181] text-sm">Tell us about your business</p>
                 </div>
 
-                <form className="space-y-6">
+                <form className="space-y-4">
                   <div>
-                    <label className="block mb-3 text-sm font-semibold text-[#1B2150]">Company Name *</label>
+                    <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Company Name *</label>
                     <input
                       type="text"
                       name="companyName"
                       value={formData.companyName}
                       onChange={handleChange}
                       placeholder="Enter your company name"
-                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
                     />
                   </div>
 
                   <div>
-                    <label className="block mb-3 text-sm font-semibold text-[#1B2150]">Company Address *</label>
+                    <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Company Address *</label>
                     <input
                       type="text"
                       name="companyAddress"
                       value={formData.companyAddress}
                       onChange={handleChange}
                       placeholder="Enter your complete business address"
-                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
                     />
                   </div>
 
                   <div>
-                    <label className="block mb-3 text-sm font-semibold text-[#1B2150]">Business Type *</label>
+                    <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Business Type *</label>
                     <select
                       name="businessType"
                       value={formData.businessType}
                       onChange={handleChange}
-                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
                     >
                       <option value="">Select your business type</option>
                       <option value="reseller">Reseller</option>
@@ -257,23 +257,23 @@ const PartnerApplication = () => {
                   </div>
 
                   {submitError && (
-                    <div className="bg-[#E22400]/10 border border-[#E22400]/30 rounded-xl p-4">
-                      <div className="text-[#E22400] font-medium">{submitError}</div>
+                    <div className="bg-[#EB664D]/10 border border-[#EB664D]/30 rounded-xl p-3">
+                      <div className="text-[#EB664D] font-medium text-sm">{submitError}</div>
                     </div>
                   )}
 
-                  <div className="flex justify-between pt-6">
+                  <div className="flex justify-between pt-4">
                     <button
                       type="button"
                       onClick={handleBack}
-                      className="px-8 py-3 bg-[#FAFAFB] text-[#818181] rounded-xl text-lg font-semibold hover:bg-[#5F6485] hover:text-white transition-all duration-200 border-2 border-transparent hover:border-[#5F6485]"
+                      className="px-6 py-2 bg-[#FAFAFB] text-[#818181] rounded-xl text-base font-semibold hover:bg-[#5F6485] hover:text-white transition-all duration-200 border-2 border-transparent hover:border-[#5F6485]"
                     >
                       Back
                     </button>
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="px-8 py-3 bg-[#1B2150] text-white rounded-xl text-lg font-semibold hover:bg-[#E22400] hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                      className="px-6 py-2 bg-[#1B2150] text-white rounded-xl text-base font-semibold hover:bg-[#EB664D] hover:shadow-lg transition-all duration-200"
                     >
                       Continue →
                     </button>
@@ -283,98 +283,98 @@ const PartnerApplication = () => {
             )}
 
             {step === 2 && (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div className="text-center">
-                  <div className="w-20 h-20 bg-[#1B2150] rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <User className="h-10 w-10 text-white" />
+                  <div className="w-16 h-16 bg-[#1B2150] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <User className="h-8 w-8 text-white" />
                   </div>
-                  <h2 className="text-3xl font-bold text-[#1B2150] mb-3">Contact Information</h2>
-                  <p className="text-[#818181]">Your primary contact details</p>
+                  <h2 className="text-2xl font-bold text-[#1B2150] mb-2">Contact Information</h2>
+                  <p className="text-[#818181] text-sm">Your primary contact details</p>
                 </div>
 
-                <form className="space-y-6">
+                <form className="space-y-4">
                   <div>
-                    <label className="block mb-3 text-sm font-semibold text-[#1B2150]">Contact Person's Name *</label>
+                    <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Contact Person's Name *</label>
                     <input
                       type="text"
                       name="contactName"
                       value={formData.contactName}
                       onChange={handleChange}
                       placeholder="Enter full name"
-                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
                     />
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block mb-3 text-sm font-semibold text-[#1B2150]">Email Address *</label>
+                      <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Email Address *</label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="your@email.com"
-                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
                       />
                     </div>
 
                     <div>
-                      <label className="block mb-3 text-sm font-semibold text-[#1B2150]">Phone Number *</label>
+                      <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Phone Number *</label>
                       <input
                         type="text"
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder="+1 (555) 000-0000"
-                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
                       />
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block mb-3 text-sm font-semibold text-[#1B2150]">Position in Company *</label>
+                      <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Position in Company *</label>
                       <input
                         type="text"
                         name="position"
                         value={formData.position}
                         onChange={handleChange}
                         placeholder="e.g., CEO, Sales Director"
-                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
                       />
                     </div>
 
                     <div>
-                      <label className="block mb-3 text-sm font-semibold text-[#1B2150]">Create Password *</label>
+                      <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Create Password *</label>
                       <input
                         type="password"
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
                         placeholder="Create a secure password"
-                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
                       />
                     </div>
                   </div>
 
                   {submitError && (
-                    <div className="bg-[#E22400]/10 border border-[#E22400]/30 rounded-xl p-4">
-                      <div className="text-[#E22400] font-medium">{submitError}</div>
+                    <div className="bg-[#EB664D]/10 border border-[#EB664D]/30 rounded-xl p-3">
+                      <div className="text-[#EB664D] font-medium text-sm">{submitError}</div>
                     </div>
                   )}
 
-                  <div className="flex justify-between pt-6">
+                  <div className="flex justify-between pt-4">
                     <button
                       type="button"
                       onClick={handlePrevious}
-                      className="px-8 py-3 bg-[#FAFAFB] text-[#818181] rounded-xl text-lg font-semibold hover:bg-[#5F6485] hover:text-white transition-all duration-200 border-2 border-transparent hover:border-[#5F6485]"
+                      className="px-6 py-2 bg-[#FAFAFB] text-[#818181] rounded-xl text-base font-semibold hover:bg-[#5F6485] hover:text-white transition-all duration-200 border-2 border-transparent hover:border-[#5F6485]"
                     >
                       ← Previous
                     </button>
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="px-8 py-3 bg-[#1B2150] text-white rounded-xl text-lg font-semibold hover:bg-[#E22400] hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                      className="px-6 py-2 bg-[#1B2150] text-white rounded-xl text-base font-semibold hover:bg-[#EB664D] hover:shadow-lg transition-all duration-200"
                     >
                       Continue →
                     </button>
@@ -384,20 +384,20 @@ const PartnerApplication = () => {
             )}
 
             {step === 3 && (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div className="text-center">
-                  <div className="w-20 h-20 bg-[#1B2150] rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <Upload className="h-10 w-10 text-white" />
+                  <div className="w-16 h-16 bg-[#1B2150] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Upload className="h-8 w-8 text-white" />
                   </div>
-                  <h2 className="text-3xl font-bold text-[#1B2150] mb-3">Business Documentation</h2>
-                  <p className="text-[#818181]">Upload your business registration certificate</p>
+                  <h2 className="text-2xl font-bold text-[#1B2150] mb-2">Business Documentation</h2>
+                  <p className="text-[#818181] text-sm">Upload your business registration certificate</p>
                 </div>
 
-                <form className="space-y-6">
+                <form className="space-y-4">
                   <div>
-                    <label className="block mb-3 text-sm font-semibold text-[#1B2150]">Business Registration Certificate *</label>
-                    <div className="border-2 border-dashed border-[#FAFAFB] rounded-xl p-8 text-center hover:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-[#1B2150]/5">
-                      <Upload className="h-12 w-12 text-[#818181] mx-auto mb-4" />
+                    <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Business Registration Certificate *</label>
+                    <div className="border-2 border-dashed border-[#FAFAFB] rounded-xl p-6 text-center hover:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-[#1B2150]/5">
+                      <Upload className="h-10 w-10 text-[#818181] mx-auto mb-3" />
                       <input
                         type="file"
                         accept="application/pdf"
@@ -406,7 +406,7 @@ const PartnerApplication = () => {
                         id="certificate-upload"
                       />
                       <label htmlFor="certificate-upload" className="cursor-pointer">
-                        <div className="text-lg font-semibold text-[#1B2150] mb-2">
+                        <div className="text-base font-semibold text-[#1B2150] mb-2">
                           {certificateFile ? certificateFile.name : "Drop your PDF file here or click to browse"}
                         </div>
                         <div className="text-sm text-[#818181]">
@@ -417,23 +417,23 @@ const PartnerApplication = () => {
                   </div>
 
                   {submitError && (
-                    <div className="bg-[#E22400]/10 border border-[#E22400]/30 rounded-xl p-4">
-                      <div className="text-[#E22400] font-medium">{submitError}</div>
+                    <div className="bg-[#EB664D]/10 border border-[#EB664D]/30 rounded-xl p-3">
+                      <div className="text-[#EB664D] font-medium text-sm">{submitError}</div>
                     </div>
                   )}
 
-                  <div className="flex justify-between pt-6">
+                  <div className="flex justify-between pt-4">
                     <button
                       type="button"
                       onClick={handlePrevious}
-                      className="px-8 py-3 bg-[#FAFAFB] text-[#818181] rounded-xl text-lg font-semibold hover:bg-[#5F6485] hover:text-white transition-all duration-200 border-2 border-transparent hover:border-[#5F6485]"
+                      className="px-6 py-2 bg-[#FAFAFB] text-[#818181] rounded-xl text-base font-semibold hover:bg-[#5F6485] hover:text-white transition-all duration-200 border-2 border-transparent hover:border-[#5F6485]"
                     >
                       ← Previous
                     </button>
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="px-8 py-3 bg-[#1B2150] text-white rounded-xl text-lg font-semibold hover:bg-[#E22400] hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                      className="px-6 py-2 bg-[#1B2150] text-white rounded-xl text-base font-semibold hover:bg-[#EB664D] hover:shadow-lg transition-all duration-200"
                     >
                       Continue →
                     </button>
@@ -443,49 +443,49 @@ const PartnerApplication = () => {
             )}
 
             {step === 4 && (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div className="text-center">
-                  <div className="w-20 h-20 bg-[#1B2150] rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <FileCheck className="h-10 w-10 text-white" />
+                  <div className="w-16 h-16 bg-[#1B2150] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <FileCheck className="h-8 w-8 text-white" />
                   </div>
-                  <h2 className="text-3xl font-bold text-[#1B2150] mb-3">Legal Agreement</h2>
-                  <p className="text-[#818181]">Review and accept the partnership terms</p>
+                  <h2 className="text-2xl font-bold text-[#1B2150] mb-2">Legal Agreement</h2>
+                  <p className="text-[#818181] text-sm">Review and accept the partnership terms</p>
                 </div>
 
-                <form className="space-y-8" onSubmit={handleSubmit}>
-                  <div className="bg-[#FAFAFB] rounded-xl p-6 border border-[#FAFAFB]">
-                    <div className="flex items-start space-x-4">
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                  <div className="bg-[#FAFAFB] rounded-xl p-4 border border-[#FAFAFB]">
+                    <div className="flex items-start space-x-3">
                       <input 
                         id="nda" 
                         type="checkbox" 
                         checked={ndaAgreed} 
                         onChange={(e) => setNdaAgreed(e.target.checked)} 
-                        className="mt-1 h-5 w-5 text-[#1B2150] rounded focus:ring-[#1B2150]" 
+                        className="mt-1 h-4 w-4 text-[#1B2150] rounded focus:ring-[#1B2150]" 
                       />
-                      <label htmlFor="nda" className="text-lg text-[#818181] leading-relaxed">
-                        I agree to the terms of the <a href="#" className="text-[#1B2150] underline font-semibold hover:text-[#E22400]">Non-Disclosure Agreement</a> and partnership terms. I understand that all shared information will be kept confidential and used solely for partnership evaluation purposes.
+                      <label htmlFor="nda" className="text-base text-[#818181] leading-relaxed">
+                        I agree to the terms of the <a href="#" className="text-[#1B2150] underline font-semibold hover:text-[#EB664D]">Non-Disclosure Agreement</a> and partnership terms. I understand that all shared information will be kept confidential and used solely for partnership evaluation purposes.
                       </label>
                     </div>
                   </div>
 
                   {submitError && (
-                    <div className="bg-[#E22400]/10 border border-[#E22400]/30 rounded-xl p-4">
-                      <div className="text-[#E22400] font-medium">{submitError}</div>
+                    <div className="bg-[#EB664D]/10 border border-[#EB664D]/30 rounded-xl p-3">
+                      <div className="text-[#EB664D] font-medium text-sm">{submitError}</div>
                     </div>
                   )}
 
-                  <div className="flex justify-between pt-6">
+                  <div className="flex justify-between pt-4">
                     <button 
                       type="button" 
                       onClick={handlePrevious} 
-                      className="px-8 py-3 bg-[#FAFAFB] text-[#818181] rounded-xl text-lg font-semibold hover:bg-[#5F6485] hover:text-white transition-all duration-200 border-2 border-transparent hover:border-[#5F6485]"
+                      className="px-6 py-2 bg-[#FAFAFB] text-[#818181] rounded-xl text-base font-semibold hover:bg-[#5F6485] hover:text-white transition-all duration-200 border-2 border-transparent hover:border-[#5F6485]"
                     >
                       ← Previous
                     </button>
                     <button 
                       type="submit" 
                       disabled={submitting} 
-                      className="px-8 py-3 bg-[#1B2150] text-white rounded-xl text-lg font-semibold hover:bg-[#E22400] hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-60 disabled:transform-none disabled:hover:shadow-none"
+                      className="px-6 py-2 bg-[#1B2150] text-white rounded-xl text-base font-semibold hover:bg-[#EB664D] hover:shadow-lg transition-all duration-200 disabled:opacity-60"
                     >
                       {submitting ? "Submitting..." : "Submit Application ✓"}
                     </button>
@@ -495,18 +495,18 @@ const PartnerApplication = () => {
             )}
 
             {step === 5 && (
-              <div className="text-center space-y-8">
-                <div className="w-24 h-24 bg-[#1B2150] rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle className="h-12 w-12 text-white" />
+              <div className="text-center space-y-6">
+                <div className="w-20 h-20 bg-[#1B2150] rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle className="h-10 w-10 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-[#1B2150] mb-3">Application Submitted!</h2>
-                  <p className="text-xl text-[#818181] mb-6">Your partnership request is under review</p>
+                  <h2 className="text-2xl font-bold text-[#1B2150] mb-2">Application Submitted!</h2>
+                  <p className="text-lg text-[#818181] mb-4">Your partnership request is under review</p>
                 </div>
                 
-                <div className="bg-[#FAFAFB] rounded-xl p-8 text-left space-y-4">
-                  <h3 className="font-bold text-lg text-[#1B2150]">What happens next?</h3>
-                  <div className="space-y-3 text-[#818181]">
+                <div className="bg-[#FAFAFB] rounded-xl p-6 text-left space-y-3">
+                  <h3 className="font-bold text-base text-[#1B2150]">What happens next?</h3>
+                  <div className="space-y-2 text-[#818181] text-sm">
                     <div className="flex items-center space-x-3">
                       <div className="w-2 h-2 bg-[#1B2150] rounded-full"></div>
                       <span>Our team will review your application within 2-3 business days</span>
@@ -521,7 +521,7 @@ const PartnerApplication = () => {
                     </div>
                   </div>
                   
-                  <div className="border-t border-[#E22400]/20 pt-4 mt-6">
+                  <div className="border-t border-[#EB664D]/20 pt-3 mt-4">
                     <div className="text-sm text-[#818181]">
                       <strong className="text-[#1B2150]">Need help?</strong> Contact our support team at{" "}
                       <span className="font-mono text-[#1B2150]">support@workplace.com</span>
@@ -531,7 +531,7 @@ const PartnerApplication = () => {
 
                 <button 
                   onClick={() => navigate("/login")} 
-                  className="px-8 py-3 bg-[#1B2150] text-white rounded-xl text-lg font-semibold hover:bg-[#E22400] hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                  className="px-6 py-2 bg-[#1B2150] text-white rounded-xl text-base font-semibold hover:bg-[#EB664D] hover:shadow-lg transition-all duration-200"
                 >
                   Go to Login Portal
                 </button>

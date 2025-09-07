@@ -338,13 +338,13 @@ const AdminProducts = () => {
   // Wait for auth to resolve to avoid unauthorized flicker
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-[#FAFAFB]">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <Header toggleSidebar={toggleSidebar} />
         <main className="pt-16">
           <div className="p-6">
             <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#405952]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B2150]"></div>
             </div>
           </div>
         </main>
@@ -355,15 +355,15 @@ const AdminProducts = () => {
   // Role guard - only admin can access
   if (currentRole !== 'admin') {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-[#FAFAFB]">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <Header toggleSidebar={toggleSidebar} />
         <main className="pt-16">
           <div className="p-6">
             <div className="text-center py-12">
-              <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-red-500" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Access Denied</h3>
-              <p className="text-gray-600">You need admin privileges to access this page.</p>
+              <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-[#EB664D]" />
+              <h3 className="text-lg font-medium text-[#1B2150] mb-2">Access Denied</h3>
+              <p className="text-[#818181]">You need admin privileges to access this page.</p>
             </div>
           </div>
         </main>
@@ -373,13 +373,13 @@ const AdminProducts = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-[#FAFAFB]">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <Header toggleSidebar={toggleSidebar} />
         <main className="pt-16">
           <div className="p-6">
             <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#405952]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B2150]"></div>
             </div>
           </div>
         </main>
@@ -389,18 +389,18 @@ const AdminProducts = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-[#FAFAFB]">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <Header toggleSidebar={toggleSidebar} />
         <main className="pt-16">
           <div className="p-6">
             <div className="text-center py-12">
-              <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-red-500" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Products</h3>
-              <p className="text-gray-600">{error}</p>
+              <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-[#EB664D]" />
+              <h3 className="text-lg font-medium text-[#1B2150] mb-2">Error Loading Products</h3>
+              <p className="text-[#818181]">{error}</p>
               <button 
                 onClick={() => window.location.reload()} 
-                className="mt-4 px-4 py-2 bg-[#405952] text-white rounded-lg hover:bg-[#2d3f38]"
+                className="mt-4 px-4 py-2 bg-[#1B2150] text-white rounded-lg hover:bg-[#EB664D]"
               >
                 Retry
               </button>
@@ -412,17 +412,17 @@ const AdminProducts = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-[#FAFAFB]">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <Header toggleSidebar={toggleSidebar} />
 
       <main className="pt-16">
         {/* Page Header - Updated with right-aligned actions */}
-        <div className="bg-gray-100 p-6 pb-3">
+        <div className="bg-[#FAFAFB] p-6 pb-3">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Admin Products</h1>
-              <div className="mt-1 text-sm text-[#405952]">Manage your product catalog</div>
+              <h1 className="text-3xl font-bold text-[#1B2150]">Admin Products</h1>
+              <div className="mt-1 text-sm text-[#818181]">Manage your product catalog</div>
             </div>
 
             <div className="flex items-center gap-2">
@@ -432,7 +432,7 @@ const AdminProducts = () => {
                   disabled={deletingMany}
                   aria-busy={deletingMany ? 'true' : 'false'}
                   onClick={(e) => { e.stopPropagation(); handleBulkDelete(); }}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#EB664D] text-white rounded-lg hover:bg-[#EB664D]/80 transition-colors disabled:opacity-50"
                 >
                   {deletingMany ? 'Deleting...' : (
                     <>
@@ -445,7 +445,7 @@ const AdminProducts = () => {
               <button
                 type="button"
                 onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-[#405952] text-white rounded-lg hover:bg-[#2d3f38] transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-[#1B2150] text-white rounded-lg hover:bg-[#EB664D] transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Add Product
@@ -456,21 +456,21 @@ const AdminProducts = () => {
 
         {/* Product Detail Modal - Positioned below header and made sticky - EXACTLY matching Products.js */}
         {selectedProduct && (
-          <div className="sticky top-16 z-30 bg-white shadow-lg border-b border-gray-200">
+          <div className="sticky top-16 z-30 bg-white shadow-lg border-b border-[#FAFAFB]">
             <div className="max-w-7xl mx-auto p-6">
               <div className="grid grid-cols-12 gap-6">
                 {/* Left Side - Product Image */}
                 <div className="col-span-12 lg:col-span-3">
                   <div className="flex justify-between items-start mb-2">
-                    <h2 className="text-lg font-bold text-gray-900 leading-tight">{selectedProduct.product_name || selectedProduct.name}</h2>
+                    <h2 className="text-lg font-bold text-[#1B2150] leading-tight">{selectedProduct.product_name || selectedProduct.name}</h2>
                     <button
                       onClick={() => setSelectedProduct(null)}
-                      className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 ml-2"
+                      className="text-[#818181] hover:text-[#1B2150] transition-colors flex-shrink-0 ml-2"
                     >
                       <X className="w-5 h-5" />
                     </button>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-4 mb-3">
+                  <div className="bg-[#FAFAFB] rounded-lg p-4 mb-3">
                     {selectedProduct.product_image || selectedProduct.picture ? (
                       <img 
                         src={selectedProduct.product_image || selectedProduct.picture} 
@@ -486,7 +486,7 @@ const AdminProducts = () => {
                       className="w-full h-32 flex items-center justify-center"
                       style={{ display: (selectedProduct.product_image || selectedProduct.picture) ? 'none' : 'flex' }}
                     >
-                      <Package className="w-12 h-12 text-gray-400" />
+                      <Package className="w-12 h-12 text-[#818181]" />
                     </div>
                   </div>
                 </div>
@@ -494,16 +494,16 @@ const AdminProducts = () => {
                 {/* Center - Product Details */}
                 <div className="col-span-12 lg:col-span-6">
                   {/* SKU, Category, Brand */}
-                  <div className="mb-3 text-sm text-gray-600 space-y-1">
-                    <div>SKU: <span className="text-gray-900 font-medium">{selectedProduct['sku/model'] || selectedProduct.sku}</span></div>
-                    <div>Category: <span className="text-gray-900 font-medium">{selectedProduct.category}</span> | Brand: <span className="text-gray-900 font-medium">{selectedProduct.brand}</span></div>
+                  <div className="mb-3 text-sm text-[#818181] space-y-1">
+                    <div>SKU: <span className="text-[#1B2150] font-medium">{selectedProduct['sku/model'] || selectedProduct.sku}</span></div>
+                    <div>Category: <span className="text-[#1B2150] font-medium">{selectedProduct.category}</span> | Brand: <span className="text-[#1B2150] font-medium">{selectedProduct.brand}</span></div>
                   </div>
 
                   {/* Description */}
                   {selectedProduct.description && (
                     <div className="mb-3">
                       <h3 className="text-sm font-semibold mb-1">Description</h3>
-                      <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">{selectedProduct.description}</p>
+                      <p className="text-sm text-[#818181] leading-relaxed line-clamp-3">{selectedProduct.description}</p>
                     </div>
                   )}
                 </div>
@@ -511,23 +511,23 @@ const AdminProducts = () => {
                 {/* Right Side - Pricing and Actions */}
                 <div className="col-span-12 lg:col-span-3">
                   {/* Pricing Breakdown */}
-                  <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                  <div className="bg-[#FAFAFB] p-4 rounded-lg mb-4">
                     <h3 className="text-sm font-semibold mb-3">Pricing Information</h3>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">MSRP:</span>
+                        <span className="text-[#818181]">MSRP:</span>
                         <span className="font-semibold">${(selectedProduct.msrp || 0).toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Discount (Professional):</span>
+                        <span className="text-[#818181]">Discount (Professional):</span>
                         <span className="font-semibold text-green-600">{(selectedProduct.discount_professional || 0).toFixed(0)}%</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Discount (Expert):</span>
+                        <span className="text-[#818181]">Discount (Expert):</span>
                         <span className="font-semibold text-green-600">{(selectedProduct.discount_expert || 0).toFixed(0)}%</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Discount (Master):</span>
+                        <span className="text-[#818181]">Discount (Master):</span>
                         <span className="font-semibold text-green-600">{(selectedProduct.discount_master || 0).toFixed(0)}%</span>
                       </div>
                     </div>
@@ -537,14 +537,14 @@ const AdminProducts = () => {
                   <div className="space-y-2">
                     <button
                       onClick={() => handleEditProduct(selectedProduct)}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-[#405952] text-white rounded text-sm hover:bg-[#2d3f38] transition-colors"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-[#1B2150] text-white rounded text-sm hover:bg-[#EB664D] transition-colors"
                     >
                       <Edit className="w-4 h-4" />
                       Edit Product
                     </button>
                     <button
                       onClick={() => handleDeleteProduct(selectedProduct._id)}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-[#EB664D] text-white rounded text-sm hover:bg-[#EB664D]/80 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                       Delete Product
@@ -562,23 +562,23 @@ const AdminProducts = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#818181] w-4 h-4" />
                 <input
                   type="text"
                   placeholder="Search products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-[#FAFAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent"
                 />
               </div>
 
               {/* Category Filter */}
               <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#818181] w-4 h-4" />
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent appearance-none"
+                  className="w-full pl-10 pr-8 py-2 border border-[#FAFAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent appearance-none"
                 >
                   {categories.map(category => (
                     <option key={category} value={category}>
@@ -593,7 +593,7 @@ const AdminProducts = () => {
                 <select
                   value={brandFilter}
                   onChange={(e) => setBrandFilter(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent appearance-none"
+                  className="w-full px-4 py-2 border border-[#FAFAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent appearance-none"
                 >
                   {brands.map(brand => (
                     <option key={brand} value={brand}>
@@ -608,7 +608,7 @@ const AdminProducts = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent appearance-none"
+                  className="w-full px-4 py-2 border border-[#FAFAFB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent appearance-none"
                 >
                   <option value="name">Sort by Name</option>
                   <option value="price">Sort by Price</option>
@@ -623,41 +623,41 @@ const AdminProducts = () => {
           {/* Products Table - Updated with responsive columns */}
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-[#FAFAFB]">
+                <thead className="bg-[#FAFAFB]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
                       <input
                         type="checkbox"
                         checked={selectedProducts.size === paginatedProducts.length && paginatedProducts.length > 0}
                         onChange={handleSelectAll}
-                        className="rounded border-gray-300 text-[#405952] focus:ring-[#405952]"
+                        className="rounded border-[#FAFAFB] text-[#1B2150] focus:ring-[#1B2150]"
                       />
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
                       Product
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider hidden sm:table-cell">
                       Brand
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider hidden sm:table-cell">
                       SKU
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider hidden sm:table-cell">
                       Category
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
                       MSRP
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-6 py-3 text-center text-xs font-medium text-[#818181] uppercase tracking-wider hidden sm:table-cell">
                       Discounts
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-[#FAFAFB]">
                   {paginatedProducts.map((product) => {
                     const isSelected = selectedProduct?._id === product._id;
                     const isChecked = selectedProducts.has(product._id);
@@ -665,7 +665,7 @@ const AdminProducts = () => {
                     return (
                       <tr 
                         key={product._id}
-                        className={`hover:bg-gray-50 cursor-pointer ${isSelected ? 'bg-blue-50' : ''}`}
+                        className={`hover:bg-[#FAFAFB] cursor-pointer ${isSelected ? 'bg-blue-50' : ''}`}
                         onClick={(e) => handleProductClick(product, e)}
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -673,7 +673,7 @@ const AdminProducts = () => {
                             type="checkbox"
                             checked={isChecked}
                             onChange={(e) => handleSelectProduct(product._id, e)}
-                            className="rounded border-gray-300 text-[#405952] focus:ring-[#405952]"
+                            className="rounded border-[#FAFAFB] text-[#1B2150] focus:ring-[#1B2150]"
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -691,17 +691,17 @@ const AdminProducts = () => {
                                 />
                               ) : null}
                               <div 
-                                className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center"
+                                className="h-10 w-10 rounded-lg bg-[#FAFAFB] flex items-center justify-center"
                                 style={{ display: (product.product_image || product.picture) ? 'none' : 'flex' }}
                               >
-                                <Package className="w-5 h-5 text-gray-400" />
+                                <Package className="w-5 h-5 text-[#818181]" />
                               </div>
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-[#1B2150]">
                                 {product.product_name || product.name}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-[#818181]">
                                 {(product.description || '').length > 50 
                                   ? `${(product.description || '').substring(0, 50)}...`
                                   : (product.description || '')
@@ -711,17 +711,17 @@ const AdminProducts = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FAFAFB] text-[#1B2150]">
                             {product.brand}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150] hidden sm:table-cell">
                           {product['sku/model'] || product.sku}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181] hidden sm:table-cell">
                           {product.category}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150]">
                           ${(product.msrp || 0).toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell text-center">
@@ -731,14 +731,14 @@ const AdminProducts = () => {
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">M {(product.discount_master || 0).toFixed(0)}%</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181]">
                           <div className="flex items-center space-x-2">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleEditProduct(product);
                               }}
-                              className="flex items-center gap-1 px-3 py-1 text-xs bg-[#405952] hover:bg-[#2d3f38] text-white rounded transition-colors"
+                              className="flex items-center gap-1 px-3 py-1 text-xs bg-[#1B2150] hover:bg-[#EB664D] text-white rounded transition-colors"
                               title="Edit Product"
                             >
                               <Edit className="w-3 h-3" />
@@ -749,7 +749,7 @@ const AdminProducts = () => {
                                 e.stopPropagation();
                                 handleDeleteProduct(product._id);
                               }}
-                              className="flex items-center gap-1 px-3 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
+                              className="flex items-center gap-1 px-3 py-1 text-xs bg-[#EB664D] hover:bg-[#EB664D]/80 text-white rounded transition-colors"
                               title="Delete Product"
                             >
                               <Trash2 className="w-3 h-3" />
@@ -766,26 +766,26 @@ const AdminProducts = () => {
 
             {/* Pagination - EXACTLY matching Products.js */}
             {totalPages > 1 && (
-              <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+              <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-[#FAFAFB] sm:px-6">
                 <div className="flex-1 flex justify-between sm:hidden">
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    className="relative inline-flex items-center px-4 py-2 border border-[#FAFAFB] text-sm font-medium rounded-md text-[#818181] bg-white hover:bg-[#FAFAFB] disabled:opacity-50"
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-[#FAFAFB] text-sm font-medium rounded-md text-[#818181] bg-white hover:bg-[#FAFAFB] disabled:opacity-50"
                   >
                     Next
                   </button>
                 </div>
                 <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-[#818181]">
                       Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
                       <span className="font-medium">
                         {Math.min(startIndex + itemsPerPage, filteredProducts.length)}
@@ -798,7 +798,7 @@ const AdminProducts = () => {
                       <button
                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
-                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-[#FAFAFB] bg-white text-sm font-medium text-[#818181] hover:bg-[#FAFAFB] disabled:opacity-50"
                       >
                         Previous
                       </button>
@@ -808,8 +808,8 @@ const AdminProducts = () => {
                           onClick={() => setCurrentPage(page)}
                           className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                             page === currentPage
-                              ? 'z-10 bg-[#405952] border-[#405952] text-white'
-                              : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                              ? 'z-10 bg-[#1B2150] border-[#1B2150] text-white'
+                              : 'bg-white border-[#FAFAFB] text-[#818181] hover:bg-[#FAFAFB]'
                           }`}
                         >
                           {page}
@@ -818,7 +818,7 @@ const AdminProducts = () => {
                       <button
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages}
-                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-[#FAFAFB] bg-white text-sm font-medium text-[#818181] hover:bg-[#FAFAFB] disabled:opacity-50"
                       >
                         Next
                       </button>
@@ -833,9 +833,9 @@ const AdminProducts = () => {
           {filteredProducts.length === 0 && !loading && (
             <div className="bg-white rounded-lg shadow-md">
               <div className="text-center py-12">
-                <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-                <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+                <Package className="w-16 h-16 mx-auto mb-4 text-[#818181]" />
+                <h3 className="text-lg font-medium text-[#1B2150] mb-2">No products found</h3>
+                <p className="text-[#818181]">Try adjusting your search or filter criteria</p>
               </div>
             </div>
           )}
@@ -847,6 +847,8 @@ const AdminProducts = () => {
         <AdminProductFormModal
           visible={showAddModal}
           mode="create"
+          existingBrands={brands.filter(b => b !== 'all')}
+          existingCategories={categories.filter(c => c !== 'all')}
           onClose={() => setShowAddModal(false)}
           onSubmit={async (values, files) => {
             try {
@@ -868,6 +870,8 @@ const AdminProducts = () => {
           visible={showEditModal}
           mode="edit"
           initialValues={editingProduct}
+          existingBrands={brands.filter(b => b !== 'all')}
+          existingCategories={categories.filter(c => c !== 'all')}
           onClose={() => {
             setShowEditModal(false);
             setEditingProduct(null);
@@ -891,7 +895,7 @@ const AdminProducts = () => {
 };
 
 // Admin Product Form Modal Component
-const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit }) => {
+const AdminProductFormModal = ({ visible, mode, initialValues, existingBrands, existingCategories, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     product_name: initialValues?.product_name || initialValues?.name || '',
     'sku/model': initialValues?.['sku/model'] || initialValues?.sku || '',
@@ -913,6 +917,20 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
   );
 
   const [errors, setErrors] = useState({});
+  
+  // States for smart dropdowns
+  const [brandDropdownValue, setBrandDropdownValue] = useState(
+    existingBrands.includes(initialValues?.brand) ? initialValues?.brand : (initialValues?.brand ? 'new' : '')
+  );
+  const [categoryDropdownValue, setCategoryDropdownValue] = useState(
+    existingCategories.includes(initialValues?.category) ? initialValues?.category : (initialValues?.category ? 'new' : '')
+  );
+  const [customBrand, setCustomBrand] = useState(
+    !existingBrands.includes(initialValues?.brand) ? initialValues?.brand || '' : ''
+  );
+  const [customCategory, setCustomCategory] = useState(
+    !existingCategories.includes(initialValues?.category) ? initialValues?.category || '' : ''
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -926,6 +944,42 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
     }
   };
 
+  const handleBrandDropdownChange = (e) => {
+    const value = e.target.value;
+    setBrandDropdownValue(value);
+    
+    if (value === 'new') {
+      setFormData(prev => ({ ...prev, brand: customBrand }));
+    } else {
+      setFormData(prev => ({ ...prev, brand: value }));
+      setCustomBrand('');
+    }
+  };
+
+  const handleCategoryDropdownChange = (e) => {
+    const value = e.target.value;
+    setCategoryDropdownValue(value);
+    
+    if (value === 'new') {
+      setFormData(prev => ({ ...prev, category: customCategory }));
+    } else {
+      setFormData(prev => ({ ...prev, category: value }));
+      setCustomCategory('');
+    }
+  };
+
+  const handleCustomBrandChange = (e) => {
+    const value = e.target.value;
+    setCustomBrand(value);
+    setFormData(prev => ({ ...prev, brand: value }));
+  };
+
+  const handleCustomCategoryChange = (e) => {
+    const value = e.target.value;
+    setCustomCategory(value);
+    setFormData(prev => ({ ...prev, category: value }));
+  };
+
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -937,8 +991,6 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
       reader.readAsDataURL(file);
     }
   };
-
-  
 
   const removeImage = () => {
     setFiles(prev => ({ ...prev, picture: null }));
@@ -984,12 +1036,12 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-[#1B2150]">
               {mode === 'create' ? 'Add New Product' : 'Edit Product'}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-[#818181] hover:text-[#1B2150]"
             >
               <X className="w-6 h-6" />
             </button>
@@ -998,10 +1050,10 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#1B2150] mb-2">
                 Product Image
               </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <div className="border-2 border-dashed border-[#FAFAFB] rounded-lg p-6 text-center">
                 {imagePreview ? (
                   <div className="relative">
                     <img 
@@ -1012,16 +1064,16 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
                     <button
                       type="button"
                       onClick={removeImage}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      className="absolute -top-2 -right-2 bg-[#EB664D] text-white rounded-full p-1 hover:bg-[#EB664D]/80"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
                   <div>
-                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                    <Upload className="mx-auto h-12 w-12 text-[#818181]" />
                     <div className="mt-4">
-                      <label className="cursor-pointer bg-[#405952] text-white px-4 py-2 rounded-lg hover:bg-[#2d3f38] transition-colors">
+                      <label className="cursor-pointer bg-[#1B2150] text-white px-4 py-2 rounded-lg hover:bg-[#EB664D] transition-colors">
                         Upload Image
                         <input
                           type="file"
@@ -1031,7 +1083,7 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
                         />
                       </label>
                     </div>
-                    <p className="text-sm text-gray-500 mt-2">
+                    <p className="text-sm text-[#818181] mt-2">
                       PNG, JPG, GIF up to 10MB
                     </p>
                   </div>
@@ -1042,7 +1094,7 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
             {/* Product Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1B2150] mb-2">
                   Product Name *
                 </label>
                 <input
@@ -1050,17 +1102,17 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
                   name="product_name"
                   value={formData.product_name}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent ${
-                    errors.product_name ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                    errors.product_name ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                   }`}
                 />
                 {errors.product_name && (
-                  <p className="text-red-500 text-xs mt-1">{errors.product_name}</p>
+                  <p className="text-[#EB664D] text-xs mt-1">{errors.product_name}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1B2150] mb-2">
                   SKU/Model *
                 </label>
                 <input
@@ -1068,17 +1120,17 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
                   name="sku/model"
                   value={formData['sku/model']}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent ${
-                    errors['sku/model'] ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                    errors['sku/model'] ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                   }`}
                 />
                 {errors['sku/model'] && (
-                  <p className="text-red-500 text-xs mt-1">{errors['sku/model']}</p>
+                  <p className="text-[#EB664D] text-xs mt-1">{errors['sku/model']}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1B2150] mb-2">
                   MSRP *
                 </label>
                 <input
@@ -1088,17 +1140,17 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
                   onChange={handleChange}
                   min="0"
                   step="0.01"
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent ${
-                    errors.msrp ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                    errors.msrp ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                   }`}
                 />
                 {errors.msrp && (
-                  <p className="text-red-500 text-xs mt-1">{errors.msrp}</p>
+                  <p className="text-[#EB664D] text-xs mt-1">{errors.msrp}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1B2150] mb-2">
                   Discount (Professional) *
                 </label>
                 <input
@@ -1108,17 +1160,17 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
                   onChange={handleChange}
                   min="0"
                   step="0.01"
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent ${
-                    errors.discount_professional ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                    errors.discount_professional ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                   }`}
                 />
                 {errors.discount_professional && (
-                  <p className="text-red-500 text-xs mt-1">{errors.discount_professional}</p>
+                  <p className="text-[#EB664D] text-xs mt-1">{errors.discount_professional}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1B2150] mb-2">
                   Discount (Expert) *
                 </label>
                 <input
@@ -1128,17 +1180,17 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
                   onChange={handleChange}
                   min="0"
                   step="0.01"
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent ${
-                    errors.discount_expert ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                    errors.discount_expert ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                   }`}
                 />
                 {errors.discount_expert && (
-                  <p className="text-red-500 text-xs mt-1">{errors.discount_expert}</p>
+                  <p className="text-[#EB664D] text-xs mt-1">{errors.discount_expert}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1B2150] mb-2">
                   Discount (Master) *
                 </label>
                 <input
@@ -1148,54 +1200,86 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
                   onChange={handleChange}
                   min="0"
                   step="0.01"
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent ${
-                    errors.discount_master ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                    errors.discount_master ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                   }`}
                 />
                 {errors.discount_master && (
-                  <p className="text-red-500 text-xs mt-1">{errors.discount_master}</p>
+                  <p className="text-[#EB664D] text-xs mt-1">{errors.discount_master}</p>
                 )}
               </div>
 
+              {/* Smart Brand Dropdown */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1B2150] mb-2">
                   Brand *
                 </label>
-                <input
-                  type="text"
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent ${
-                    errors.brand ? 'border-red-500' : 'border-gray-300'
+                <select
+                  value={brandDropdownValue}
+                  onChange={handleBrandDropdownChange}
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                    errors.brand ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                   }`}
-                />
+                >
+                  <option value="">Select Brand</option>
+                  {existingBrands.map(brand => (
+                    <option key={brand} value={brand}>{brand}</option>
+                  ))}
+                  <option value="new">+ Add New Brand</option>
+                </select>
+                
+                {brandDropdownValue === 'new' && (
+                  <input
+                    type="text"
+                    placeholder="Enter new brand name"
+                    value={customBrand}
+                    onChange={handleCustomBrandChange}
+                    className="w-full mt-2 px-3 py-2 border border-[#FAFAFB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent"
+                  />
+                )}
+                
                 {errors.brand && (
-                  <p className="text-red-500 text-xs mt-1">{errors.brand}</p>
+                  <p className="text-[#EB664D] text-xs mt-1">{errors.brand}</p>
                 )}
               </div>
 
+              {/* Smart Category Dropdown */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#1B2150] mb-2">
                   Category *
                 </label>
-                <input
-                  type="text"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent ${
-                    errors.category ? 'border-red-500' : 'border-gray-300'
+                <select
+                  value={categoryDropdownValue}
+                  onChange={handleCategoryDropdownChange}
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                    errors.category ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                   }`}
-                />
+                >
+                  <option value="">Select Category</option>
+                  {existingCategories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                  <option value="new">+ Add New Category</option>
+                </select>
+                
+                {categoryDropdownValue === 'new' && (
+                  <input
+                    type="text"
+                    placeholder="Enter new category name"
+                    value={customCategory}
+                    onChange={handleCustomCategoryChange}
+                    className="w-full mt-2 px-3 py-2 border border-[#FAFAFB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent"
+                  />
+                )}
+                
                 {errors.category && (
-                  <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+                  <p className="text-[#EB664D] text-xs mt-1">{errors.category}</p>
                 )}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#1B2150] mb-2">
                 Description *
               </label>
               <textarea
@@ -1203,29 +1287,27 @@ const AdminProductFormModal = ({ visible, mode, initialValues, onClose, onSubmit
                 value={formData.description}
                 onChange={handleChange}
                 rows="3"
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#405952] focus:border-transparent ${
-                  errors.description ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                  errors.description ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                 }`}
               />
               {errors.description && (
-                <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+                <p className="text-[#EB664D] text-xs mt-1">{errors.description}</p>
               )}
             </div>
 
-            
-
             {/* Action Buttons */}
-            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+            <div className="flex justify-end space-x-4 pt-6 border-t border-[#FAFAFB]">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                className="px-4 py-2 text-[#818181] bg-[#FAFAFB] rounded-lg hover:bg-[#818181] hover:text-white transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-[#405952] text-white rounded-lg hover:bg-[#2d3f38] transition-colors"
+                className="px-4 py-2 bg-[#1B2150] text-white rounded-lg hover:bg-[#EB664D] transition-colors"
               >
                 {mode === 'create' ? 'Add Product' : 'Update Product'}
               </button>

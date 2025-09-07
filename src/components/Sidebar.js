@@ -212,10 +212,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     }
   };
 
-  const handleResetPassword = () => {
-    navigate('/reset-password');
-  };
-
   return (
     <>
       {/* Mobile overlay */}
@@ -233,21 +229,21 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         w-[300px]
       `}>
         {/* Top Section: Logo + Close Button */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-[#FAFAFB]">
           <div className="flex items-center space-x-2">
             <img
               src="/logo192.png"
-              alt="Partner’s Marketplace Logo"
+              alt="Partner's Marketplace Logo"
               className="h-8 w-8"
             />
-            <span className="font-bold text-lg text-gray-800">Partner’s Marketplace</span>
+            <span className="font-bold text-lg text-[#1B2150]">Partner's Marketplace</span>
           </div>
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-md hover:bg-[#FAFAFB] transition-colors"
             aria-label="Close sidebar"
           >
-            <X className="w-5 h-5 text-gray-700" />
+            <X className="w-5 h-5 text-[#818181]" />
           </button>
         </div>
 
@@ -264,8 +260,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     className={`
                       flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200
                       ${isActive(item.path) 
-                        ? 'bg-gray-100 text-gray-900' 
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-[#FAFAFB] text-[#1B2150] border-l-4 border-[#1B2150]' 
+                        : 'text-[#818181] hover:bg-[#FAFAFB] hover:text-[#1B2150]'
                       }
                     `}
                   >
@@ -279,35 +275,29 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </nav>
 
         {/* Bottom Section: Account Info + Dropdown */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
+        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-[#FAFAFB]">
           <div>
             <button
               onClick={handleToggleMenu}
-              className="w-full flex items-center justify-between px-2 py-2 rounded-md hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between px-2 py-2 rounded-md hover:bg-[#FAFAFB] transition-colors"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-[#405952] rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-[#1B2150] rounded-full flex items-center justify-center">
                   <span className="text-white font-bold text-sm">{displayLetter}</span>
                 </div>
                 <div className="text-left">
-                  <p className="text-gray-900 font-medium text-sm leading-tight">{displayName}</p>
-                  <p className="text-gray-500 text-xs leading-tight">{displayEmail}</p>
+                  <p className="text-[#1B2150] font-medium text-sm leading-tight">{displayName}</p>
+                  <p className="text-[#818181] text-xs leading-tight">{displayEmail}</p>
                 </div>
               </div>
-              <ChevronDown className={`w-5 h-5 text-gray-700 transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-5 h-5 text-[#818181] transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             <div className={`overflow-hidden transition-all duration-200 ${isMenuOpen ? 'max-h-40 mt-2' : 'max-h-0'}`}>
-              <div className="bg-white border border-gray-200 rounded-md shadow-sm">
-                <div
-                  onClick={handleResetPassword}
-                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                >
-                  Reset Password
-                </div>
+              <div className="bg-white border border-[#FAFAFB] rounded-md shadow-sm">
                 <div
                   onClick={handleLogout}
-                  className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer"
+                  className="px-4 py-2 text-sm text-[#EB664D] hover:bg-[#FAFAFB] cursor-pointer"
                 >
                   Logout
                 </div>

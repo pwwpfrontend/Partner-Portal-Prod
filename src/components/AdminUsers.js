@@ -409,14 +409,14 @@ const AdminUsers = () => {
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
           {/* Decorative gradient overlay */}
-          <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#E22400]"></div>
+          <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#EB664D]"></div>
           
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold bg-gradient-to-r from-[#1B2150] to-[#E22400] bg-clip-text text-transparent">User Details</h2>
+              <h2 className="text-xl font-semibold bg-gradient-to-r from-[#1B2150] to-[#EB664D] bg-clip-text text-transparent">User Details</h2>
               <button
                 onClick={() => setShowUserModal(false)}
-                className="text-gray-400 hover:text-[#E22400] transition-colors duration-200"
+                className="text-gray-400 hover:text-[#EB664D] transition-colors duration-200"
               >
                 <XCircle className="w-6 h-6" />
               </button>
@@ -425,7 +425,7 @@ const AdminUsers = () => {
           
           <div className="p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-gradient-to-br from-[#1B2150]/5 to-[#E22400]/5 rounded-xl p-6 border border-gray-100">
+              <div className="bg-gradient-to-br from-[#1B2150]/5 to-[#EB664D]/5 rounded-xl p-6 border border-gray-100">
                 <h3 className="font-semibold text-[#1B2150] mb-4">Personal Information</h3>
                 <div className="space-y-3">
                   <div>
@@ -443,7 +443,7 @@ const AdminUsers = () => {
                 </div>
               </div>
               
-              <div className="bg-gradient-to-br from-[#1B2150]/5 to-[#E22400]/5 rounded-xl p-6 border border-gray-100">
+              <div className="bg-gradient-to-br from-[#1B2150]/5 to-[#EB664D]/5 rounded-xl p-6 border border-gray-100">
                 <h3 className="font-semibold text-[#1B2150] mb-4">Company Information</h3>
                 <div className="space-y-3">
                   <div>
@@ -463,14 +463,14 @@ const AdminUsers = () => {
             </div>
             
             {selectedUser.documentUrl && (
-              <div className="mt-8 bg-gradient-to-r from-[#1B2150]/5 to-[#E22400]/5 rounded-xl p-6 border border-gray-100">
+              <div className="mt-8 bg-gradient-to-r from-[#1B2150]/5 to-[#EB664D]/5 rounded-xl p-6 border border-gray-100">
                 <h3 className="font-semibold text-[#1B2150] mb-4">Submitted Document</h3>
                 <div className="space-y-3">
                   <a
                     href={selectedUser.documentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block px-4 py-2 text-sm bg-gradient-to-r from-[#1B2150] to-[#E22400] text-white rounded-lg hover:shadow-lg hover:shadow-[#E22400]/25 transition-all duration-200"
+                    className="inline-block px-4 py-2 text-sm bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-lg hover:shadow-lg hover:shadow-[#EB664D]/25 transition-all duration-200"
                   >
                     Open Document
                   </a>
@@ -498,7 +498,7 @@ const AdminUsers = () => {
               </div>
             )}
 
-            <div className="mt-8 bg-gradient-to-r from-[#1B2150]/5 to-[#E22400]/5 rounded-xl p-6 border border-gray-100">
+            <div className="mt-8 bg-gradient-to-r from-[#1B2150]/5 to-[#EB664D]/5 rounded-xl p-6 border border-gray-100">
               <h3 className="font-semibold text-[#1B2150] mb-4">Partnership Details</h3>
               <div className="space-y-3">
                 <div>
@@ -551,7 +551,7 @@ const AdminUsers = () => {
     <div className="min-h-screen bg-gradient-to-br from-white via-[#FAFAFB]/30 to-white">
       {/* Animated background elements */}
       <div className="absolute top-20 left-10 w-96 h-96 bg-[#1B2150]/5 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#E22400]/5 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#EB664D]/5 rounded-full blur-3xl animate-pulse"></div>
       
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <Header toggleSidebar={toggleSidebar} />
@@ -571,7 +571,7 @@ const AdminUsers = () => {
                   resetAddUserForm();
                   setShowAddUserModal(true);
                 }}
-                className="flex items-center px-6 py-3 bg-gradient-to-r from-[#1B2150] to-[#E22400] text-white rounded-xl hover:shadow-lg hover:shadow-[#E22400]/25 transition-all duration-200 transform hover:scale-105"
+                className="flex items-center px-6 py-3 bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-xl hover:shadow-lg hover:shadow-[#EB664D]/25 transition-all duration-200 transform hover:scale-105"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add User
@@ -638,7 +638,7 @@ const AdminUsers = () => {
               <button
                 onClick={fetchUsers}
                 disabled={loading}
-                className="px-4 py-2 text-sm bg-gradient-to-r from-[#1B2150]/10 to-[#E22400]/10 hover:from-[#1B2150]/20 hover:to-[#E22400]/20 rounded-lg transition-all duration-200 disabled:opacity-50 text-[#1B2150] font-medium"
+                className="px-4 py-2 text-sm bg-gradient-to-r from-[#1B2150]/10 to-[#EB664D]/10 hover:from-[#1B2150]/20 hover:to-[#EB664D]/20 rounded-lg transition-all duration-200 disabled:opacity-50 text-[#1B2150] font-medium"
               >
                 {loading ? 'Refreshing...' : 'Refresh'}
               </button>
@@ -656,7 +656,7 @@ const AdminUsers = () => {
                   <p className="text-gray-600 mb-4">{error}</p>
                   <button
                     onClick={fetchUsers}
-                    className="px-6 py-3 bg-gradient-to-r from-[#1B2150] to-[#E22400] text-white rounded-xl hover:shadow-lg hover:shadow-[#E22400]/25 transition-all duration-200"
+                    className="px-6 py-3 bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-xl hover:shadow-lg hover:shadow-[#EB664D]/25 transition-all duration-200"
                   >
                     Retry
                   </button>
@@ -668,7 +668,7 @@ const AdminUsers = () => {
                 </div>
               ) : (
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gradient-to-r from-[#1B2150]/5 to-[#E22400]/5">
+                  <thead className="bg-gradient-to-r from-[#1B2150]/5 to-[#EB664D]/5">
                     <tr>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         User
@@ -689,11 +689,11 @@ const AdminUsers = () => {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {filteredUsers.map((user) => (
-                      <tr key={user.id} className="hover:bg-gradient-to-r hover:from-[#1B2150]/5 hover:to-[#E22400]/5 transition-all duration-200">
+                      <tr key={user.id} className="hover:bg-gradient-to-r hover:from-[#1B2150]/5 hover:to-[#EB664D]/5 transition-all duration-200">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10">
-                              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#1B2150] to-[#E22400] flex items-center justify-center">
+                              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#1B2150] to-[#EB664D] flex items-center justify-center">
                                 <span className="text-white font-medium text-sm">
                                   {user.name.charAt(0).toUpperCase()}
                                 </span>
@@ -751,7 +751,7 @@ const AdminUsers = () => {
                                 <button
                                   onClick={() => handleOpenRoleModal(user)}
                                   disabled={actionLoading}
-                                  className="text-[#1B2150] hover:text-[#E22400] p-1 rounded hover:bg-gray-50 disabled:opacity-50 transition-colors duration-200"
+                                  className="text-[#1B2150] hover:text-[#EB664D] p-1 rounded hover:bg-gray-50 disabled:opacity-50 transition-colors duration-200"
                                   title="Update Role"
                                 >
                                   <Edit className="w-4 h-4" />
@@ -786,14 +786,14 @@ const AdminUsers = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
             {/* Decorative gradient overlay */}
-            <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#E22400]"></div>
+            <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#EB664D]"></div>
             
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold bg-gradient-to-r from-[#1B2150] to-[#E22400] bg-clip-text text-transparent">Add New User</h3>
+                <h3 className="text-lg font-semibold bg-gradient-to-r from-[#1B2150] to-[#EB664D] bg-clip-text text-transparent">Add New User</h3>
                 <button
                   onClick={() => setShowAddUserModal(false)}
-                  className="text-gray-400 hover:text-[#E22400] transition-colors duration-200"
+                  className="text-gray-400 hover:text-[#EB664D] transition-colors duration-200"
                 >
                   <XCircle className="w-6 h-6" />
                 </button>
@@ -927,7 +927,7 @@ const AdminUsers = () => {
                 </button>
                 <button 
                   type="submit"
-                  className="px-4 py-2 bg-gradient-to-r from-[#1B2150] to-[#E22400] text-white rounded-lg hover:shadow-lg hover:shadow-[#E22400]/25 disabled:opacity-50 flex items-center transition-all duration-200"
+                  className="px-4 py-2 bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-lg hover:shadow-lg hover:shadow-[#EB664D]/25 disabled:opacity-50 flex items-center transition-all duration-200"
                   disabled={actionLoading}
                 >
                   {actionLoading && (
@@ -946,10 +946,10 @@ const AdminUsers = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-gray-200">
             {/* Decorative gradient overlay */}
-            <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#E22400]"></div>
+            <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#EB664D]"></div>
             
             <div className="p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold bg-gradient-to-r from-[#1B2150] to-[#E22400] bg-clip-text text-transparent">Update Role</h3>
+              <h3 className="text-lg font-semibold bg-gradient-to-r from-[#1B2150] to-[#EB664D] bg-clip-text text-transparent">Update Role</h3>
             </div>
             <div className="p-6 space-y-4">
               <p className="text-sm text-gray-700">Select a new role for <span className="font-medium">{selectedUser.name || selectedUser.email}</span>.</p>
@@ -973,7 +973,7 @@ const AdminUsers = () => {
               </button>
               <button 
                 onClick={submitRoleUpdate} 
-                className="px-4 py-2 bg-gradient-to-r from-[#1B2150] to-[#E22400] text-white rounded-lg hover:shadow-lg hover:shadow-[#E22400]/25 disabled:opacity-50 transition-all duration-200"
+                className="px-4 py-2 bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-lg hover:shadow-lg hover:shadow-[#EB664D]/25 disabled:opacity-50 transition-all duration-200"
                 disabled={actionLoading}
               >
                 {actionLoading ? "Updating..." : "Update"}
