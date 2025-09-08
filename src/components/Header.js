@@ -24,7 +24,7 @@ const Header = ({ toggleSidebar }) => {
             alt="Partner’s Marketplace Logo"
             className="h-8 w-8"
           />
-          <span className="font-bold text-lg text-gray-800">Partner’s Marketplace</span>
+          <span className="font-bold text-lg text-[#1B2150]">Partner’s Marketplace</span>
         </div>
 
         {/* Right: Empty for now */}

@@ -407,16 +407,16 @@ const AdminUsers = () => {
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
-          {/* Decorative gradient overlay */}
-          <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#EB664D]"></div>
+        <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#FAFAFB]">
+          {/* Top border */}
+          <div className="h-1 bg-[#1B2150]"></div>
           
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-6 border-b border-[#FAFAFB]">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold bg-gradient-to-r from-[#1B2150] to-[#EB664D] bg-clip-text text-transparent">User Details</h2>
+              <h2 className="text-xl font-semibold text-[#1B2150]">User Details</h2>
               <button
                 onClick={() => setShowUserModal(false)}
-                className="text-gray-400 hover:text-[#EB664D] transition-colors duration-200"
+                className="text-[#818181] hover:text-[#EB664D] transition-colors duration-200"
               >
                 <XCircle className="w-6 h-6" />
               </button>
@@ -425,37 +425,37 @@ const AdminUsers = () => {
           
           <div className="p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-gradient-to-br from-[#1B2150]/5 to-[#EB664D]/5 rounded-xl p-6 border border-gray-100">
+              <div className="bg-[#FAFAFB] rounded-xl p-6 border border-gray-100">
                 <h3 className="font-semibold text-[#1B2150] mb-4">Personal Information</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm text-gray-500">Name</label>
+                    <label className="text-sm text-[#818181]">Name</label>
                     <p className="text-gray-900 font-medium">{selectedUser.name}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500">Email</label>
+                    <label className="text-sm text-[#818181]">Email</label>
                     <p className="text-gray-900">{selectedUser.email}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500">Phone</label>
+                    <label className="text-sm text-[#818181]">Phone</label>
                     <p className="text-gray-900">{selectedUser.phone}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-gradient-to-br from-[#1B2150]/5 to-[#EB664D]/5 rounded-xl p-6 border border-gray-100">
+              <div className="bg-[#FAFAFB] rounded-xl p-6 border border-gray-100">
                 <h3 className="font-semibold text-[#1B2150] mb-4">Company Information</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm text-gray-500">Company</label>
+                    <label className="text-sm text-[#818181]">Company</label>
                     <p className="text-gray-900 font-medium">{selectedUser.company}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500">Location</label>
+                    <label className="text-sm text-[#818181]">Location</label>
                     <p className="text-gray-900">{selectedUser.location}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500">Status</label>
+                    <label className="text-sm text-[#818181]">Status</label>
                     <div className="mt-1">{getStatusBadge(selectedUser.status)}</div>
                   </div>
                 </div>
@@ -463,14 +463,14 @@ const AdminUsers = () => {
             </div>
             
             {selectedUser.documentUrl && (
-              <div className="mt-8 bg-gradient-to-r from-[#1B2150]/5 to-[#EB664D]/5 rounded-xl p-6 border border-gray-100">
+              <div className="mt-8 bg-[#FAFAFB] rounded-xl p-6 border border-gray-100">
                 <h3 className="font-semibold text-[#1B2150] mb-4">Submitted Document</h3>
                 <div className="space-y-3">
                   <a
                     href={selectedUser.documentUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block px-4 py-2 text-sm bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-lg hover:shadow-lg hover:shadow-[#EB664D]/25 transition-all duration-200"
+                    className="inline-block px-4 py-2 text-sm bg-[#1B2150] text-white rounded-lg hover:bg-[#EB664D] transition-colors duration-200"
                   >
                     Open Document
                   </a>
@@ -498,28 +498,28 @@ const AdminUsers = () => {
               </div>
             )}
 
-            <div className="mt-8 bg-gradient-to-r from-[#1B2150]/5 to-[#EB664D]/5 rounded-xl p-6 border border-gray-100">
+            <div className="mt-8 bg-[#FAFAFB] rounded-xl p-6 border border-gray-100">
               <h3 className="font-semibold text-[#1B2150] mb-4">Partnership Details</h3>
               <div className="space-y-3">
                 <div>
-                  <label className="text-sm text-gray-500">Current Role</label>
+                  <label className="text-sm text-[#818181]">Current Role</label>
                   <div className="mt-1">{getRoleBadge(selectedUser.role)}</div>
                 </div>
                 {selectedUser.appliedDate && (
                   <div>
-                    <label className="text-sm text-gray-500">Applied Date</label>
+                    <label className="text-sm text-[#818181]">Applied Date</label>
                     <p className="text-gray-900">{selectedUser.appliedDate}</p>
                   </div>
                 )}
                 {selectedUser.approvedDate && (
                   <div>
-                    <label className="text-sm text-gray-500">Approved Date</label>
+                    <label className="text-sm text-[#818181]">Approved Date</label>
                     <p className="text-gray-900">{selectedUser.approvedDate}</p>
                   </div>
                 )}
                 {selectedUser.rejectedDate && (
                   <div>
-                    <label className="text-sm text-gray-500">Rejected Date</label>
+                    <label className="text-sm text-[#818181]">Rejected Date</label>
                     <p className="text-gray-900">{selectedUser.rejectedDate}</p>
                   </div>
                 )}
@@ -536,7 +536,7 @@ const AdminUsers = () => {
             <div className="mt-8 flex justify-end space-x-3">
               <button
                 onClick={() => setShowUserModal(false)}
-                className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                className="px-6 py-2 text-[#818181] bg-[#FAFAFB] rounded-lg hover:bg-gray-200 transition-colors duration-200"
               >
                 Close
               </button>
@@ -548,30 +548,26 @@ const AdminUsers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-[#FAFAFB]/30 to-white">
-      {/* Animated background elements */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-[#1B2150]/5 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#EB664D]/5 rounded-full blur-3xl animate-pulse"></div>
-      
+    <div className="min-h-screen bg-white">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <Header toggleSidebar={toggleSidebar} />
       
       {/* Main content */}
-      <main className="pt-16 relative z-10">
+      <main className="pt-16">
         <div className="p-6">
           {/* Page Header */}
           <div className="mb-8">
             <div className="flex justify-between items-center">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-                <p className="text-gray-600">Manage partner applications, approve users, and assign partnership levels</p>
+                <h1 className="text-3xl font-bold text-[#1B2150]">User Management</h1>
+                <p className="text-[#818181]">Manage partner applications, approve users, and assign partnership levels</p>
               </div>
               <button
                 onClick={() => {
                   resetAddUserForm();
                   setShowAddUserModal(true);
                 }}
-                className="flex items-center px-6 py-3 bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-xl hover:shadow-lg hover:shadow-[#EB664D]/25 transition-all duration-200 transform hover:scale-105"
+                className="flex items-center px-6 py-3 bg-[#1B2150] text-white rounded-xl hover:bg-[#EB664D] transition-colors duration-200"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add User
@@ -580,28 +576,28 @@ const AdminUsers = () => {
           </div>
 
           {/* Filters and Search */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 mb-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-[#FAFAFB] mb-6">
             <div className="p-6">
               <div className="flex flex-col sm:flex-row gap-4">
                 {/* Search */}
                 <div className="flex-1 relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#818181] w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Search users by name, email, or company..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white text-lg"
+                    className="w-full pl-12 pr-4 py-3 border-2 border-[#FAFAFB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-lg"
                   />
                 </div>
 
                 {/* Status Filter */}
                 <div className="relative">
-                  <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#818181] w-4 h-4" />
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="pl-12 pr-8 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent appearance-none bg-gray-50 hover:bg-white transition-all duration-200"
+                    className="pl-12 pr-8 py-3 border-2 border-[#FAFAFB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent appearance-none bg-[#FAFAFB] hover:bg-white transition-all duration-200"
                   >
                     <option value="all">All Statuses</option>
                     <option value="pending">Pending</option>
@@ -612,11 +608,11 @@ const AdminUsers = () => {
 
                 {/* Role Filter */}
                 <div className="relative">
-                  <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Filter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#818181] w-4 h-4" />
                   <select
                     value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
-                    className="pl-12 pr-8 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent appearance-none bg-gray-50 hover:bg-white transition-all duration-200"
+                    className="pl-12 pr-8 py-3 border-2 border-[#FAFAFB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent appearance-none bg-[#FAFAFB] hover:bg-white transition-all duration-200"
                   >
                     <option value="all">All Roles</option>
                     <option value="pending">Pending</option>
@@ -630,15 +626,15 @@ const AdminUsers = () => {
           </div>
 
           {/* Users Table */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-gray-900">
+          <div className="bg-white rounded-2xl shadow-lg border border-[#FAFAFB]">
+            <div className="px-6 py-4 border-b border-[#FAFAFB] flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-[#1B2150]">
                 Users ({filteredUsers.length})
               </h2>
               <button
                 onClick={fetchUsers}
                 disabled={loading}
-                className="px-4 py-2 text-sm bg-gradient-to-r from-[#1B2150]/10 to-[#EB664D]/10 hover:from-[#1B2150]/20 hover:to-[#EB664D]/20 rounded-lg transition-all duration-200 disabled:opacity-50 text-[#1B2150] font-medium"
+                className="px-4 py-2 text-sm bg-[#FAFAFB] hover:bg-[#1B2150] hover:text-white rounded-lg transition-colors duration-200 disabled:opacity-50 text-[#1B2150] font-medium"
               >
                 {loading ? 'Refreshing...' : 'Refresh'}
               </button>
@@ -648,66 +644,66 @@ const AdminUsers = () => {
               {loading ? (
                 <div className="p-6 text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1B2150] mx-auto"></div>
-                  <p className="text-gray-600 mt-2">Loading users...</p>
+                  <p className="text-[#818181] mt-2">Loading users...</p>
                 </div>
               ) : error ? (
                 <div className="p-6 text-center">
-                  <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-red-500" />
-                  <p className="text-gray-600 mb-4">{error}</p>
+                  <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-[#EB664D]" />
+                  <p className="text-[#818181] mb-4">{error}</p>
                   <button
                     onClick={fetchUsers}
-                    className="px-6 py-3 bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-xl hover:shadow-lg hover:shadow-[#EB664D]/25 transition-all duration-200"
+                    className="px-6 py-3 bg-[#1B2150] text-white rounded-xl hover:bg-[#EB664D] transition-colors duration-200"
                   >
                     Retry
                   </button>
                 </div>
               ) : filteredUsers.length === 0 ? (
                 <div className="p-6 text-center">
-                  <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-600">No users found matching your criteria</p>
+                  <Users className="w-16 h-16 mx-auto mb-4 text-[#818181]" />
+                  <p className="text-[#818181]">No users found matching your criteria</p>
                 </div>
               ) : (
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gradient-to-r from-[#1B2150]/5 to-[#EB664D]/5">
+                <table className="min-w-full divide-y divide-[#FAFAFB]">
+                  <thead className="bg-[#FAFAFB]">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#1B2150] uppercase tracking-wider">
                         User
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#1B2150] uppercase tracking-wider">
                         Company
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#1B2150] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#1B2150] uppercase tracking-wider">
                         Role
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#1B2150] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white divide-y divide-[#FAFAFB]">
                     {filteredUsers.map((user) => (
-                      <tr key={user.id} className="hover:bg-gradient-to-r hover:from-[#1B2150]/5 hover:to-[#EB664D]/5 transition-all duration-200">
+                      <tr key={user.id} className="hover:bg-[#FAFAFB] transition-colors duration-200">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10">
-                              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#1B2150] to-[#EB664D] flex items-center justify-center">
+                              <div className="h-10 w-10 rounded-full bg-[#1B2150] flex items-center justify-center">
                                 <span className="text-white font-medium text-sm">
                                   {user.name.charAt(0).toUpperCase()}
                                 </span>
                               </div>
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                              <div className="text-sm text-gray-500">{user.email}</div>
+                              <div className="text-sm font-medium text-[#1B2150]">{user.name}</div>
+                              <div className="text-sm text-[#818181]">{user.email}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{user.company}</div>
-                          <div className="text-sm text-gray-500">{user.location}</div>
+                          <div className="text-sm text-[#1B2150]">{user.company}</div>
+                          <div className="text-sm text-[#818181]">{user.location}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {getStatusBadge(user.status)}
@@ -738,7 +734,7 @@ const AdminUsers = () => {
                                 <button
                                   onClick={() => handleRejectUser(user.id)}
                                   disabled={actionLoading}
-                                  className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 disabled:opacity-50 transition-colors duration-200"
+                                  className="text-[#EB664D] hover:text-red-900 p-1 rounded hover:bg-red-50 disabled:opacity-50 transition-colors duration-200"
                                   title="Reject"
                                 >
                                   <XCircle className="w-4 h-4" />
@@ -751,7 +747,7 @@ const AdminUsers = () => {
                                 <button
                                   onClick={() => handleOpenRoleModal(user)}
                                   disabled={actionLoading}
-                                  className="text-[#1B2150] hover:text-[#EB664D] p-1 rounded hover:bg-gray-50 disabled:opacity-50 transition-colors duration-200"
+                                  className="text-[#1B2150] hover:text-[#EB664D] p-1 rounded hover:bg-[#FAFAFB] disabled:opacity-50 transition-colors duration-200"
                                   title="Update Role"
                                 >
                                   <Edit className="w-4 h-4" />
@@ -759,7 +755,7 @@ const AdminUsers = () => {
                                 <button
                                   onClick={() => { setSelectedUser(user); setShowDeleteModal(true); }}
                                   disabled={actionLoading}
-                                  className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 disabled:opacity-50 transition-colors duration-200"
+                                  className="text-[#EB664D] hover:text-red-900 p-1 rounded hover:bg-red-50 disabled:opacity-50 transition-colors duration-200"
                                   title="Delete"
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -784,16 +780,16 @@ const AdminUsers = () => {
       {/* Add User Modal */}
       {showAddUserModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
-            {/* Decorative gradient overlay */}
-            <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#EB664D]"></div>
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl border border-[#FAFAFB]">
+            {/* Top border */}
+            <div className="h-1 bg-[#1B2150]"></div>
             
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-6 border-b border-[#FAFAFB]">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold bg-gradient-to-r from-[#1B2150] to-[#EB664D] bg-clip-text text-transparent">Add New User</h3>
+                <h3 className="text-lg font-semibold text-[#1B2150]">Add New User</h3>
                 <button
                   onClick={() => setShowAddUserModal(false)}
-                  className="text-gray-400 hover:text-[#EB664D] transition-colors duration-200"
+                  className="text-[#818181] hover:text-[#EB664D] transition-colors duration-200"
                 >
                   <XCircle className="w-6 h-6" />
                 </button>
@@ -802,7 +798,7 @@ const AdminUsers = () => {
             <form onSubmit={handleAddUser} className="p-6 space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
                   Full Name *
                 </label>
                 <input
@@ -810,14 +806,14 @@ const AdminUsers = () => {
                   name="contactName"
                   value={addUserForm.contactName}
                   onChange={handleAddUserFormChange}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
                   required
                 />
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
                   Email Address *
                 </label>
                 <input
@@ -825,14 +821,14 @@ const AdminUsers = () => {
                   name="email"
                   value={addUserForm.email}
                   onChange={handleAddUserFormChange}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
                   required
                 />
               </div>
 
               {/* Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
                   Password *
                 </label>
                 <input
@@ -840,21 +836,21 @@ const AdminUsers = () => {
                   name="password"
                   value={addUserForm.password}
                   onChange={handleAddUserFormChange}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
                   required
                 />
               </div>
 
               {/* Role */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
                   Partner Type/Role *
                 </label>
                 <select
                   name="role"
                   value={addUserForm.role}
                   onChange={handleAddUserFormChange}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
                 >
                   <option value="professional">Professional</option>
                   <option value="expert">Expert</option>
@@ -864,7 +860,7 @@ const AdminUsers = () => {
 
               {/* Company Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
                   Company Name
                 </label>
                 <input
@@ -872,14 +868,14 @@ const AdminUsers = () => {
                   name="companyName"
                   value={addUserForm.companyName}
                   onChange={handleAddUserFormChange}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
                   placeholder="Optional"
                 />
               </div>
 
               {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
                   Phone Number
                 </label>
                 <input
@@ -887,21 +883,21 @@ const AdminUsers = () => {
                   name="phone"
                   value={addUserForm.phone}
                   onChange={handleAddUserFormChange}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
                   placeholder="Optional"
                 />
               </div>
 
               {/* Business Type */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
                   Business Type
                 </label>
                 <select
                   name="businessType"
                   value={addUserForm.businessType}
                   onChange={handleAddUserFormChange}
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
                 >
                   <option value="other">Other</option>
                   <option value="reseller">Reseller</option>
@@ -911,23 +907,23 @@ const AdminUsers = () => {
               </div>
 
               {addUserError && (
-                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-xl border border-red-200">
+                <div className="text-[#EB664D] text-sm bg-red-50 p-3 rounded-xl border border-red-200">
                   {addUserError}
                 </div>
               )}
 
-              <div className="flex justify-end space-x-3 pt-4 border-t">
+              <div className="flex justify-end space-x-3 pt-4 border-t border-[#FAFAFB]">
                 <button 
                   type="button"
                   onClick={() => setShowAddUserModal(false)} 
-                  className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                  className="px-4 py-2 bg-[#FAFAFB] rounded-lg hover:bg-gray-200 transition-colors duration-200"
                   disabled={actionLoading}
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-4 py-2 bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-lg hover:shadow-lg hover:shadow-[#EB664D]/25 disabled:opacity-50 flex items-center transition-all duration-200"
+                  className="px-4 py-2 bg-[#1B2150] text-white rounded-lg hover:bg-[#EB664D] disabled:opacity-50 flex items-center transition-colors duration-200"
                   disabled={actionLoading}
                 >
                   {actionLoading && (
@@ -944,36 +940,36 @@ const AdminUsers = () => {
       {/* Update Role Modal */}
       {showRoleModal && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-gray-200">
-            {/* Decorative gradient overlay */}
-            <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#EB664D]"></div>
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-[#FAFAFB]">
+            {/* Top border */}
+            <div className="h-1 bg-[#1B2150]"></div>
             
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold bg-gradient-to-r from-[#1B2150] to-[#EB664D] bg-clip-text text-transparent">Update Role</h3>
+            <div className="p-6 border-b border-[#FAFAFB]">
+              <h3 className="text-lg font-semibold text-[#1B2150]">Update Role</h3>
             </div>
             <div className="p-6 space-y-4">
-              <p className="text-sm text-gray-700">Select a new role for <span className="font-medium">{selectedUser.name || selectedUser.email}</span>.</p>
+              <p className="text-sm text-[#818181]">Select a new role for <span className="font-medium text-[#1B2150]">{selectedUser.name || selectedUser.email}</span>.</p>
               <select
                 value={roleToSet}
                 onChange={(e) => setRoleToSet(e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
               >
                 <option value="professional">Professional</option>
                 <option value="expert">Expert</option>
                 <option value="master">Master</option>
               </select>
             </div>
-            <div className="p-6 flex justify-end space-x-3 border-t">
+            <div className="p-6 flex justify-end space-x-3 border-t border-[#FAFAFB]">
               <button 
                 onClick={() => setShowRoleModal(false)} 
-                className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                className="px-4 py-2 bg-[#FAFAFB] rounded-lg hover:bg-gray-200 transition-colors duration-200"
                 disabled={actionLoading}
               >
                 Cancel
               </button>
               <button 
                 onClick={submitRoleUpdate} 
-                className="px-4 py-2 bg-gradient-to-r from-[#1B2150] to-[#EB664D] text-white rounded-lg hover:shadow-lg hover:shadow-[#EB664D]/25 disabled:opacity-50 transition-all duration-200"
+                className="px-4 py-2 bg-[#1B2150] text-white rounded-lg hover:bg-[#EB664D] disabled:opacity-50 transition-colors duration-200"
                 disabled={actionLoading}
               >
                 {actionLoading ? "Updating..." : "Update"}
@@ -986,20 +982,20 @@ const AdminUsers = () => {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-gray-200">
-            {/* Decorative gradient overlay */}
-            <div className="h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-[#FAFAFB]">
+            {/* Top border */}
+            <div className="h-1 bg-[#EB664D]"></div>
             
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-red-700">Delete User</h3>
+            <div className="p-6 border-b border-[#FAFAFB]">
+              <h3 className="text-lg font-semibold text-[#EB664D]">Delete User</h3>
             </div>
             <div className="p-6 space-y-3">
-              <p>Are you sure you want to delete <span className="font-medium">{selectedUser.name || selectedUser.email}</span>? This action cannot be undone.</p>
+              <p className="text-[#818181]">Are you sure you want to delete <span className="font-medium text-[#1B2150]">{selectedUser.name || selectedUser.email}</span>? This action cannot be undone.</p>
             </div>
-            <div className="p-6 flex justify-end space-x-3 border-t">
+            <div className="p-6 flex justify-end space-x-3 border-t border-[#FAFAFB]">
               <button 
                 onClick={() => setShowDeleteModal(false)} 
-                className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+                className="px-4 py-2 bg-[#FAFAFB] rounded-lg hover:bg-gray-200 transition-colors duration-200"
                 disabled={actionLoading}
               >
                 Cancel
@@ -1021,7 +1017,7 @@ const AdminUsers = () => {
                     setActionLoading(false);
                   }
                 }} 
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors duration-200"
+                className="px-4 py-2 bg-[#EB664D] text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors duration-200"
                 disabled={actionLoading}
               >
                 {actionLoading ? "Deleting..." : "Delete"}

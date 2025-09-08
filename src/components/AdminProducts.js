@@ -992,10 +992,15 @@ const AdminProductFormModal = ({ visible, mode, initialValues, existingBrands, e
     }
   };
 
-  const removeImage = () => {
-    setFiles(prev => ({ ...prev, picture: null }));
-    setImagePreview(initialValues?.product_image || initialValues?.picture || null);
-  };
+const removeImage = () => {
+  setFiles(prev => ({ ...prev, picture: null }));
+  setImagePreview(null);
+  // Reset the file input
+  const fileInput = document.querySelector('input[type="file"]');
+  if (fileInput) {
+    fileInput.value = '';
+  }
+};
 
   const validateForm = () => {
     const newErrors = {};
@@ -1048,48 +1053,48 @@ const AdminProductFormModal = ({ visible, mode, initialValues, existingBrands, e
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Image Upload */}
-            <div>
-              <label className="block text-sm font-medium text-[#1B2150] mb-2">
-                Product Image
-              </label>
-              <div className="border-2 border-dashed border-[#FAFAFB] rounded-lg p-6 text-center">
-                {imagePreview ? (
-                  <div className="relative">
-                    <img 
-                      src={imagePreview} 
-                      alt="Preview" 
-                      className="mx-auto h-32 w-32 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="absolute -top-2 -right-2 bg-[#EB664D] text-white rounded-full p-1 hover:bg-[#EB664D]/80"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    <Upload className="mx-auto h-12 w-12 text-[#818181]" />
-                    <div className="mt-4">
-                      <label className="cursor-pointer bg-[#1B2150] text-white px-4 py-2 rounded-lg hover:bg-[#EB664D] transition-colors">
-                        Upload Image
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
-                    <p className="text-sm text-[#818181] mt-2">
-                      PNG, JPG, GIF up to 10MB
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+           {/* Image Upload */}
+<div>
+  <label className="block text-sm font-medium text-[#1B2150] mb-2">
+    Product Image
+  </label>
+  <div className="border-2 border-dashed border-[#FAFAFB] rounded-lg p-6 text-center">
+    {imagePreview ? (
+      <div className="relative">
+        <img 
+          src={imagePreview} 
+          alt="Preview" 
+          className="mx-auto h-32 w-32 object-cover rounded-lg"
+        />
+        <button
+          type="button"
+          onClick={removeImage}
+          className="absolute -top-2 -right-2 bg-[#EB664D] text-white rounded-full p-1 hover:bg-[#EB664D]/80"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    ) : (
+      <div>
+        <Upload className="mx-auto h-12 w-12 text-[#818181]" />
+        <div className="mt-4">
+          <label className="cursor-pointer bg-[#1B2150] text-white px-4 py-2 rounded-lg hover:bg-[#EB664D] transition-colors">
+            Upload Image
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+          </label>
+        </div>
+        <p className="text-sm text-[#818181] mt-2">
+          PNG, JPG, GIF up to 10MB
+        </p>
+      </div>
+    )}
+  </div>
+</div>
 
             {/* Product Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

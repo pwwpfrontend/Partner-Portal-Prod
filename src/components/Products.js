@@ -255,7 +255,7 @@ const generatePDFDocument = (product) => {
     // Set up fonts and colors
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(20);
-    doc.setTextColor(64, 89, 82); // #405952
+    doc.setTextColor(27, 33, 80); // #1B2150
     
     // Header
     doc.text('Product Datasheet', 20, 30);
@@ -265,7 +265,7 @@ const generatePDFDocument = (product) => {
     doc.text(product.name, 20, 50);
     
     // Draw a line under product name
-    doc.setDrawColor(64, 89, 82);
+    doc.setDrawColor(27, 33, 80);
     doc.line(20, 55, 190, 55);
     
     // Product Information Section
@@ -320,12 +320,12 @@ const generatePDFDocument = (product) => {
     // Your Price - highlighted
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.setTextColor(64, 89, 82);
+    doc.setTextColor(27, 33, 80);
     doc.text(`Your Price: $${product.netPrice.toFixed(2)}`, 25, yPosition + 25);
     
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.setTextColor(34, 197, 94); // Green color for savings
+    doc.setTextColor(226, 36, 0); // Accent color for savings
     doc.text(`You Save: $${savings.toFixed(2)}`, 25, yPosition + 35);
     
     yPosition += 50;
@@ -721,11 +721,11 @@ const handleDownload = async (product) => {
           <div className="p-4 md:p-6">
             <div className="flex items-center justify-center h-64">
               <div className="relative">
-                <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#405952] absolute top-0 left-0"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#FAFAFB]"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#1B2150] absolute top-0 left-0"></div>
                 <div className="mt-6 text-center">
-                  <div className="text-lg font-semibold text-gray-700">Loading Products</div>
-                  <div className="text-sm text-gray-500 mt-2">Please wait while we fetch your catalog...</div>
+                  <div className="text-lg font-semibold text-[#1B2150]">Loading Products</div>
+                  <div className="text-sm text-[#818181] mt-2">Please wait while we fetch your catalog...</div>
                 </div>
               </div>
             </div>
@@ -748,12 +748,12 @@ const handleDownload = async (product) => {
                   <AlertTriangle className="w-10 h-10 text-white" />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Unable to Load Products</h3>
-              <p className="text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">{error}</p>
+              <h3 className="text-2xl font-bold text-[#1B2150] mb-4">Unable to Load Products</h3>
+              <p className="text-[#818181] mb-8 max-w-2xl mx-auto leading-relaxed">{error}</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button 
                   onClick={() => window.location.reload()} 
-                  className="px-6 py-3 bg-gradient-to-r from-[#405952] to-[#30423f] text-white rounded-xl hover:shadow-lg hover:shadow-[#405952]/25 transition-all duration-300 font-semibold"
+                  className="px-6 py-3 bg-[#1B2150] text-white rounded-xl hover:bg-[#E22400] transition-all duration-300 font-semibold"
                 >
                   Try Again
                 </button>
@@ -763,7 +763,7 @@ const handleDownload = async (product) => {
                     localStorage.removeItem('refreshToken');
                     window.location.href = '/login';
                   }} 
-                  className="px-6 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all duration-300 font-semibold"
+                  className="px-6 py-3 bg-[#5F6485] text-white rounded-xl hover:bg-[#1B2150] transition-all duration-300 font-semibold"
                 >
                   Login Again
                 </button>
@@ -778,27 +778,27 @@ const handleDownload = async (product) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50/20">
       {/* Background decoration elements */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-[#405952]/5 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-[#405952]/3 to-[#30423f]/3 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-20 left-10 w-72 h-72 bg-[#1B2150]/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-[#1B2150]/10 to-[#5F6485]/10 rounded-full blur-3xl pointer-events-none"></div>
       
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <Header toggleSidebar={toggleSidebar} />
 
       <main className="pt-16">
         {/* Fixed Top Section - Enhanced Header */}
-        <div className="sticky top-16 z-20 backdrop-blur-sm bg-white/90 border-b border-gray-200/80">
+        <div className="sticky top-16 z-20 backdrop-blur-sm bg-white/90 border-b border-[#FAFAFB]">
           {/* Page Header - Enhanced */}
           <div className={`bg-gradient-to-r from-white to-gray-50/50 p-4 pb-2 transform transition-all duration-1000 ${
             isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="relative">
-                <h1 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-black text-[#1B2150] leading-tight tracking-tight">
                   Product Catalog
                 </h1>
-                <div className="w-24 h-1 bg-gradient-to-r from-[#405952] to-[#30423f] rounded-full mt-2"></div>
-                <div className="mt-2 text-sm text-gray-600">
-                  Your Level: <span className="font-bold bg-gradient-to-r from-[#405952] to-[#30423f] bg-clip-text text-transparent">
+                <div className="w-24 h-1 bg-[#1B2150] rounded-full mt-2"></div>
+                <div className="mt-2 text-sm text-[#818181]">
+                  Your Level: <span className="font-bold text-[#1B2150]">
                     {currentRole === 'admin' ? 'Administrator' : (currentRole || 'Partner')}
                   </span>
                 </div>
@@ -809,13 +809,13 @@ const handleDownload = async (product) => {
                 <div className="relative">
                   <button
                     onClick={handleQuoteCartClick}
-                    className="group bg-gradient-to-r from-[#405952] to-[#30423f] text-white px-4 sm:px-6 py-3 rounded-xl hover:shadow-xl hover:shadow-[#405952]/25 transition-all duration-300 flex items-center gap-2 sm:gap-3 font-semibold relative overflow-hidden text-sm sm:text-base"
+                    className="group bg-[#1B2150] text-white px-4 sm:px-6 py-3 rounded-xl hover:bg-[#E22400] transition-all duration-300 flex items-center gap-2 sm:gap-3 font-semibold relative overflow-hidden text-sm sm:text-base"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#30423f] to-[#405952] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-[#E22400] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
                     <span className="relative z-10 hidden sm:inline">Quote Cart</span>
                     <span className="relative z-10 sm:hidden">Cart</span>
-                    <span className="bg-white text-[#405952] rounded-full px-2 sm:px-3 py-1 text-xs sm:text-sm font-bold relative z-10 shadow-lg">
+                    <span className="bg-white text-[#1B2150] rounded-full px-2 sm:px-3 py-1 text-xs sm:text-sm font-bold relative z-10 shadow-lg">
                       {getCartItemsCount()}
                     </span>
                   </button>
@@ -826,21 +826,21 @@ const handleDownload = async (product) => {
 
           {/* Product Detail Modal - Enhanced Responsive */}
           {selectedProduct && (
-            <div className="bg-white shadow-lg border-b border-gray-200">
+            <div className="bg-white shadow-lg border-b border-[#FAFAFB]">
               <div className="max-w-7xl mx-auto p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                   {/* Left Side - Product Image */}
                   <div className="lg:col-span-3">
                     <div className="flex justify-between items-start mb-2">
-                      <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-tight pr-2">{selectedProduct.name}</h2>
+                      <h2 className="text-base sm:text-lg font-bold text-[#1B2150] leading-tight pr-2">{selectedProduct.name}</h2>
                       <button
                         onClick={() => setSelectedProduct(null)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+                        className="text-[#818181] hover:text-[#1B2150] transition-colors flex-shrink-0"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 mb-2">
+                    <div className="bg-[#FAFAFB] rounded-lg p-3 mb-2">
                       {selectedProduct.picture ? (
                         <img 
                           src={selectedProduct.picture} 
@@ -856,25 +856,25 @@ const handleDownload = async (product) => {
                         className="w-full h-32 flex items-center justify-center"
                         style={{ display: selectedProduct.picture ? 'none' : 'flex' }}
                       >
-                        <Package className="w-12 h-12 text-gray-400" />
+                        <Package className="w-12 h-12 text-[#818181]" />
                       </div>
                     </div>
                   </div>
 
                   {/* Center - Product Details */}
                   <div className="lg:col-span-6">
-                    <div className="mb-2 text-sm text-gray-600 space-y-1">
+                    <div className="mb-2 text-sm text-[#818181] space-y-1">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-                        <div>SKU: <span className="text-gray-900 font-medium">{selectedProduct.sku}</span></div>
-                        <div>Category: <span className="text-gray-900 font-medium">{selectedProduct.category}</span></div>
-                        <div>Brand: <span className="text-gray-900 font-medium">{selectedProduct.brand}</span></div>
+                        <div>SKU: <span className="text-[#1B2150] font-medium">{selectedProduct.sku}</span></div>
+                        <div>Category: <span className="text-[#1B2150] font-medium">{selectedProduct.category}</span></div>
+                        <div>Brand: <span className="text-[#1B2150] font-medium">{selectedProduct.brand}</span></div>
                       </div>
                     </div>
 
                     {selectedProduct.description && (
                       <div className="mb-2">
                         <h3 className="text-sm font-semibold mb-1">Description</h3>
-                        <p className="text-sm text-gray-700 leading-relaxed">{selectedProduct.description}</p>
+                        <p className="text-sm text-[#818181] leading-relaxed">{selectedProduct.description}</p>
                       </div>
                     )}
 
@@ -887,10 +887,10 @@ const handleDownload = async (product) => {
                             
                             return (
                               <div key={key} className="flex flex-col sm:flex-row">
-                                <span className="font-medium text-gray-700 sm:w-2/5 capitalize text-xs">
+                                <span className="font-medium text-[#1B2150] sm:w-2/5 capitalize text-xs">
                                   {key.replace(/([A-Z])/g, ' $1').trim()}:
                                 </span>
-                                <span className="text-gray-600 sm:w-3/5 text-xs">
+                                <span className="text-[#818181] sm:w-3/5 text-xs">
                                   {typeof value === 'boolean' ? 
                                     (value ? 'Yes' : 'No') : 
                                     String(value).length > 25 ? 
@@ -908,22 +908,22 @@ const handleDownload = async (product) => {
 
                   {/* Right Side - Pricing and Actions */}
                   <div className="lg:col-span-3">
-                    <div className="bg-gray-50 p-3 rounded-lg mb-3">
+                    <div className="bg-[#FAFAFB] p-3 rounded-lg mb-3">
                       <h3 className="text-sm font-semibold mb-2">Pricing</h3>
                       <div className="space-y-1">
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">MSRP:</span>
+                          <span className="text-[#818181]">MSRP:</span>
                           <span className="font-semibold">${selectedProduct.msrp.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Discount:</span>
+                          <span className="text-[#818181]">Discount:</span>
                           <span className="font-semibold text-green-600">{selectedProduct.discount.toFixed(0)}%</span>
                         </div>
                         <div className="border-t pt-1 flex justify-between">
-                          <span className="text-sm text-gray-600">Your Price:</span>
-                          <span className="text-lg font-bold text-[#405952]">${selectedProduct.netPrice.toFixed(2)}</span>
+                          <span className="text-sm text-[#818181]">Your Price:</span>
+                          <span className="text-lg font-bold text-[#1B2150]">${selectedProduct.netPrice.toFixed(2)}</span>
                         </div>
-                        <div className="text-center text-xs text-gray-500">
+                        <div className="text-center text-xs text-[#818181]">
                           Save: ${(selectedProduct.msrp - selectedProduct.netPrice).toFixed(2)}
                         </div>
                       </div>
@@ -933,7 +933,7 @@ const handleDownload = async (product) => {
                       <button
                         onClick={() => handleAddToCart(selectedProduct)}
                         disabled={addToCartLoading === selectedProduct.id}
-                        className="flex items-center justify-center gap-1 w-full px-3 py-1.5 bg-[#405952] text-white rounded text-sm hover:bg-[#2d3f38] transition-colors disabled:opacity-50"
+                        className="flex items-center justify-center gap-1 w-full px-3 py-1.5 bg-[#1B2150] text-white rounded text-sm hover:bg-[#E22400] transition-colors disabled:opacity-50"
                       >
                         {addToCartLoading === selectedProduct.id ? (
                           <>
@@ -950,7 +950,7 @@ const handleDownload = async (product) => {
                       <button
                         onClick={() => handleDownload(selectedProduct)}
                         disabled={downloadLoading === selectedProduct.id}
-                        className="flex items-center justify-center gap-1 w-full px-3 py-1.5 bg-gray-600 text-white rounded text-sm hover:bg-gray-700 transition-colors disabled:opacity-50"
+                        className="flex items-center justify-center gap-1 w-full px-3 py-1.5 bg-[#5F6485] text-white rounded text-sm hover:bg-[#1B2150] transition-colors disabled:opacity-50"
                       >
                         {downloadLoading === selectedProduct.id ? (
                           <>
@@ -978,20 +978,20 @@ const handleDownload = async (product) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
               {/* Enhanced Search */}
               <div className="sm:col-span-2 lg:col-span-2 relative group">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-[#405952] transition-colors duration-300" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#818181] w-4 h-4 group-focus-within:text-[#1B2150] transition-colors duration-300" />
                 <input
                   type="text"
                   placeholder="Search products, brands, SKUs..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#405952]/20 focus:border-[#405952] transition-all duration-300 text-sm bg-white/80 backdrop-blur-sm"
+                  className="w-full pl-10 pr-4 py-2 border-2 border-[#FAFAFB] rounded-xl focus:outline-none focus:ring-4 focus:ring-[#1B2150]/20 focus:border-[#1B2150] transition-all duration-300 text-sm bg-white/80 backdrop-blur-sm"
                 />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#405952]/5 to-transparent opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
 
               {/* Enhanced Category Filter */}
               <div className="relative group">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-[#405952] transition-colors duration-300" />
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#818181] w-4 h-4 group-focus-within:text-[#1B2150] transition-colors duration-300" />
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
@@ -1043,34 +1043,34 @@ const handleDownload = async (product) => {
           isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
         }`}>
           {/* Enhanced Products Table - Responsive */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#FAFAFB] overflow-hidden relative">
             {/* Gradient overlay for visual depth */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#405952] to-[#30423f]"></div>
+            <div className="absolute top-0 left-0 right-0 h-1 bg-[#1B2150]"></div>
             
             {/* Desktop Table View */}
             <div className="hidden lg:block overflow-x-auto max-h-96 overflow-y-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gradient-to-r from-gray-50 to-gray-100/80 sticky top-0 z-10 backdrop-blur-sm">
+                <thead className="bg-gradient-to-r from-white to-[#FAFAFB] sticky top-0 z-10 backdrop-blur-sm">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Product Details
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Brand
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       SKU
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Category
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       MSRP
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Discount
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Your Price
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
@@ -1078,7 +1078,7 @@ const handleDownload = async (product) => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white/50 divide-y divide-gray-200">
+                <tbody className="bg-white/50 divide-y divide-[#FAFAFB]">
                   {paginatedProducts.map((product, index) => {
                     const isExpanded = expandedProducts.has(product.id);
                     const isSelected = selectedProduct?.id === product.id;
@@ -1087,8 +1087,8 @@ const handleDownload = async (product) => {
                     return (
                       <React.Fragment key={product.id}>
                         <tr 
-                          className={`group hover:bg-gradient-to-r hover:from-[#405952]/5 hover:to-transparent cursor-pointer transition-all duration-300 ${
-                            isSelected ? 'bg-gradient-to-r from-blue-50 to-blue-25 border-l-4 border-[#405952]' : ''
+                          className={`group hover:bg-[#1B2150]/5 cursor-pointer transition-all duration-300 ${
+                            isSelected ? 'bg-[#1B2150]/10 border-l-4 border-[#1B2150]' : ''
                           }`}
                           onClick={(e) => handleProductClick(product, e)}
                           style={{
@@ -1110,18 +1110,18 @@ const handleDownload = async (product) => {
                                         e.target.nextSibling.style.display = 'flex';
                                       }}
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-br from-[#405952]/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <div className="absolute inset-0 bg-[#1B2150]/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                   </div>
                                 ) : null}
                                 <div 
                                   className="h-12 w-12 rounded-xl bg-gradient-to-r from-gray-200 to-gray-300 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300"
                                   style={{ display: product.picture ? 'none' : 'flex' }}
                                 >
-                                  <Package className="w-6 h-6 text-gray-500" />
+                                  <Package className="w-6 h-6 text-[#818181]" />
                                 </div>
                               </div>
                               <div className="ml-4">
-                                <div className="text-sm font-bold text-gray-900 flex items-center group-hover:text-[#405952] transition-colors duration-300">
+                                <div className="text-sm font-bold text-[#1B2150] flex items-center group-hover:text-[#1B2150] transition-colors duration-300">
                                   {product.name}
                                   {product.isModel && (
                                     <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 shadow-sm">
@@ -1134,14 +1134,14 @@ const handleDownload = async (product) => {
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-sm text-gray-600 leading-relaxed">
+                                <div className="text-sm text-[#818181] leading-relaxed">
                                   {product.description.length > 50 
                                     ? `${product.description.substring(0, 50)}...`
                                     : product.description
                                   }
                                 </div>
                                 {product.duration && (
-                                  <div className="text-xs text-gray-500 mt-1">
+                                  <div className="text-xs text-[#818181] mt-1">
                                     Duration: {product.duration}
                                   </div>
                                 )}
@@ -1149,17 +1149,17 @@ const handleDownload = async (product) => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 shadow-sm">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#FAFAFB] text-[#1B2150] shadow-sm">
                               {product.brand}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150] font-mono">
                             {product.sku}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181] font-medium">
                             {product.category}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150] font-bold">
                             ${product.msrp.toFixed(2)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -1167,10 +1167,10 @@ const handleDownload = async (product) => {
                               {product.discount.toFixed(0)}%
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-lg font-black bg-gradient-to-r from-[#405952] to-[#30423f] bg-clip-text text-transparent">
+                          <td className="px-6 py-4 whitespace-nowrap text-lg font-black text-[#1B2150]">
                             ${product.netPrice.toFixed(2)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181]">
                             <div className="flex items-center space-x-2">
                               <button
                                 onClick={(e) => {
@@ -1181,7 +1181,7 @@ const handleDownload = async (product) => {
                                 className={`group flex items-center gap-2 px-4 py-2 text-xs rounded-lg transition-all duration-300 font-semibold shadow-md disabled:opacity-50 ${
                                   isInCart 
                                     ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 hover:from-green-200 hover:to-green-300 hover:shadow-lg' 
-                                    : 'bg-gradient-to-r from-[#405952] to-[#30423f] hover:from-[#30423f] hover:to-[#405952] text-white hover:shadow-xl hover:shadow-[#405952]/25'
+                                    : 'bg-[#1B2150] hover:bg-[#E22400] text-white'
                                 }`}
                                 title={isInCart ? 'Add More' : 'Add to Quote'}
                               >
