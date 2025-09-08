@@ -691,18 +691,18 @@ const ManageQuotes = () => {
           {/* Quote Details Modal */}
           {showQuoteDetails && selectedQuote && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#FAFAFB]">
+              <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#FAFAFB]">
                 {/* Decorative gradient overlay */}
                 <div className="h-1 bg-gradient-to-r from-[#1B2150] to-[#EB664D]"></div>
                 
                 <div className="p-8">
                   <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-2xl font-bold text-[#1B2150]">
+                    <h2 className="text-xl font-bold text-[#1B2150]">
                       Quote Details - {(selectedQuote.id || selectedQuote._id || 'N/A').slice(0, 8)}
                     </h2>
                     <button
                       onClick={() => setShowQuoteDetails(false)}
-                      className="text-[#818181] hover:text-[#EB664D] text-2xl transition-colors duration-200"
+                      className="text-[#818181] hover:text-[#EB664D] text-xl transition-colors duration-200"
                     >
                       ×
                     </button>
@@ -824,23 +824,23 @@ const ManageQuotes = () => {
                         <h4 className="text-lg font-semibold text-[#1B2150] mb-4">Quote Summary</h4>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                           <div className="bg-white rounded-lg p-3">
-                            <div className="text-2xl font-bold text-[#1B2150]">{selectedQuote.items.length}</div>
+                            <div className="text-md font-bold text-[#1B2150]">{selectedQuote.items.length}</div>
                             <div className="text-sm text-[#818181]">Products</div>
                           </div>
                           <div className="bg-white rounded-lg p-3">
-                            <div className="text-2xl font-bold text-[#1B2150]">
+                            <div className="text-md font-bold text-[#1B2150]">
                               {selectedQuote.items.reduce((sum, item) => sum + (item.quantity || 1), 0)}
                             </div>
                             <div className="text-sm text-[#818181]">Total Qty</div>
                           </div>
                           <div className="bg-white rounded-lg p-3">
-                            <div className="text-2xl font-bold text-[#EB664D]">
+                            <div className="text-md font-bold text-[#EB664D]">
                               ${(selectedQuote.totalAmount || selectedQuote.total || 0).toFixed(2)}
                             </div>
                             <div className="text-sm text-[#818181]">Total Value</div>
                           </div>
                           <div className="bg-white rounded-lg p-3">
-                            <div className={`text-2xl font-bold ${getStatusBadgeColor(selectedQuote.status || 'New').replace('bg-', 'text-').replace('-100', '-600')}`}>
+                            <div className={`text-md font-bold ${getStatusBadgeColor(selectedQuote.status || 'New').replace('bg-', 'text-').replace('-100', '-600')}`}>
                               {selectedQuote.status || 'New'}
                             </div>
                             <div className="text-sm text-[#818181]">Status</div>
