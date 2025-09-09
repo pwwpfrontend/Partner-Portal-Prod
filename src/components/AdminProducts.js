@@ -1291,7 +1291,7 @@ const removeImage = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                rows="3"
+                rows="12"
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
                   errors.description ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
                 }`}

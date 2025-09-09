@@ -37,7 +37,7 @@ const Products = () => {
   const [addToCartLoading, setAddToCartLoading] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(null);
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
 
   // Load animation trigger
   useEffect(() => {
@@ -719,10 +719,12 @@ const handleDownload = async (product) => {
         <Header toggleSidebar={toggleSidebar} />
         <main className="pt-16">
           <div className="p-4 md:p-6">
-            <div className="flex items-center justify-center h-64">
-              <div className="relative">
-                <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#FAFAFB]"></div>
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#1B2150] absolute top-0 left-0"></div>
+            <div className="flex items-center justify-center h-[calc(100vh-10rem)]">
+              <div className="flex flex-col items-center">
+                <div className="relative">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#FAFAFB]"></div>
+                  <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#1B2150] absolute top-0 left-0"></div>
+                </div>
                 <div className="mt-6 text-center">
                   <div className="text-lg font-semibold text-[#1B2150]">Loading Products</div>
                   <div className="text-sm text-[#818181] mt-2">Please wait while we fetch your catalog...</div>
@@ -1048,32 +1050,32 @@ const handleDownload = async (product) => {
             <div className="absolute top-0 left-0 right-0 h-1 bg-[#1B2150]"></div>
             
             {/* Desktop Table View */}
-            <div className="hidden lg:block overflow-x-auto max-h-96 overflow-y-auto">
+            <div className="hidden lg:block overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gradient-to-r from-white to-[#FAFAFB] sticky top-0 z-10 backdrop-blur-sm">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Product Details
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Brand
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       SKU
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Category
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       MSRP
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Discount
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-bold text-[#818181] uppercase tracking-wider">
                       Your Price
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -1096,13 +1098,13 @@ const handleDownload = async (product) => {
                             animation: isLoaded ? 'fadeInUp 0.6s ease-out forwards' : 'none'
                           }}
                         >
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 py-2 whitespace-nowrap">
                             <div className="flex items-center">
-                              <div className="flex-shrink-0 h-12 w-12 relative">
+                              <div className="flex-shrink-0 h-10 w-10 relative">
                                 {product.picture ? (
                                   <div className="relative group-hover:scale-105 transition-transform duration-300">
                                     <img 
-                                      className="h-12 w-12 rounded-xl object-cover shadow-md" 
+                                      className="h-10 w-10 rounded-xl object-cover shadow-md" 
                                       src={product.picture} 
                                       alt={product.name}
                                       onError={(e) => {
@@ -1114,14 +1116,14 @@ const handleDownload = async (product) => {
                                   </div>
                                 ) : null}
                                 <div 
-                                  className="h-12 w-12 rounded-xl bg-gradient-to-r from-gray-200 to-gray-300 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300"
+                                  className="h-10 w-10 rounded-xl bg-gradient-to-r from-gray-200 to-gray-300 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300"
                                   style={{ display: product.picture ? 'none' : 'flex' }}
                                 >
                                   <Package className="w-6 h-6 text-[#818181]" />
                                 </div>
                               </div>
-                              <div className="ml-4">
-                                <div className="text-sm font-bold text-[#1B2150] flex items-center group-hover:text-[#1B2150] transition-colors duration-300">
+                              <div className="ml-3">
+                                <div className="text-xs font-bold text-[#1B2150] flex items-center group-hover:text-[#1B2150] transition-colors duration-300">
                                   {product.name}
                                   {product.isModel && (
                                     <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 shadow-sm">
@@ -1134,7 +1136,7 @@ const handleDownload = async (product) => {
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-sm text-[#818181] leading-relaxed">
+                                <div className="text-xs text-[#818181] leading-relaxed">
                                   {product.description.length > 50 
                                     ? `${product.description.substring(0, 50)}...`
                                     : product.description
@@ -1148,29 +1150,29 @@ const handleDownload = async (product) => {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#FAFAFB] text-[#1B2150] shadow-sm">
+                          <td className="px-3 py-2 whitespace-nowrap">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAFAFB] text-[#1B2150] shadow-sm">
                               {product.brand}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150] font-mono">
+                          <td className="px-3 py-2 whitespace-nowrap text-xs text-[#1B2150] font-mono">
                             {product.sku}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181] font-medium">
+                          <td className="px-3 py-2 whitespace-nowrap text-xs text-[#818181] font-medium">
                             {product.category}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150] font-bold">
+                          <td className="px-3 py-2 whitespace-nowrap text-xs text-[#1B2150] font-bold">
                             ${product.msrp.toFixed(2)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-green-100 to-green-200 text-green-800 shadow-sm">
+                          <td className="px-3 py-2 whitespace-nowrap">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-green-100 to-green-200 text-green-800 shadow-sm">
                               {product.discount.toFixed(0)}%
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-lg font-black text-[#1B2150]">
+                          <td className="px-3 py-2 whitespace-nowrap text-base font-black text-[#1B2150]">
                             ${product.netPrice.toFixed(2)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181]">
+                          <td className="px-3 py-2 whitespace-nowrap text-xs text-[#818181]">
                             <div className="flex items-center space-x-2">
                               <button
                                 onClick={(e) => {
@@ -1178,7 +1180,7 @@ const handleDownload = async (product) => {
                                   handleAddToCart(product);
                                 }}
                                 disabled={addToCartLoading === product.id}
-                                className={`group flex items-center gap-2 px-4 py-2 text-xs rounded-lg transition-all duration-300 font-semibold shadow-md disabled:opacity-50 ${
+                                className={`group flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg transition-all duration-300 font-semibold shadow-md disabled:opacity-50 ${
                                   isInCart 
                                     ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 hover:from-green-200 hover:to-green-300 hover:shadow-lg' 
                                     : 'bg-[#1B2150] hover:bg-[#E22400] text-white'

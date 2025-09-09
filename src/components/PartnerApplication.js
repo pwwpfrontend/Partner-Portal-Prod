@@ -11,6 +11,7 @@ const PartnerApplication = () => {
     companyName: "",
     companyAddress: "",
     businessType: "",
+    country: "",
     contactName: "",
     email: "",
     phone: "",
@@ -29,16 +30,89 @@ const PartnerApplication = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setSubmitError(""); // Clear error when user starts typing
+  };
+
+  // Input validation functions
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+  };
+
+  const validatePassword = (password) => {
+    return password.length >= 6;
   };
 
   const validateStep = (currentStep) => {
+    setSubmitError("");
+    
     switch (currentStep) {
       case 1:
-        return formData.companyName.trim() && formData.companyAddress.trim() && formData.businessType.trim();
+        if (!formData.companyName.trim()) {
+          setSubmitError("Company name is required.");
+          return false;
+        }
+        if (!formData.companyAddress.trim()) {
+          setSubmitError("Company address is required.");
+          return false;
+        }
+        if (!formData.businessType.trim()) {
+          setSubmitError("Business type is required.");
+          return false;
+        }
+        if (!formData.country.trim()) {
+          setSubmitError("Country is required.");
+          return false;
+        }
+        return true;
+        
       case 2:
-        return formData.contactName.trim() && formData.email.trim() && formData.phone.trim() && formData.position.trim() && formData.password.trim();
+        if (!formData.contactName.trim()) {
+          setSubmitError("Contact person's name is required.");
+          return false;
+        }
+        if (!formData.email.trim()) {
+          setSubmitError("Email address is required.");
+          return false;
+        }
+        if (!validateEmail(formData.email)) {
+          setSubmitError("Please enter a valid email address.");
+          return false;
+        }
+        if (!formData.phone.trim()) {
+          setSubmitError("Phone number is required.");
+          return false;
+        }
+        if (!validatePhone(formData.phone)) {
+          setSubmitError("Please enter a valid phone number.");
+          return false;
+        }
+        if (!formData.position.trim()) {
+          setSubmitError("Position in company is required.");
+          return false;
+        }
+        if (!formData.password.trim()) {
+          setSubmitError("Password is required.");
+          return false;
+        }
+        if (!validatePassword(formData.password)) {
+          setSubmitError("Password must be at least 6 characters long.");
+          return false;
+        }
+        return true;
+        
       case 3:
-        return certificateFile !== null;
+        if (!certificateFile) {
+          setSubmitError("Business registration certificate is required.");
+          return false;
+        }
+        return true;
+        
       default:
         return true;
     }
@@ -47,8 +121,6 @@ const PartnerApplication = () => {
   const handleNext = () => {
     if (validateStep(step)) {
       setStep(step + 1);
-    } else {
-      setSubmitError("Please fill in all required fields before continuing.");
     }
   };
 
@@ -102,6 +174,7 @@ const PartnerApplication = () => {
       fd.append("companyAddress", formData.companyAddress);
       fd.append("businessType", formData.businessType);
       fd.append("bussinessType", formData.businessType);
+      fd.append("country", formData.country);
       fd.append("contactPersonName", formData.contactName);
       fd.append("phoneNumber", formData.phone);
       fd.append("email", formData.email);
@@ -124,6 +197,20 @@ const PartnerApplication = () => {
     { number: 2, title: "Contact Details", icon: User },
     { number: 3, title: "Documentation", icon: Upload },
     { number: 4, title: "Agreement", icon: FileCheck }
+  ];
+
+  const countries = [
+    "Afghanistan", "Albania", "Algeria", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan",
+    "Bahrain", "Bangladesh", "Belarus", "Belgium", "Bolivia", "Bosnia and Herzegovina", "Brazil", "Bulgaria",
+    "Cambodia", "Canada", "Chile", "China", "Colombia", "Costa Rica", "Croatia", "Cyprus", "Czech Republic",
+    "Denmark", "Dominican Republic", "Ecuador", "Egypt", "Estonia", "Ethiopia", "Finland", "France",
+    "Georgia", "Germany", "Ghana", "Greece", "Guatemala", "Honduras", "Hong Kong", "Hungary",
+    "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy",
+    "Japan", "Jordan", "Kazakhstan", "Kenya", "Kuwait", "Latvia", "Lebanon", "Lithuania", "Luxembourg",
+    "Malaysia", "Mexico", "Morocco", "Netherlands", "New Zealand", "Nigeria", "Norway",
+    "Oman", "Pakistan", "Panama", "Peru", "Philippines", "Poland", "Portugal", "Qatar",
+    "Romania", "Russia", "Saudi Arabia", "Singapore", "Slovakia", "Slovenia", "South Africa", "South Korea", "Spain", "Sri Lanka", "Sweden", "Switzerland",
+    "Taiwan", "Thailand", "Turkey", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Venezuela", "Vietnam"
   ];
 
   return (
@@ -240,20 +327,37 @@ const PartnerApplication = () => {
                     />
                   </div>
 
-                  <div>
-                    <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Business Type *</label>
-                    <select
-                      name="businessType"
-                      value={formData.businessType}
-                      onChange={handleChange}
-                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
-                    >
-                      <option value="">Select your business type</option>
-                      <option value="reseller">Reseller</option>
-                      <option value="integrator">System Integrator</option>
-                      <option value="consultant">Consultant</option>
-                      <option value="other">Other</option>
-                    </select>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Business Type *</label>
+                      <select
+                        name="businessType"
+                        value={formData.businessType}
+                        onChange={handleChange}
+                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                      >
+                        <option value="">Select your business type</option>
+                        <option value="reseller">Reseller</option>
+                        <option value="integrator">System Integrator</option>
+                        <option value="consultant">Consultant</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Country *</label>
+                      <select
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                        className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
+                      >
+                        <option value="">Select your country</option>
+                        {countries.map((country) => (
+                          <option key={country} value={country}>{country}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
                   {submitError && (
@@ -321,7 +425,7 @@ const PartnerApplication = () => {
                     <div>
                       <label className="block mb-2 text-sm font-semibold text-[#1B2150]">Phone Number *</label>
                       <input
-                        type="text"
+                        type="tel"
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
@@ -354,6 +458,31 @@ const PartnerApplication = () => {
                         placeholder="Create a secure password"
                         className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-[#1B2150] transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-[#818181]"
                       />
+                      <div className="mt-2 text-xs text-[#818181] space-y-1">
+                        <p className="font-medium">Password must contain:</p>
+                        <div className="grid grid-cols-2 gap-x-4">
+                          <div className={`flex items-center space-x-1 ${formData.password.length >= 8 ? 'text-green-600' : 'text-[#818181]'}`}>
+                            <span className="w-1 h-1 rounded-full bg-current"></span>
+                            <span>8+ characters</span>
+                          </div>
+                          <div className={`flex items-center space-x-1 ${/[A-Z]/.test(formData.password) ? 'text-green-600' : 'text-[#818181]'}`}>
+                            <span className="w-1 h-1 rounded-full bg-current"></span>
+                            <span>Uppercase letter</span>
+                          </div>
+                          <div className={`flex items-center space-x-1 ${/[a-z]/.test(formData.password) ? 'text-green-600' : 'text-[#818181]'}`}>
+                            <span className="w-1 h-1 rounded-full bg-current"></span>
+                            <span>Lowercase letter</span>
+                          </div>
+                          <div className={`flex items-center space-x-1 ${/\d/.test(formData.password) ? 'text-green-600' : 'text-[#818181]'}`}>
+                            <span className="w-1 h-1 rounded-full bg-current"></span>
+                            <span>Number</span>
+                          </div>
+                          <div className={`flex items-center space-x-1 col-span-2 ${/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password) ? 'text-green-600' : 'text-[#818181]'}`}>
+                            <span className="w-1 h-1 rounded-full bg-current"></span>
+                            <span>Special character (!@#$%^&*)</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
