@@ -225,10 +225,10 @@ const PartnerApplication = () => {
           <div className="flex items-center space-x-3">
             <div className="relative">
               <div className="absolute inset-0 bg-[#1B2150]/10 rounded-full blur-md"></div>
-              <img src="/logo192.png" alt="Partner's Marketplace Logo" className="h-10 w-10 relative z-10 drop-shadow-lg" />
+              <img src="/logo192.png" alt="Partner Portal Logo" className="h-10 w-10 relative z-10 drop-shadow-lg" />
             </div>
             <span className="font-semibold text-lg text-[#1B2150]">
-              Power Workplace Partner's Marketplace
+              Power Workplace Partner Portal
             </span>
           </div>
           <button

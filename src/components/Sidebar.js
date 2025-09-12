@@ -233,10 +233,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <div className="flex items-center space-x-2">
             <img
               src="/logo192.png"
-              alt="Partner's Marketplace Logo"
+              alt="Partner Portal Logo"
               className="h-8 w-8"
             />
-            <span className="font-bold text-lg text-[#1B2150]">Partner's Marketplace</span>
+            <span className="font-bold text-lg text-[#1B2150]">Partner Portal</span>
           </div>
           <button
             onClick={toggleSidebar}
