@@ -1165,7 +1165,7 @@ const handleDownload = async (product) => {
                             ${product.msrp.toFixed(2)}
                           </td>
                           <td className="px-3 py-2 whitespace-nowrap">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-green-100 to-green-200 text-green-800 shadow-sm">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-gradient-to-r from-green-100 to-green-200 text-[#1B2150] shadow-sm">
                               {product.discount.toFixed(0)}%
                             </span>
                           </td>

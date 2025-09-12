@@ -346,13 +346,14 @@ const RequestQuote = () => {
         // Customer/User details
         customerInfo: {
           id: userDetails.id || userDetails._id,
-          name: userDetails.name || userDetails.companyName,
+          name: userDetails.name || userDetails.contactPersonName || userDetails.companyName,
           email: userDetails.email,
           role: userDetails.role || currentRole,
           level: userDetails.role || currentRole,
           company: userDetails.companyName,
-          phone: userDetails.phone || '',
-          address: userDetails.address || '',
+          phone: userDetails.phone || userDetails.phoneNumber || '',
+          address: userDetails.address || userDetails.companyAddress || '',
+          country: userDetails.country || userDetails.companyCountry || '',
           submissionDate: new Date().toISOString()
         },
         
@@ -392,11 +393,12 @@ const RequestQuote = () => {
       const mailData = {
         _id: userDetails.id || userDetails._id,
         companyName: userDetails.companyName || userDetails.name,
-        companyAddress: userDetails.address || '',
+        companyAddress: userDetails.address || userDetails.companyAddress || '',
         businessType: userDetails.businessType || 'integrator',
-        contactPersonName: userDetails.name || userDetails.companyName,
+        contactPersonName: userDetails.name || userDetails.contactPersonName || userDetails.companyName,
         email: userDetails.email,
-        phoneNumber: userDetails.phone || '',
+        phoneNumber: userDetails.phone || userDetails.phoneNumber || '',
+        country: userDetails.country || userDetails.companyCountry || '',
         position: userDetails.position || userDetails.role || currentRole,
         certificateUrl: userDetails.certificateUrl || null,
         role: userDetails.role || currentRole,

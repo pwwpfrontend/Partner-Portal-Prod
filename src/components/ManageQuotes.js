@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { FileText, Search, Eye, Package, User, RefreshCw, AlertTriangle, ChevronDown } from 'lucide-react';
+import { FileText, Search, Eye, Package, User, RefreshCw, AlertTriangle, ChevronDown, Trash } from 'lucide-react';
 import { getToken } from '../services/auth';
 
 const ManageQuotes = () => {
@@ -14,10 +14,28 @@ const ManageQuotes = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [updatingStatus, setUpdatingStatus] = useState(null); // Add this state
+  const [updatingStatus, setUpdatingStatus] = useState(null);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  // Generate short quote ID (5-7 digits) from full ID
+  const getShortQuoteId = (fullId) => {
+    if (!fullId) return 'N/A';
+    const idString = String(fullId);
+    // Take last 6 characters or create a hash-based short ID
+    if (idString.length >= 6) {
+      return idString.slice(-6).toUpperCase();
+    } else {
+      // For shorter IDs, pad with random characters
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let shortId = idString.toUpperCase();
+      while (shortId.length < 6) {
+        shortId = chars[Math.floor(Math.random() * chars.length)] + shortId;
+      }
+      return shortId;
+    }
   };
 
   // Handle status change - Multiple endpoint options
@@ -36,7 +54,6 @@ const ManageQuotes = () => {
 
       // Try multiple possible API endpoints for updating quote status
       let response;
-      let apiError;
       
       // Option 1: Try dedicated status endpoint
       try {
@@ -48,10 +65,9 @@ const ManageQuotes = () => {
         if (response.ok) {
           console.log('Status updated via dedicated endpoint');
         }
-      } catch (error) {
-        console.log('Dedicated status endpoint not available, trying alternatives...');
-        apiError = error;
-      }
+        } catch (error) {
+          console.log('Dedicated status endpoint not available, trying alternatives...');
+        }
       
       // Option 2: Try general PATCH endpoint if status endpoint failed
       if (!response || !response.ok) {
@@ -66,7 +82,6 @@ const ManageQuotes = () => {
           }
         } catch (error) {
           console.log('General PATCH endpoint failed, trying PUT...');
-          apiError = error;
         }
       }
       
@@ -90,7 +105,6 @@ const ManageQuotes = () => {
           }
         } catch (error) {
           console.log('PUT endpoint also failed');
-          apiError = error;
         }
       }
       
@@ -350,12 +364,28 @@ const ManageQuotes = () => {
     };
 
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Build user map for efficient lookups
+  const userMap = useMemo(() => {
+    const map = {};
+    users.forEach(user => {
+      if (user._id) map[user._id] = user;
+      if (user.id) map[user.id] = user;
+      if (user.email) map[user.email] = user;
+    });
+    return map;
+  }, [users]);
 
   // Get user details by ID
   const getUserById = (userId) => {
     if (!userId) return null;
     
+    // Try direct lookup first
+    if (userMap[userId]) return userMap[userId];
+    
+    // Fallback to array search for edge cases
     const foundUser = users.find(user => 
       user.id === userId || 
       user._id === userId ||
@@ -390,15 +420,29 @@ const ManageQuotes = () => {
       };
     });
 
+    // Enhanced customer info with proper field mapping and phone/address handling
+    const customerInfo = user ? {
+      name: user.contactPersonName || user.contactName || user.name || quote.userName || 'Unknown User',
+      email: user.email || quote.userEmail || 'unknown@email.com',
+      role: user.role || quote.userRole || quote.userLevel || 'user',
+      company: user.companyName || quote.customerInfo?.company || 'Unknown Company',
+      phone: user.phoneNumber || user.phone || quote.customerInfo?.phone || quote.customerInfo?.phoneNumber || 'N/A',
+      address: user.companyAddress || user.address || quote.customerInfo?.address || quote.customerInfo?.companyAddress || 'N/A',
+      country: user.country || user.companyCountry || quote.customerInfo?.country || quote.customerInfo?.companyCountry || 'N/A'
+    } : (quote.customerInfo || {
+      name: quote.userName || 'Unknown User',
+      email: quote.userEmail || 'unknown@email.com',
+      role: quote.userRole || quote.userLevel || 'user',
+      company: quote.customerInfo?.company || quote.customerInfo?.companyName || 'Unknown Company',
+      phone: quote.customerInfo?.phone || quote.customerInfo?.phoneNumber || 'N/A',
+      address: quote.customerInfo?.address || quote.customerInfo?.companyAddress || 'N/A',
+      country: quote.customerInfo?.country || quote.customerInfo?.companyCountry || 'N/A'
+    });
+
     return {
       ...quote,
       user: user,
-      customerInfo: quote.customerInfo || user || {
-        name: quote.userName || 'Unknown User',
-        email: quote.userEmail || 'unknown@email.com',
-        role: quote.userRole || quote.userLevel || 'user',
-        company: quote.customerInfo?.company || user?.companyName || 'Unknown Company'
-      },
+      customerInfo: customerInfo,
       items: enhancedItems
     };
   });
@@ -410,11 +454,15 @@ const ManageQuotes = () => {
       customerInfo.name,
       customerInfo.company,
       customerInfo.email,
+      customerInfo.country,
+      customerInfo.phone,
+      customerInfo.address,
       quote.userName,
       quote.userEmail,
       quote.id,
       quote._id,
-      quote.status
+      quote.status,
+      getShortQuoteId(quote.id || quote._id)
     ].filter(Boolean).join(' ').toLowerCase();
     
     const matchesSearch = searchTerm === '' || searchFields.includes(searchTerm.toLowerCase());
@@ -442,6 +490,39 @@ const ManageQuotes = () => {
   const handleViewDetails = (quote) => {
     setSelectedQuote(quote);
     setShowQuoteDetails(true);
+  };
+
+  // Handle quote deletion
+  const handleDeleteQuote = async (quoteId) => {
+    if (!window.confirm('Are you sure you want to delete this quote? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const response = await fetchWithAuth(`https://njs-01.optimuslab.space/partners/quotes/${quoteId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete quote: ${response.status}`);
+      }
+
+      // Remove the quote from local state
+      setQuotes(prevQuotes => prevQuotes.filter(quote => 
+        (quote.id !== quoteId && quote._id !== quoteId)
+      ));
+
+      // Close details modal if the deleted quote was being viewed
+      if (selectedQuote && (selectedQuote.id === quoteId || selectedQuote._id === quoteId)) {
+        setShowQuoteDetails(false);
+        setSelectedQuote(null);
+      }
+
+      console.log(`Quote ${quoteId} deleted successfully`);
+    } catch (error) {
+      console.error('Error deleting quote:', error);
+      setError(`Failed to delete quote: ${error.message}`);
+    }
   };
 
   // Refresh data
@@ -555,7 +636,7 @@ const ManageQuotes = () => {
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#818181] w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search by customer name, company, email, quote ID, or status..."
+                placeholder="Search by customer name, company, email, country, phone, address, quote ID, or status..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 border-2 border-[#FAFAFB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-lg text-[#818181]"
@@ -622,6 +703,16 @@ const ManageQuotes = () => {
                                 <div className="text-sm text-[#818181]">
                                   {customerInfo.email || quote.userEmail || 'No email'}
                                 </div>
+                                {customerInfo.phone !== 'N/A' && (
+                                  <div className="text-sm text-[#818181]">
+                                     {customerInfo.phone}
+                                  </div>
+                                )}
+                                {customerInfo.country !== 'N/A' && (
+                                  <div className="text-sm text-[#818181]">
+                                     {customerInfo.country}
+                                  </div>
+                                )}
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#1B2150]/10 text-[#1B2150] mt-1">
                                   {customerInfo.role || quote.userRole || quote.userLevel || 'user'}
                                 </span>
@@ -633,7 +724,7 @@ const ManageQuotes = () => {
                               <FileText className="w-5 h-5 text-[#1B2150] mr-3" />
                               <div>
                                 <div className="text-sm font-medium text-[#1B2150]">
-                                  {quoteId ? quoteId.slice(0, 8) : 'N/A'}
+                                  #{getShortQuoteId(quoteId)}
                                 </div>
                                 <div className="text-sm text-[#818181]">{itemsCount} items</div>
                               </div>
@@ -671,13 +762,22 @@ const ManageQuotes = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button
-                              onClick={() => handleViewDetails(quote)}
-                              className="text-[#1B2150] hover:text-[#EB664D] flex items-center transition-colors duration-200"
-                            >
-                              <Eye className="w-4 h-4 mr-1" />
-                              View
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleViewDetails(quote)}
+                                className="text-[#1B2150] hover:text-[#EB664D] flex items-center transition-colors duration-200"
+                              >
+                                <Eye className="w-4 h-4 mr-1" />
+                                View
+                              </button>
+                              <button
+                                onClick={() => handleDeleteQuote(quoteId)}
+                                className="p-2 border border-gray-400 rounded-md text-gray-700 hover:border-red-500 cursor-pointer transition-colors duration-200"
+                                title="Delete Quote"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -698,7 +798,7 @@ const ManageQuotes = () => {
                 <div className="p-8">
                   <div className="flex items-center justify-between mb-8">
                     <h2 className="text-xl font-bold text-[#1B2150]">
-                      Quote Details - {(selectedQuote.id || selectedQuote._id || 'N/A').slice(0, 8)}
+                      Quote Details - #{getShortQuoteId(selectedQuote.id || selectedQuote._id)}
                     </h2>
                     <button
                       onClick={() => setShowQuoteDetails(false)}
@@ -717,11 +817,14 @@ const ManageQuotes = () => {
                         <p><span className="font-medium text-[#1B2150]">Company:</span> <span className="text-[#818181]">{selectedQuote.customerInfo?.company || selectedQuote.customerInfo?.companyName || 'Unknown Company'}</span></p>
                         <p><span className="font-medium text-[#1B2150]">Email:</span> <span className="text-[#818181]">{selectedQuote.customerInfo?.email || selectedQuote.userEmail || 'No email'}</span></p>
                         <p><span className="font-medium text-[#1B2150]">User Level:</span> <span className="text-[#818181]">{selectedQuote.customerInfo?.role || selectedQuote.userRole || selectedQuote.userLevel || 'user'}</span></p>
-                        {selectedQuote.customerInfo?.phone && (
+                        {selectedQuote.customerInfo?.phone && selectedQuote.customerInfo.phone !== 'N/A' && (
                           <p><span className="font-medium text-[#1B2150]">Phone:</span> <span className="text-[#818181]">{selectedQuote.customerInfo.phone}</span></p>
                         )}
-                        {selectedQuote.customerInfo?.address && (
+                        {selectedQuote.customerInfo?.address && selectedQuote.customerInfo.address !== 'N/A' && (
                           <p><span className="font-medium text-[#1B2150]">Address:</span> <span className="text-[#818181]">{selectedQuote.customerInfo.address}</span></p>
+                        )}
+                        {selectedQuote.customerInfo?.country && selectedQuote.customerInfo.country !== 'N/A' && (
+                          <p><span className="font-medium text-[#1B2150]">Country:</span> <span className="text-[#818181]">{selectedQuote.customerInfo.country}</span></p>
                         )}
                       </div>
                     </div>
@@ -860,7 +963,3 @@ const ManageQuotes = () => {
 };
 
 export default ManageQuotes;
-
-
-
-

@@ -620,13 +620,14 @@ const AdminProducts = () => {
             </div>
           </div>
 
-          {/* Products Table - Updated with responsive columns */}
+          {/* Products Table/Card - Responsive like Products.js */}
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="min-w-full divide-y divide-[#FAFAFB]">
                 <thead className="bg-[#FAFAFB]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider w-10">
                       <input
                         type="checkbox"
                         checked={selectedProducts.size === paginatedProducts.length && paginatedProducts.length > 0}
@@ -637,19 +638,19 @@ const AdminProducts = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
                       Product
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
                       Brand
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
                       SKU
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
                       Category
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
                       MSRP
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-[#818181] uppercase tracking-wider hidden sm:table-cell">
+                    <th className="px-6 py-3 text-center text-xs font-medium text-[#818181] uppercase tracking-wider">
                       Discounts
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
@@ -661,7 +662,6 @@ const AdminProducts = () => {
                   {paginatedProducts.map((product) => {
                     const isSelected = selectedProduct?._id === product._id;
                     const isChecked = selectedProducts.has(product._id);
-                    
                     return (
                       <tr 
                         key={product._id}
@@ -697,34 +697,31 @@ const AdminProducts = () => {
                                 <Package className="w-5 h-5 text-[#818181]" />
                               </div>
                             </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-[#1B2150]">
+                            <div className="ml-4 min-w-0">
+                              <div className="text-sm font-medium text-[#1B2150] truncate">
                                 {product.product_name || product.name}
                               </div>
-                              <div className="text-sm text-[#818181]">
-                                {(product.description || '').length > 50 
-                                  ? `${(product.description || '').substring(0, 50)}...`
-                                  : (product.description || '')
-                                }
+                              <div className="text-sm text-[#818181] truncate max-w-[14rem]">
+                                {product.description || ''}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FAFAFB] text-[#1B2150]">
+                        <td className="px-6 py-4 whitespace-nowrap overflow-hidden">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FAFAFB] text-[#1B2150] truncate max-w-[10rem]">
                             {product.brand}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150] hidden sm:table-cell">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150] truncate max-w-[10rem]">
                           {product['sku/model'] || product.sku}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181] hidden sm:table-cell">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181] truncate max-w-[10rem]">
                           {product.category}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150]">
                           ${(product.msrp || 0).toFixed(2)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell text-center">
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
                           <div className="flex items-center justify-center gap-1 text-xs">
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">P {(product.discount_professional || 0).toFixed(0)}%</span>
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">E {(product.discount_expert || 0).toFixed(0)}%</span>
@@ -734,26 +731,19 @@ const AdminProducts = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181]">
                           <div className="flex items-center space-x-2">
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEditProduct(product);
-                              }}
-                              className="flex items-center gap-1 px-3 py-1 text-xs bg-[#1B2150] hover:bg-[#EB664D] text-white rounded transition-colors"
+                              onClick={(e) => { e.stopPropagation(); handleEditProduct(product); }}
+                              className="flex items-center gap-1 px-3 py-1 text-xs bg-transparent border border-[#1B2150] text-[#1B2150] rounded hover:border-[#EB664D] hover:text-[#EB664D] transition-colors"
                               title="Edit Product"
                             >
                               <Edit className="w-3 h-3" />
                               Edit
                             </button>
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteProduct(product._id);
-                              }}
-                              className="flex items-center gap-1 px-3 py-1 text-xs bg-[#EB664D] hover:bg-[#EB664D]/80 text-white rounded transition-colors"
+                              onClick={(e) => { e.stopPropagation(); handleDeleteProduct(product._id); }}
+                              className="p-1.5 text-xs bg-transparent border border-[#EB664D] text-[#EB664D] rounded-full hover:border-[#EB664D]/80 hover:text-[#EB664D]/80 transition-colors"
                               title="Delete Product"
                             >
                               <Trash2 className="w-3 h-3" />
-                              Delete
                             </button>
                           </div>
                         </td>
@@ -762,6 +752,70 @@ const AdminProducts = () => {
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile/Tablet Card View */}
+            <div className="lg:hidden space-y-4 p-4">
+              {paginatedProducts.map((product) => {
+                const isChecked = selectedProducts.has(product._id);
+                return (
+                  <div key={product._id} className="bg-white rounded-lg border border-[#FAFAFB] p-3">
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={(e) => handleSelectProduct(product._id, e)}
+                        className="mt-1 rounded border-[#FAFAFB] text-[#1B2150] focus:ring-[#1B2150]"
+                      />
+                      <div className="flex-shrink-0 h-10 w-10">
+                        {product.product_image || product.picture ? (
+                          <img
+                            className="h-10 w-10 rounded-lg object-cover"
+                            src={product.product_image || product.picture}
+                            alt={product.product_name || product.name}
+                            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                          />
+                        ) : null}
+                        <div className="h-10 w-10 rounded-lg bg-[#FAFAFB] flex items-center justify-center" style={{ display: (product.product_image || product.picture) ? 'none' : 'flex' }}>
+                          <Package className="w-5 h-5 text-[#818181]" />
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-[#1B2150] truncate">{product.product_name || product.name}</div>
+                        <div className="text-xs text-[#818181] truncate">{product.description || ''}</div>
+                        <div className="flex flex-wrap gap-1 mt-2 text-[10px] text-[#1B2150]">
+                          <span className="bg-[#FAFAFB] px-2 py-0.5 rounded">{product.brand}</span>
+                          <span className="bg-[#FAFAFB] px-2 py-0.5 rounded">{product['sku/model'] || product.sku}</span>
+                          <span className="bg-[#FAFAFB] px-2 py-0.5 rounded">{product.category}</span>
+                        </div>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="text-sm font-semibold text-[#1B2150]">${(product.msrp || 0).toFixed(2)}</div>
+                          <div className="flex items-center gap-1 text-[10px]">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">P {(product.discount_professional || 0).toFixed(0)}%</span>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">E {(product.discount_expert || 0).toFixed(0)}%</span>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">M {(product.discount_master || 0).toFixed(0)}%</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-3">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleEditProduct(product); }}
+                            className="flex items-center gap-1 px-3 py-1 text-xs bg-transparent border border-[#1B2150] text-[#1B2150] rounded hover:border-[#EB664D] hover:text-[#EB664D] transition-colors"
+                          >
+                            <Edit className="w-3 h-3" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteProduct(product._id); }}
+                            className="p-1.5 text-xs bg-transparent border border-[#EB664D] text-[#EB664D] rounded-full hover:border-[#EB664D]/80 hover:text-[#EB664D]/80 transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Pagination - EXACTLY matching Products.js */}
