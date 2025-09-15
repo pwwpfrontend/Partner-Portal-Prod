@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../services/auth";
 import { Building2, User, Upload, FileCheck, CheckCircle } from "lucide-react";
 
 const PartnerApplication = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [step, setStep] = useState(1);
   const [isLoaded, setIsLoaded] = useState(false);
   const [formData, setFormData] = useState({
@@ -22,11 +23,58 @@ const PartnerApplication = () => {
   const [ndaAgreed, setNdaAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [recaptchaVerified, setRecaptchaVerified] = useState(false);
+  const [recaptchaError, setRecaptchaError] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Check if NDA was accepted and set the checkbox, or handle step parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    if (urlParams.get('ndaAccepted') === 'true') {
+      setNdaAgreed(true);
+      setStep(4); // Go to the agreement step
+    } else if (urlParams.get('step')) {
+      const stepNumber = parseInt(urlParams.get('step'));
+      if (stepNumber >= 1 && stepNumber <= 4) {
+        setStep(stepNumber);
+      }
+    }
+  }, [location.search]);
+
+  // Load reCAPTCHA script and set up global callback
+  useEffect(() => {
+    if (step === 4) {
+      const script = document.createElement('script');
+      script.src = 'https://www.google.com/recaptcha/api.js';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+
+      // Set up global callback function
+      window.handleRecaptchaChange = (token) => {
+        if (token) {
+          setRecaptchaVerified(true);
+          setRecaptchaError("");
+        } else {
+          setRecaptchaVerified(false);
+        }
+      };
+
+      return () => {
+        // Cleanup script on unmount
+        const existingScript = document.querySelector('script[src="https://www.google.com/recaptcha/api.js"]');
+        if (existingScript) {
+          document.head.removeChild(existingScript);
+        }
+        // Cleanup global callback
+        delete window.handleRecaptchaChange;
+      };
+    }
+  }, [step]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -164,6 +212,10 @@ const PartnerApplication = () => {
     }
     if (!ndaAgreed) {
       setSubmitError("Please agree to the NDA terms to continue.");
+      return;
+    }
+    if (!recaptchaVerified) {
+      setSubmitError("Please complete the reCAPTCHA verification to proceed.");
       return;
     }
 
@@ -592,8 +644,38 @@ const PartnerApplication = () => {
                         className="mt-1 h-4 w-4 text-[#1B2150] rounded focus:ring-[#1B2150]" 
                       />
                       <label htmlFor="nda" className="text-base text-[#818181] leading-relaxed">
-                        I agree to the terms of the <a href="#" className="text-[#1B2150] underline font-semibold hover:text-[#EB664D]">Non-Disclosure Agreement</a> and partnership terms. I understand that all shared information will be kept confidential and used solely for partnership evaluation purposes.
+                        I agree to the terms of the <button type="button" onClick={() => navigate('/ndapage')} className="text-[#1B2150] underline font-semibold hover:text-[#EB664D] transition-colors">Non-Disclosure Agreement</button> and partnership terms. I understand that all shared information will be kept confidential and used solely for partnership evaluation purposes.
                       </label>
+                    </div>
+                  </div>
+
+                  {/* reCAPTCHA */}
+                  <div className="flex flex-col items-center space-y-2">
+                    <div 
+                      className="g-recaptcha" 
+                      data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                      data-callback="handleRecaptchaChange"
+                    ></div>
+                    <p className="text-xs text-[#818181] text-center">
+                      Note: This is a test reCAPTCHA. For production, replace with your actual reCAPTCHA site key.
+                    </p>
+                    {recaptchaError && (
+                      <div className="text-[#EB664D] text-sm font-medium">{recaptchaError}</div>
+                    )}
+                  </div>
+
+                  {/* Requirements Status */}
+                  <div className="bg-[#FAFAFB] rounded-xl p-4 border border-[#FAFAFB]">
+                    <h3 className="text-sm font-semibold text-[#1B2150] mb-2">Submission Requirements:</h3>
+                    <div className="space-y-1 text-sm text-[#818181]">
+                      <div className={`flex items-center space-x-2 ${ndaAgreed ? 'text-green-600' : 'text-[#818181]'}`}>
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        <span>✓ NDA Agreement accepted</span>
+                      </div>
+                      <div className={`flex items-center space-x-2 ${recaptchaVerified ? 'text-green-600' : 'text-[#818181]'}`}>
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        <span>✓ reCAPTCHA verification completed</span>
+                      </div>
                     </div>
                   </div>
 
@@ -613,8 +695,8 @@ const PartnerApplication = () => {
                     </button>
                     <button 
                       type="submit" 
-                      disabled={submitting} 
-                      className="px-6 py-2 bg-[#1B2150] text-white rounded-xl text-base font-semibold hover:bg-[#EB664D] hover:shadow-lg transition-all duration-200 disabled:opacity-60"
+                      disabled={submitting || !recaptchaVerified || !ndaAgreed} 
+                      className="px-6 py-2 bg-[#1B2150] text-white rounded-xl text-base font-semibold hover:bg-[#EB664D] hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {submitting ? "Submitting..." : "Submit Application ✓"}
                     </button>
@@ -653,7 +735,7 @@ const PartnerApplication = () => {
                   <div className="border-t border-[#EB664D]/20 pt-3 mt-4">
                     <div className="text-sm text-[#818181]">
                       <strong className="text-[#1B2150]">Need help?</strong> Contact our support team at{" "}
-                      <span className="font-mono text-[#1B2150]">support@workplace.com</span>
+                      <span className="font-mono text-[#1B2150]">ask@powerworkplace.com</span>
                     </div>
                   </div>
                 </div>

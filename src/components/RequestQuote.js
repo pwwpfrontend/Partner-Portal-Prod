@@ -28,6 +28,13 @@ const RequestQuote = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Generate short quote number (5-7 digits)
+  const generateQuoteNumber = () => {
+    const timestamp = Date.now().toString().slice(-6); // Last 6 digits of timestamp
+    const random = Math.floor(Math.random() * 99); // 0-99
+    return `Q${timestamp}${random.toString().padStart(2, '0')}`.slice(0, 8); // Ensures 7-8 characters total
+  };
+
   // Load persisted quote confirmation on component mount
   useEffect(() => {
     const loadPersistedQuoteState = () => {
@@ -331,10 +338,14 @@ const RequestQuote = () => {
     setSuccess(false);
 
     try {
+      // Generate a short quote number
+      const shortQuoteNumber = generateQuoteNumber();
+
       // Prepare quote data for database API
       const quoteData = {
         type: 'quote',
         status: 'New', // Default status for new quotes
+        quoteNumber: shortQuoteNumber,
         
         // User information from /auth/me
         userId: userDetails.id || userDetails._id,
@@ -343,7 +354,7 @@ const RequestQuote = () => {
         userRole: userDetails.role || currentRole,
         userLevel: userDetails.role || currentRole,
         
-        // Customer/User details
+        // Customer/User details - Fixed field mapping
         customerInfo: {
           id: userDetails.id || userDetails._id,
           name: userDetails.name || userDetails.contactPersonName || userDetails.companyName,
@@ -389,11 +400,12 @@ const RequestQuote = () => {
         requirements: 'Customer quote request from web portal'
       };
 
-      // Prepare mail data with user schema format - INCLUDING status field
+      // Prepare mail data with user schema format - Fixed field mapping for mail
       const mailData = {
         _id: userDetails.id || userDetails._id,
         companyName: userDetails.companyName || userDetails.name,
         companyAddress: userDetails.address || userDetails.companyAddress || '',
+        companyCountry: userDetails.country || userDetails.companyCountry || '',
         businessType: userDetails.businessType || 'integrator',
         contactPersonName: userDetails.name || userDetails.contactPersonName || userDetails.companyName,
         email: userDetails.email,
@@ -403,10 +415,11 @@ const RequestQuote = () => {
         certificateUrl: userDetails.certificateUrl || null,
         role: userDetails.role || currentRole,
         date: new Date().toISOString(),
-        status: 'New', // Add status field to mail data
+        status: 'New',
         cart: {
           type: 'cart',
-          status: 'New', // Add status field to cart object
+          status: 'New',
+          quoteNumber: shortQuoteNumber,
           items: cartItems.map(item => ({
             productId: item.productId || item.id,
             name: item.name,
@@ -489,8 +502,8 @@ const RequestQuote = () => {
         }
       }
 
-      // Use the actual quote ID from the backend response
-      const actualQuoteId = quoteResult.id || quoteResult._id || quoteResult.quoteNumber;
+      // Use the actual quote ID from the backend response or fallback to our generated number
+      const actualQuoteId = quoteResult.id || quoteResult._id || quoteResult.quoteNumber || shortQuoteNumber;
       console.log('Actual quote ID from backend:', actualQuoteId);
 
       // Fetch the complete quote details from backend if we have an ID
@@ -503,7 +516,7 @@ const RequestQuote = () => {
       const submittedQuoteDetails = completeQuoteDetails || {
         id: actualQuoteId,
         _id: actualQuoteId,
-        quoteNumber: quoteResult.quoteNumber || actualQuoteId,
+        quoteNumber: shortQuoteNumber,
         submittedAt: new Date().toISOString(),
         userDetails: userDetails,
         items: [...cartItems],
@@ -632,24 +645,6 @@ const RequestQuote = () => {
                   </div>
                 </div>
 
-                {/* Customer Info
-                {submittedQuote.customerInfo && (
-                  <div className="mb-6">
-                    <h3 className="font-semibold text-green-800 mb-3 flex items-center">
-                      <User className="w-4 h-4 mr-2" />
-                      Customer Details
-                    </h3>
-                    <div className="bg-white rounded-lg p-3 border border-green-200">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                        <p><span className="font-medium">Name:</span> {submittedQuote.customerInfo.name}</p>
-                        <p><span className="font-medium">Email:</span> {submittedQuote.customerInfo.email}</p>
-                        <p><span className="font-medium">Company:</span> {submittedQuote.customerInfo.company}</p>
-                        <p><span className="font-medium">Role:</span> {submittedQuote.customerInfo.role}</p>
-                      </div>
-                    </div>
-                  </div>
-                )} */}
-
                 {/* Products Summary */}
                 <div className="mb-6">
                   <h3 className="font-semibold text-green-800 mb-3 flex items-center">
@@ -721,10 +716,10 @@ const RequestQuote = () => {
                       <div className="text-2xl font-bold text-[#1B2150]">${(submittedQuote.totalAmount || 0).toFixed(2)}</div>
                       <div className="text-sm text-[#1B2150]">Total Value</div>
                     </div>
-                    {/* <div>
+                    <div>
                       <div className="text-2xl font-bold text-[#1B2150]">{submittedQuote.status || 'New'}</div>
                       <div className="text-sm text-[#1B2150]">Status</div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
 
@@ -785,9 +780,6 @@ const RequestQuote = () => {
                         <p className="text-sm text-[#818181]">
                           {quote.submittedAt ? new Date(quote.submittedAt).toLocaleDateString() : 'Recently'}
                         </p>
-                        {/* <span className="text-xs bg-blue-100 text-[#1B2150] px-2 py-1 rounded">
-                          {quote.status || 'New'}
-                        </span> */}
                       </div>
                     </div>
                   ))}

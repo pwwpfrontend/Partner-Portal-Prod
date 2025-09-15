@@ -49,7 +49,8 @@ const AdminUsers = () => {
     companyAddress: '',
     businessType: 'other',
     phone: '',
-    position: ''
+    position: '',
+    country: ''
   });
   const [addUserError, setAddUserError] = useState('');
 
@@ -67,13 +68,19 @@ const AdminUsers = () => {
       const data = await getAllUsers();
       const normalized = (data || []).map(u => ({
         id: u._id,
-        name: u.contactPersonName || '-',
+        name: u.contactPersonName || u.name || u.contactName || '-',
         email: u.email,
         company: u.companyName,
-        phone: u.phoneNumber,
-        location: u.companyAddress,
+        // Fixed field mapping for phone number
+        phone: u.phoneNumber || u.phone || '',
+        // Fixed field mapping for location/address
+        location: u.companyAddress || u.address || '',
+        // Fixed field mapping for country
+        country: u.country || u.companyCountry || '',
         status: u.role === 'pending' ? 'pending' : 'approved',
         role: u.role,
+        position: u.position || '',
+        businessType: u.businessType || u.bussinessType || '',
         // Try to detect uploaded document url from various possible fields
         documentUrl: u.certificate || u.certificateUrl || u.documentUrl || u.document || (Array.isArray(u.documents) ? u.documents[0] : (u.documents?.certificate || null)) || null,
         appliedDate: u.createdAt ? new Date(u.createdAt).toISOString().split('T')[0] : '',
@@ -102,7 +109,8 @@ const AdminUsers = () => {
     const matchesSearch = 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.company.toLowerCase().includes(searchTerm.toLowerCase());
+      user.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.country.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
@@ -202,7 +210,8 @@ const AdminUsers = () => {
       companyAddress: '',
       businessType: 'other',
       phone: '',
-      position: ''
+      position: '',
+      country: ''
     });
     setAddUserError('');
   };
@@ -236,6 +245,7 @@ const AdminUsers = () => {
         fd.append("email", addUserForm.email);
         fd.append("password", addUserForm.password);
         fd.append("position", addUserForm.position || 'Not specified');
+        fd.append("country", addUserForm.country || 'Not specified');
 
         registerResponse = await api.post("/auth/register", fd, { 
           headers: { "Content-Type": "multipart/form-data" } 
@@ -256,6 +266,7 @@ const AdminUsers = () => {
           email: addUserForm.email,
           password: addUserForm.password,
           position: addUserForm.position || 'Not specified',
+          country: addUserForm.country || 'Not specified',
           role: 'pending' // Start as pending, then approve
         };
 
@@ -426,7 +437,10 @@ const AdminUsers = () => {
           <div className="p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="bg-[#FAFAFB] rounded-xl p-6 border border-gray-100">
-                <h3 className="font-semibold text-[#1B2150] mb-4">Personal Information</h3>
+                <h3 className="font-semibold text-[#1B2150] mb-4 flex items-center">
+                  <User className="w-5 h-5 mr-2" />
+                  Personal Information
+                </h3>
                 <div className="space-y-3">
                   <div>
                     <label className="text-sm text-[#818181]">Name</label>
@@ -434,26 +448,54 @@ const AdminUsers = () => {
                   </div>
                   <div>
                     <label className="text-sm text-[#818181]">Email</label>
-                    <p className="text-gray-900">{selectedUser.email}</p>
+                    <div className="flex items-center">
+                      <Mail className="w-4 h-4 text-[#818181] mr-2" />
+                      <p className="text-gray-900">{selectedUser.email}</p>
+                    </div>
                   </div>
                   <div>
                     <label className="text-sm text-[#818181]">Phone</label>
-                    <p className="text-gray-900">{selectedUser.phone}</p>
+                    <div className="flex items-center">
+                      <Phone className="w-4 h-4 text-[#818181] mr-2" />
+                      <p className="text-gray-900">{selectedUser.phone || 'Not provided'}</p>
+                    </div>
                   </div>
+                  {selectedUser.position && (
+                    <div>
+                      <label className="text-sm text-[#818181]">Position</label>
+                      <p className="text-gray-900">{selectedUser.position}</p>
+                    </div>
+                  )}
                 </div>
               </div>
               
               <div className="bg-[#FAFAFB] rounded-xl p-6 border border-gray-100">
-                <h3 className="font-semibold text-[#1B2150] mb-4">Company Information</h3>
+                <h3 className="font-semibold text-[#1B2150] mb-4 flex items-center">
+                  <Building className="w-5 h-5 mr-2" />
+                  Company Information
+                </h3>
                 <div className="space-y-3">
                   <div>
                     <label className="text-sm text-[#818181]">Company</label>
                     <p className="text-gray-900 font-medium">{selectedUser.company}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-[#818181]">Location</label>
-                    <p className="text-gray-900">{selectedUser.location}</p>
+                    <label className="text-sm text-[#818181]">Address</label>
+                    <div className="flex items-start">
+                      <MapPin className="w-4 h-4 text-[#818181] mr-2 mt-0.5" />
+                      <p className="text-gray-900">{selectedUser.location || 'Not provided'}</p>
+                    </div>
                   </div>
+                  <div>
+                    <label className="text-sm text-[#818181]">Country</label>
+                    <p className="text-gray-900">{selectedUser.country || 'Not provided'}</p>
+                  </div>
+                  {selectedUser.businessType && (
+                    <div>
+                      <label className="text-sm text-[#818181]">Business Type</label>
+                      <p className="text-gray-900 capitalize">{selectedUser.businessType}</p>
+                    </div>
+                  )}
                   <div>
                     <label className="text-sm text-[#818181]">Status</label>
                     <div className="mt-1">{getStatusBadge(selectedUser.status)}</div>
@@ -499,7 +541,10 @@ const AdminUsers = () => {
             )}
 
             <div className="mt-8 bg-[#FAFAFB] rounded-xl p-6 border border-gray-100">
-              <h3 className="font-semibold text-[#1B2150] mb-4">Partnership Details</h3>
+              <h3 className="font-semibold text-[#1B2150] mb-4 flex items-center">
+                <Shield className="w-5 h-5 mr-2" />
+                Partnership Details
+              </h3>
               <div className="space-y-3">
                 <div>
                   <label className="text-sm text-[#818181]">Current Role</label>
@@ -584,7 +629,7 @@ const AdminUsers = () => {
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#818181] w-5 h-5" />
                   <input
                     type="text"
-                    placeholder="Search users by name, email, or company..."
+                    placeholder="Search users by name, email, company, or country..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-12 pr-4 py-3 border-2 border-[#FAFAFB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white text-lg"
@@ -670,7 +715,10 @@ const AdminUsers = () => {
                         User
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-[#1B2150] uppercase tracking-wider">
-                        Company
+                        Company & Location
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#1B2150] uppercase tracking-wider">
+                        Contact Info
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-[#1B2150] uppercase tracking-wider">
                         Status
@@ -703,7 +751,21 @@ const AdminUsers = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-[#1B2150]">{user.company}</div>
-                          <div className="text-sm text-[#818181]">{user.location}</div>
+                          <div className="text-sm text-[#818181] flex items-center">
+                            <MapPin className="w-3 h-3 mr-1" />
+                            {user.country || user.location || 'Not specified'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {user.phone && (
+                            <div className="text-sm text-[#1B2150] flex items-center">
+                              <Phone className="w-3 h-3 mr-1" />
+                              {user.phone}
+                            </div>
+                          )}
+                          {user.position && (
+                            <div className="text-sm text-[#818181]">{user.position}</div>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {getStatusBadge(user.status)}
@@ -873,6 +935,36 @@ const AdminUsers = () => {
                 />
               </div>
 
+              {/* Company Address */}
+              <div>
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
+                  Company Address
+                </label>
+                <input
+                  type="text"
+                  name="companyAddress"
+                  value={addUserForm.companyAddress}
+                  onChange={handleAddUserFormChange}
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
+                  placeholder="Optional"
+                />
+              </div>
+
+              {/* Country */}
+              <div>
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  name="country"
+                  value={addUserForm.country}
+                  onChange={handleAddUserFormChange}
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
+                  placeholder="Optional"
+                />
+              </div>
+
               {/* Phone */}
               <div>
                 <label className="block text-sm font-medium text-[#1B2150] mb-1">
@@ -882,6 +974,21 @@ const AdminUsers = () => {
                   type="text"
                   name="phone"
                   value={addUserForm.phone}
+                  onChange={handleAddUserFormChange}
+                  className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
+                  placeholder="Optional"
+                />
+              </div>
+
+              {/* Position */}
+              <div>
+                <label className="block text-sm font-medium text-[#1B2150] mb-1">
+                  Position/Title
+                </label>
+                <input
+                  type="text"
+                  name="position"
+                  value={addUserForm.position}
                   onChange={handleAddUserFormChange}
                   className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
                   placeholder="Optional"
