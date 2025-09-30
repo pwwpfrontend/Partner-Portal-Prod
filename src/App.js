@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./components/LandingPage";
 import PartnerApplication from "./components/PartnerApplication";
+import NDAPage from "./components/NDAPage";
 import LoginPage from "./components/LoginPage";
 import Dashboard from "./components/Dashboard";
 import Products from "./components/Products";
@@ -16,10 +17,13 @@ import Unauthorized from "./components/Unauthorized";
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      {/* NOTE: If using react-router v6 stable, the future prop is not needed. Kept for now. */}
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/application" element={<PartnerApplication />} />
+        <Route path="/partner-application" element={<PartnerApplication />} />
+        <Route path="/nda" element={<NDAPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
@@ -31,10 +35,22 @@ function App() {
         {/* Routes for all non-admin users */}
         <Route path="/request-quote" element={<PrivateRoute roles={["professional", "expert", "master"]}><RequestQuote /></PrivateRoute>} />
 
-        {/* Admin-only routes */}
-        <Route path="/admin/products" element={<RoleGuard allowedRoles={["admin"]}><AdminProducts /></RoleGuard>} />
-        <Route path="/admin/users" element={<RoleGuard allowedRoles={["admin"]}><AdminUsers /></RoleGuard>} />
-        <Route path="/admin/quotes" element={<RoleGuard allowedRoles={["admin"]}><ManageQuotes /></RoleGuard>} />
+        {/* Admin-only routes: wrap with PrivateRoute to ensure auth resolved before role checks */}
+        <Route path="/admin/products" element={
+          <PrivateRoute roles={["admin"]}>
+            <RoleGuard allowedRoles={["admin"]}><AdminProducts /></RoleGuard>
+          </PrivateRoute>
+        } />
+        <Route path="/admin/users" element={
+          <PrivateRoute roles={["admin"]}>
+            <RoleGuard allowedRoles={["admin"]}><AdminUsers /></RoleGuard>
+          </PrivateRoute>
+        } />
+        <Route path="/admin/quotes" element={
+          <PrivateRoute roles={["admin"]}>
+            <RoleGuard allowedRoles={["admin"]}><ManageQuotes /></RoleGuard>
+          </PrivateRoute>
+        } />
       </Routes>
     </Router>
   );

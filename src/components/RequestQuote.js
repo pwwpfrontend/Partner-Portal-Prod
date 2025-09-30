@@ -20,6 +20,9 @@ const RequestQuote = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [recentQuotes, setRecentQuotes] = useState([]);
   
+  // Additional message state
+  const [additionalMessage, setAdditionalMessage] = useState('');
+  
   // Load animation state
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -396,8 +399,9 @@ const RequestQuote = () => {
         updatedAt: new Date().toISOString(),
         
         // Additional info
-        additionalNotes: '',
-        requirements: 'Customer quote request from web portal'
+        additionalNotes: additionalMessage || '',
+        client_message: additionalMessage || '',
+        requirements: additionalMessage ? `Customer quote request from web portal. Additional message: ${additionalMessage}` : 'Customer quote request from web portal'
       };
 
       // Prepare mail data with user schema format - Fixed field mapping for mail
@@ -416,6 +420,8 @@ const RequestQuote = () => {
         role: userDetails.role || currentRole,
         date: new Date().toISOString(),
         status: 'New',
+        client_message: additionalMessage || '',
+        quote_id: shortQuoteNumber,
         cart: {
           type: 'cart',
           status: 'New',
@@ -541,9 +547,10 @@ const RequestQuote = () => {
       setSubmittedQuote(submittedQuoteDetails);
       setShowConfirmation(true);
 
-      // Clear cart and show success
+      // Clear cart, message and show success
       setCartItems([]);
       localStorage.removeItem('quoteCart');
+      setAdditionalMessage('');
 
       setSuccess(true);
       
@@ -577,6 +584,7 @@ const RequestQuote = () => {
     setSubmittedQuote(null);
     setSuccess(false);
     setError(null);
+    setAdditionalMessage(''); // Clear the message field
     // Clear persisted state
     localStorage.removeItem('lastSubmittedQuote');
     localStorage.removeItem('lastQuoteSubmissionTime');
@@ -739,7 +747,7 @@ const RequestQuote = () => {
                   </a>
                   <a
                     href="/dashboard"
-                    className="bg-[#1B2150] text-white px-6 py-3 rounded-lg hover:bg-[#EB664D] transition-colors duration-200 font-medium text-center"
+                    className="bg-[#1B2150] text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium text-center"
                   >
                     View Dashboard
                   </a>
@@ -821,7 +829,7 @@ const RequestQuote = () => {
                         <button
                           onClick={handleSubmitQuote}
                           disabled={loading || !isAuthenticated}
-                          className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-[#EB664D] transition-colors duration-200 font-medium text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                           {loading ? (
                             <>
@@ -1043,12 +1051,6 @@ const RequestQuote = () => {
                                 </button>
                               </div>
                             </div>
-                            
-                            {product.description && (
-                              <p className="text-sm text-[#818181] mt-3 ml-15 bg-[#FAFAFB] rounded p-2">
-                                {product.description}
-                              </p>
-                            )}
                           </div>
                         );
                       })}
@@ -1056,6 +1058,27 @@ const RequestQuote = () => {
                   )}
                 </div>
               </div>
+
+              {/* Message Input Section */}
+              {cartItems.length > 0 && (
+                <div className={`mt-4 transform transition-all duration-700 delay-300 ${
+                  isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+                }`}>
+                  <div className="bg-white backdrop-blur-sm rounded-xl shadow-sm p-4 border border-[#FAFAFB]">
+                    <h3 className="text-lg font-semibold text-[#1B2150] mb-3 flex items-center">
+                      <Mail className="w-5 h-5 mr-2" />
+                      Additional Message (Optional)
+                    </h3>
+                    <textarea
+                      value={additionalMessage}
+                      onChange={(e) => setAdditionalMessage(e.target.value)}
+                      placeholder="Add any questions, special requirements, or additional information for this quote request..."
+                      className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white resize-none"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Compact Summary Section */}
               {cartItems.length > 0 && (

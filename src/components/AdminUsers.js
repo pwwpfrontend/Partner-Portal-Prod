@@ -223,8 +223,10 @@ const AdminUsers = () => {
     setActionLoading(true);
 
     // Basic validation
-    if (!addUserForm.contactName || !addUserForm.email || !addUserForm.password) {
-      setAddUserError('Name, email, and password are required.');
+    if (!addUserForm.contactName || !addUserForm.email || !addUserForm.password || 
+        !addUserForm.companyName || !addUserForm.companyAddress || !addUserForm.country ||
+        !addUserForm.phone || !addUserForm.position) {
+      setAddUserError('All fields are required. Please fill in all the information.');
       setActionLoading(false);
       return;
     }
@@ -247,7 +249,7 @@ const AdminUsers = () => {
         fd.append("position", addUserForm.position || 'Not specified');
         fd.append("country", addUserForm.country || 'Not specified');
 
-        registerResponse = await api.post("/auth/register", fd, { 
+        registerResponse = await api.post("/partners/auth/register_no_recaptcha", fd, { 
           headers: { "Content-Type": "multipart/form-data" } 
         });
         
@@ -270,7 +272,7 @@ const AdminUsers = () => {
           role: 'pending' // Start as pending, then approve
         };
 
-        registerResponse = await api.post("/auth/register", jsonPayload, {
+        registerResponse = await api.post("/partners/auth/register_no_recaptcha", jsonPayload, {
           headers: { "Content-Type": "application/json" }
         });
         
@@ -923,7 +925,7 @@ const AdminUsers = () => {
               {/* Company Name */}
               <div>
                 <label className="block text-sm font-medium text-[#1B2150] mb-1">
-                  Company Name
+                  Company Name *
                 </label>
                 <input
                   type="text"
@@ -931,14 +933,14 @@ const AdminUsers = () => {
                   value={addUserForm.companyName}
                   onChange={handleAddUserFormChange}
                   className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
-                  placeholder="Optional"
+                  required
                 />
               </div>
 
               {/* Company Address */}
               <div>
                 <label className="block text-sm font-medium text-[#1B2150] mb-1">
-                  Company Address
+                  Company Address *
                 </label>
                 <input
                   type="text"
@@ -946,14 +948,14 @@ const AdminUsers = () => {
                   value={addUserForm.companyAddress}
                   onChange={handleAddUserFormChange}
                   className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
-                  placeholder="Optional"
+                  required
                 />
               </div>
 
               {/* Country */}
               <div>
                 <label className="block text-sm font-medium text-[#1B2150] mb-1">
-                  Country
+                  Country *
                 </label>
                 <input
                   type="text"
@@ -961,14 +963,14 @@ const AdminUsers = () => {
                   value={addUserForm.country}
                   onChange={handleAddUserFormChange}
                   className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
-                  placeholder="Optional"
+                  required
                 />
               </div>
 
               {/* Phone */}
               <div>
                 <label className="block text-sm font-medium text-[#1B2150] mb-1">
-                  Phone Number
+                  Phone Number *
                 </label>
                 <input
                   type="text"
@@ -976,14 +978,14 @@ const AdminUsers = () => {
                   value={addUserForm.phone}
                   onChange={handleAddUserFormChange}
                   className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
-                  placeholder="Optional"
+                  required
                 />
               </div>
 
               {/* Position */}
               <div>
                 <label className="block text-sm font-medium text-[#1B2150] mb-1">
-                  Position/Title
+                  Position/Title *
                 </label>
                 <input
                   type="text"
@@ -991,20 +993,21 @@ const AdminUsers = () => {
                   value={addUserForm.position}
                   onChange={handleAddUserFormChange}
                   className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
-                  placeholder="Optional"
+                  required
                 />
               </div>
 
               {/* Business Type */}
               <div>
                 <label className="block text-sm font-medium text-[#1B2150] mb-1">
-                  Business Type
+                  Business Type *
                 </label>
                 <select
                   name="businessType"
                   value={addUserForm.businessType}
                   onChange={handleAddUserFormChange}
                   className="w-full border-2 border-[#FAFAFB] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent transition-all duration-200 bg-[#FAFAFB] hover:bg-white"
+                  required
                 >
                   <option value="other">Other</option>
                   <option value="reseller">Reseller</option>

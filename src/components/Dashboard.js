@@ -52,10 +52,10 @@ const Dashboard = () => {
           href: '/admin/users'
         },
         {
-          title: 'Quotes',
+          title: 'Manage Quotes',
           description: 'Manage comprehensive quotes',
           icon: FileText,
-          href: '/request-quote'
+          href: '/admin/quotes'
         }
       ];
     } else if (currentRole === 'professional' || currentRole === 'expert' || currentRole === 'master') {

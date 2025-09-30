@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../services/auth";
 import { User, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
+
+// reCAPTCHA v2 configuration
+const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || "6Ld7QMwrAAAAANZke_5BTI-knhtlI2TQ33cYpbdA";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -11,12 +14,117 @@ const LoginPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  const [recaptchaError, setRecaptchaError] = useState("");
+  const recaptchaRef = useRef(null);
+  const [recaptchaWidgetId, setRecaptchaWidgetId] = useState(null);
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const [recaptchaTimeout, setRecaptchaTimeout] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Load reCAPTCHA v2 script and render widget
+  useEffect(() => {
+    const loadRecaptcha = () => {
+      if (window.grecaptcha) {
+        setRecaptchaLoaded(true);
+        setRecaptchaError("");
+        setRecaptchaTimeout(false);
+        console.debug("[recaptcha] grecaptcha already present");
+        return;
+      }
+
+      // Check if script is already being loaded
+      const existingScript = document.querySelector(`script[src*="recaptcha/api.js"]`);
+      if (existingScript) {
+        console.debug("[recaptcha] script already exists, waiting for load");
+        return;
+      }
+
+      // Set a timeout to handle cases where reCAPTCHA fails to load
+      const timeoutId = setTimeout(() => {
+        if (!window.grecaptcha) {
+          setRecaptchaTimeout(true);
+          setRecaptchaError("reCAPTCHA is taking too long to load. Please refresh the page or check your internet connection.");
+          console.debug("[recaptcha] timeout waiting for script to load");
+        }
+      }, 10000); // 10 second timeout
+
+      const script = document.createElement('script');
+      script.src = "https://www.google.com/recaptcha/api.js";
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        clearTimeout(timeoutId);
+        setRecaptchaLoaded(true);
+        setRecaptchaError("");
+        setRecaptchaTimeout(false);
+        console.debug("[recaptcha] v2 script loaded");
+      };
+      script.onerror = () => {
+        clearTimeout(timeoutId);
+        setRecaptchaError("Failed to load reCAPTCHA. Please check your internet connection and try again.");
+        setRecaptchaLoaded(false);
+        setRecaptchaTimeout(true);
+        console.debug("[recaptcha] script failed to load");
+      };
+      document.head.appendChild(script);
+    };
+
+    loadRecaptcha();
+
+    return () => {
+      // Cleanup on unmount: reset widget and remove script
+      try {
+        if (window.grecaptcha && recaptchaWidgetId !== null) {
+          window.grecaptcha.reset(recaptchaWidgetId);
+        }
+      } catch {}
+      const existingScript = document.querySelector(`script[src*="recaptcha/api.js"]`);
+      if (existingScript) {
+        document.head.removeChild(existingScript);
+      }
+    };
+  }, []);
+
+  // Render widget when component is loaded and script is loaded
+  useEffect(() => {
+    if (
+      isLoaded &&
+      recaptchaLoaded &&
+      window.grecaptcha &&
+      recaptchaRef.current &&
+      recaptchaWidgetId === null
+    ) {
+      // Add a small delay to ensure DOM is ready
+      const timer = setTimeout(() => {
+        try {
+          if (recaptchaRef.current && window.grecaptcha) {
+            const id = window.grecaptcha.render(recaptchaRef.current, {
+              sitekey: RECAPTCHA_SITE_KEY,
+              size: "normal",
+              callback: (token) => {
+                setRecaptchaToken(token);
+              },
+              "expired-callback": () => {
+                setRecaptchaToken(null);
+              }
+            });
+            setRecaptchaWidgetId(id);
+          }
+        } catch (err) {
+          console.debug('[recaptcha] deferred render error', err);
+          setRecaptchaError("Failed to render reCAPTCHA. Please refresh the page.");
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isLoaded, recaptchaLoaded, recaptchaWidgetId]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -32,10 +140,28 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setRecaptchaError("");
+
+    // For development, allow submission without reCAPTCHA if it fails to load
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    if (recaptchaTimeout && !isDevelopment) {
+      setError("reCAPTCHA failed to load. Please refresh the page and try again.");
+      return;
+    }
+    if (!recaptchaLoaded && !isDevelopment) {
+      setError("reCAPTCHA is still loading. Please wait a moment and try again.");
+      return;
+    }
+    if (!recaptchaToken && !isDevelopment) {
+      setError("Please complete the reCAPTCHA checkbox to verify you are human.");
+      return;
+    }
+
     setLoading(true);
     try {
       const { email, password } = formData;
-      const result = await login(email, password);
+      const result = await login(email, password, recaptchaToken);
       console.log('Login result:', result);
       
       if (result?.role) {
@@ -162,6 +288,29 @@ const LoginPage = () => {
               >
                 Forgot password?
               </Link>
+            </div>
+
+            {/* reCAPTCHA v2 Widget & Status */}
+            <div className="flex flex-col items-center space-y-2">
+              <div ref={recaptchaRef} className="my-2" aria-hidden={!!recaptchaToken ? "false" : "true"}></div>
+              {recaptchaError && (
+                <div className="text-[#EB664D] text-sm font-medium text-center bg-[#EB664D]/10 border border-[#EB664D]/30 rounded-lg p-3">
+                  {recaptchaError}
+                  {recaptchaTimeout && (
+                    <button 
+                      onClick={() => window.location.reload()} 
+                      className="ml-2 underline hover:no-underline"
+                    >
+                      Refresh Page
+                    </button>
+                  )}
+                </div>
+              )}
+              {!recaptchaLoaded && !recaptchaError && !recaptchaTimeout && (
+                <div className="text-[#818181] text-sm text-center">
+                  Loading reCAPTCHA...
+                </div>
+              )}
             </div>
 
             {error && (

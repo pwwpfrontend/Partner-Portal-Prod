@@ -34,11 +34,9 @@ const AdminProducts = () => {
   const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [selectedProducts, setSelectedProducts] = useState(new Set());
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [deletingMany, setDeletingMany] = useState(false);
   const itemsPerPage = 10;
 
   // API Base URL
@@ -117,6 +115,7 @@ const AdminProducts = () => {
     fd.append('product_name', values.product_name ?? '');
     fd.append('sku/model', values['sku/model'] ?? values.skuModel ?? '');
     fd.append('msrp', values.msrp != null ? String(values.msrp) : '');
+    fd.append('true_cost', values.true_cost != null ? String(values.true_cost) : '');
     fd.append('discount_expert', values.discount_expert != null ? String(values.discount_expert) : '');
     fd.append('discount_professional', values.discount_professional != null ? String(values.discount_professional) : '');
     fd.append('discount_master', values.discount_master != null ? String(values.discount_master) : '');
@@ -159,20 +158,10 @@ const AdminProducts = () => {
     return res.json();
   };
 
-  const apiDeleteMany = async (ids) => {
-    const fd = new FormData();
-    fd.append('ids', JSON.stringify(ids));
-    const res = await fetchWithAuth('/products', { method: 'DELETE', body: fd });
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(`Multi-delete failed: ${res.status} ${txt}`);
-    }
-    return res.json();
-  };
 
   // Handle product selection
   const handleProductClick = (product, event) => {
-    if (event.target.closest('button') || event.target.closest('input[type="checkbox"]')) {
+    if (event.target.closest('button')) {
       return;
     }
     
@@ -180,48 +169,6 @@ const AdminProducts = () => {
     
     if (selectedProduct?._id !== product._id) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  // Handle checkbox selection
-  const handleSelectProduct = (productId, event) => {
-    event.stopPropagation();
-    setSelectedProducts(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(productId)) {
-        newSet.delete(productId);
-      } else {
-        newSet.add(productId);
-      }
-      return newSet;
-    });
-  };
-
-  // Handle select all
-  const handleSelectAll = (event) => {
-    if (event.target.checked) {
-      setSelectedProducts(new Set(paginatedProducts.map(p => p._id)));
-    } else {
-      setSelectedProducts(new Set());
-    }
-  };
-
-  // Handle bulk delete
-  const handleBulkDelete = async () => {
-    if (selectedProducts.size === 0 || deletingMany) return;
-    if (!window.confirm(`Are you sure you want to delete ${selectedProducts.size} products?`)) return;
-
-    try {
-      setDeletingMany(true);
-      await apiDeleteMany(Array.from(selectedProducts));
-      setProducts(prev => prev.filter(p => !selectedProducts.has(p._id)));
-      setSelectedProducts(new Set());
-      alert('Products deleted successfully');
-    } catch (err) {
-      console.error('Bulk delete error:', err);
-      alert('Failed to delete products: ' + err.message);
-    } finally {
-      setDeletingMany(false);
     }
   };
 
@@ -426,22 +373,6 @@ const AdminProducts = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              {selectedProducts.size > 0 && (
-                <button
-                  type="button"
-                  disabled={deletingMany}
-                  aria-busy={deletingMany ? 'true' : 'false'}
-                  onClick={(e) => { e.stopPropagation(); handleBulkDelete(); }}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#EB664D] text-white rounded-lg hover:bg-[#EB664D]/80 transition-colors disabled:opacity-50"
-                >
-                  {deletingMany ? 'Deleting...' : (
-                    <>
-                      <Trash2 className="w-4 h-4" />
-                      Delete Selected ({selectedProducts.size})
-                    </>
-                  )}
-                </button>
-              )}
               <button
                 type="button"
                 onClick={() => setShowAddModal(true)}
@@ -518,6 +449,10 @@ const AdminProducts = () => {
                         <span className="text-[#818181]">MSRP:</span>
                         <span className="font-semibold">${(selectedProduct.msrp || 0).toFixed(2)}</span>
                       </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[#818181]">True Cost:</span>
+                      <span className="font-semibold">${(selectedProduct.true_cost || 0).toFixed(2)}</span>
+                    </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-[#818181]">Discount (Professional):</span>
                         <span className="font-semibold text-green-600">{(selectedProduct.discount_professional || 0).toFixed(0)}%</span>
@@ -627,33 +562,28 @@ const AdminProducts = () => {
               <table className="min-w-full divide-y divide-[#FAFAFB]">
                 <thead className="bg-[#FAFAFB]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider w-10">
-                      <input
-                        type="checkbox"
-                        checked={selectedProducts.size === paginatedProducts.length && paginatedProducts.length > 0}
-                        onChange={handleSelectAll}
-                        className="rounded border-[#FAFAFB] text-[#1B2150] focus:ring-[#1B2150]"
-                      />
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
+                    <th className="px-2 py-2 text-left text-xs font-medium text-[#818181] uppercase tracking-wider" style={{width: '40%'}}>
                       Product
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
+                    <th className="px-2 py-2 text-left text-xs font-medium text-[#818181] uppercase tracking-wider" style={{width: '12%'}}>
                       Brand
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
+                    <th className="px-2 py-2 text-left text-xs font-medium text-[#818181] uppercase tracking-wider" style={{width: '12%'}}>
                       SKU
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
+                    <th className="px-2 py-2 text-left text-xs font-medium text-[#818181] uppercase tracking-wider" style={{width: '12%'}}>
                       Category
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
+                    <th className="px-2 py-2 text-left text-xs font-medium text-[#818181] uppercase tracking-wider" style={{width: '8%'}}>
                       MSRP
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-[#818181] uppercase tracking-wider">
+                    <th className="px-2 py-2 text-left text-xs font-medium text-[#818181] uppercase tracking-wider" style={{width: '8%'}}>
+                      True Cost
+                    </th>
+                    <th className="px-2 py-2 text-center text-xs font-medium text-[#818181] uppercase tracking-wider" style={{width: '8%'}}>
                       Discounts
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#818181] uppercase tracking-wider">
+                    <th className="px-2 py-2 text-left text-xs font-medium text-[#818181] uppercase tracking-wider" style={{width: '8%'}}>
                       Actions
                     </th>
                   </tr>
@@ -661,27 +591,18 @@ const AdminProducts = () => {
                 <tbody className="bg-white divide-y divide-[#FAFAFB]">
                   {paginatedProducts.map((product) => {
                     const isSelected = selectedProduct?._id === product._id;
-                    const isChecked = selectedProducts.has(product._id);
                     return (
                       <tr 
                         key={product._id}
                         className={`hover:bg-[#FAFAFB] cursor-pointer ${isSelected ? 'bg-blue-50' : ''}`}
                         onClick={(e) => handleProductClick(product, e)}
                       >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={(e) => handleSelectProduct(product._id, e)}
-                            className="rounded border-[#FAFAFB] text-[#1B2150] focus:ring-[#1B2150]"
-                          />
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-2 py-2 whitespace-nowrap" style={{width: '40%'}}>
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
+                            <div className="flex-shrink-0 h-8 w-8">
                               {product.product_image || product.picture ? (
                                 <img 
-                                  className="h-10 w-10 rounded-lg object-cover" 
+                                  className="h-8 w-8 rounded object-cover" 
                                   src={product.product_image || product.picture} 
                                   alt={product.product_name || product.name}
                                   onError={(e) => {
@@ -691,56 +612,72 @@ const AdminProducts = () => {
                                 />
                               ) : null}
                               <div 
-                                className="h-10 w-10 rounded-lg bg-[#FAFAFB] flex items-center justify-center"
+                                className="h-8 w-8 rounded bg-[#FAFAFB] flex items-center justify-center"
                                 style={{ display: (product.product_image || product.picture) ? 'none' : 'flex' }}
                               >
-                                <Package className="w-5 h-5 text-[#818181]" />
+                                <Package className="w-4 h-4 text-[#818181]" />
                               </div>
                             </div>
-                            <div className="ml-4 min-w-0">
+                            <div className="ml-3 min-w-0 flex-1">
                               <div className="text-sm font-medium text-[#1B2150] truncate">
                                 {product.product_name || product.name}
                               </div>
-                              <div className="text-sm text-[#818181] truncate max-w-[14rem]">
-                                {product.description || ''}
+                              <div className="text-xs text-[#818181] truncate">
+                                {(product.description || '').substring(0, 60)}...
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap overflow-hidden">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#FAFAFB] text-[#1B2150] truncate max-w-[10rem]">
+                        <td className="px-2 py-2 whitespace-nowrap overflow-hidden" style={{width: '12%'}}>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#FAFAFB] text-[#1B2150] truncate">
                             {product.brand}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150] truncate max-w-[10rem]">
+                        <td className="px-2 py-2 whitespace-nowrap text-xs text-[#1B2150] truncate" style={{width: '12%'}}>
                           {product['sku/model'] || product.sku}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181] truncate max-w-[10rem]">
+                        <td className="px-2 py-2 whitespace-nowrap text-xs text-[#818181] truncate" style={{width: '12%'}}>
                           {product.category}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#1B2150]">
-                          ${(product.msrp || 0).toFixed(2)}
+                        <td className="px-2 py-2 whitespace-nowrap text-xs text-[#1B2150]" style={{width: '8%'}}>
+                          ${(product.msrp || 0).toFixed(0)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <div className="flex items-center justify-center gap-1 text-xs">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">P {(product.discount_professional || 0).toFixed(0)}%</span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">E {(product.discount_expert || 0).toFixed(0)}%</span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">M {(product.discount_master || 0).toFixed(0)}%</span>
+                        <td className="px-2 py-2 whitespace-nowrap text-xs text-[#1B2150]" style={{width: '8%'}}>
+                          ${(product.true_cost || 0).toFixed(0)}
+                        </td>
+                        <td className="px-2 py-2 whitespace-nowrap text-center" style={{width: '8%'}}>
+                          <div className="flex flex-col gap-0.5 text-[10px]">
+                            <span className="inline-flex items-center px-1 py-0.5 rounded bg-green-100 text-green-800">P{(product.discount_professional || 0).toFixed(0)}%</span>
+                            <span className="inline-flex items-center px-1 py-0.5 rounded bg-green-100 text-green-800">E{(product.discount_expert || 0).toFixed(0)}%</span>
+                            <span className="inline-flex items-center px-1 py-0.5 rounded bg-green-100 text-green-800">M{(product.discount_master || 0).toFixed(0)}%</span>
                           </div>
+                          {(() => {
+                            const msrp = Number(product.msrp) || 0;
+                            const tc = Number(product.true_cost) || 0;
+                            const p = Number(product.discount_professional) || 0;
+                            const e = Number(product.discount_expert) || 0;
+                            const m = Number(product.discount_master) || 0;
+                            const pPrice = msrp * (1 - p / 100);
+                            const ePrice = msrp * (1 - e / 100);
+                            const mPrice = msrp * (1 - m / 100);
+                            const below = tc > 0 && (pPrice < tc || ePrice < tc || mPrice < tc);
+                            return below ? (
+                              <div className="text-[10px] text-red-600 mt-1">Warning: at least one tier below cost</div>
+                            ) : null;
+                          })()}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#818181]">
-                          <div className="flex items-center space-x-2">
+                        <td className="px-2 py-2 whitespace-nowrap text-[#818181]" style={{width: '8%'}}>
+                          <div className="flex flex-col gap-1">
                             <button
                               onClick={(e) => { e.stopPropagation(); handleEditProduct(product); }}
-                              className="flex items-center gap-1 px-3 py-1 text-xs bg-transparent border border-[#1B2150] text-[#1B2150] rounded hover:border-[#EB664D] hover:text-[#EB664D] transition-colors"
+                              className="flex items-center justify-center p-1 text-[10px] bg-transparent border border-[#1B2150] text-[#1B2150] rounded hover:border-[#EB664D] hover:text-[#EB664D] transition-colors"
                               title="Edit Product"
                             >
                               <Edit className="w-3 h-3" />
-                              Edit
                             </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); handleDeleteProduct(product._id); }}
-                              className="p-1.5 text-xs bg-transparent border border-[#EB664D] text-[#EB664D] rounded-full hover:border-[#EB664D]/80 hover:text-[#EB664D]/80 transition-colors"
+                              className="flex items-center justify-center p-1 text-[10px] bg-transparent border border-[#EB664D] text-[#EB664D] rounded hover:border-[#EB664D]/80 hover:text-[#EB664D]/80 transition-colors"
                               title="Delete Product"
                             >
                               <Trash2 className="w-3 h-3" />
@@ -757,16 +694,9 @@ const AdminProducts = () => {
             {/* Mobile/Tablet Card View */}
             <div className="lg:hidden space-y-4 p-4">
               {paginatedProducts.map((product) => {
-                const isChecked = selectedProducts.has(product._id);
                 return (
                   <div key={product._id} className="bg-white rounded-lg border border-[#FAFAFB] p-3">
                     <div className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={(e) => handleSelectProduct(product._id, e)}
-                        className="mt-1 rounded border-[#FAFAFB] text-[#1B2150] focus:ring-[#1B2150]"
-                      />
                       <div className="flex-shrink-0 h-10 w-10">
                         {product.product_image || product.picture ? (
                           <img
@@ -789,7 +719,10 @@ const AdminProducts = () => {
                           <span className="bg-[#FAFAFB] px-2 py-0.5 rounded">{product.category}</span>
                         </div>
                         <div className="flex items-center justify-between mt-3">
-                          <div className="text-sm font-semibold text-[#1B2150]">${(product.msrp || 0).toFixed(2)}</div>
+                          <div>
+                            <div className="text-sm font-semibold text-[#1B2150]">${(product.msrp || 0).toFixed(2)}</div>
+                            <div className="text-xs text-[#818181]">True Cost ${(product.true_cost || 0).toFixed(2)}</div>
+                          </div>
                           <div className="flex items-center gap-1 text-[10px]">
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">P {(product.discount_professional || 0).toFixed(0)}%</span>
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800">E {(product.discount_expert || 0).toFixed(0)}%</span>
@@ -954,6 +887,7 @@ const AdminProductFormModal = ({ visible, mode, initialValues, existingBrands, e
     product_name: initialValues?.product_name || initialValues?.name || '',
     'sku/model': initialValues?.['sku/model'] || initialValues?.sku || '',
     msrp: initialValues?.msrp || '',
+    true_cost: initialValues?.true_cost || '',
     discount_expert: initialValues?.discount_expert || '',
     discount_professional: initialValues?.discount_professional || '',
     discount_master: initialValues?.discount_master || '',
@@ -1063,6 +997,9 @@ const removeImage = () => {
     if (!formData['sku/model'].trim()) newErrors['sku/model'] = 'SKU/Model is required';
     if (!formData.msrp || isNaN(formData.msrp) || parseFloat(formData.msrp) <= 0) {
       newErrors.msrp = 'Valid MSRP is required';
+    }
+    if (!formData.true_cost || isNaN(formData.true_cost) || parseFloat(formData.true_cost) <= 0) {
+      newErrors.true_cost = 'Valid true cost is required';
     }
     if (formData.discount_expert === '' || isNaN(formData.discount_expert) || parseFloat(formData.discount_expert) < 0) {
       newErrors.discount_expert = 'Valid expert discount is required';
@@ -1210,6 +1147,27 @@ const removeImage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-[#1B2150] mb-2">
+                  True Cost *
+                </label>
+                <input
+                  type="number"
+                  name="true_cost"
+                  value={formData.true_cost}
+                  onChange={handleChange}
+                  min="0"
+                  step="0.01"
+                  required
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
+                    errors.true_cost ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
+                  }`}
+                />
+                {errors.true_cost && (
+                  <p className="text-[#EB664D] text-xs mt-1">{errors.true_cost}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#1B2150] mb-2">
                   Discount (Professional) *
                 </label>
                 <input
@@ -1226,6 +1184,25 @@ const removeImage = () => {
                 {errors.discount_professional && (
                   <p className="text-[#EB664D] text-xs mt-1">{errors.discount_professional}</p>
                 )}
+                {/* Live discounted price and warning */}
+                {(() => {
+                  const msrpNum = Number(formData.msrp);
+                  const tcNum = Number(formData.true_cost);
+                  const dNum = Number(formData.discount_professional);
+                  const valid = Number.isFinite(msrpNum) && Number.isFinite(dNum);
+                  const discPrice = valid ? msrpNum * (1 - (dNum / 100)) : undefined;
+                  const below = Number.isFinite(discPrice) && Number.isFinite(tcNum) && discPrice < tcNum;
+                  return (
+                    <div className="mt-1">
+                      {Number.isFinite(discPrice) && (
+                        <div className="text-xs text-[#818181]">Disc. Price: ${discPrice.toFixed(2)}</div>
+                      )}
+                      {below && (
+                        <div className="text-xs text-[#EB664D]">Warning: below cost (${tcNum.toFixed(2)})</div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
               <div>
@@ -1246,6 +1223,25 @@ const removeImage = () => {
                 {errors.discount_expert && (
                   <p className="text-[#EB664D] text-xs mt-1">{errors.discount_expert}</p>
                 )}
+                {/* Live discounted price and warning */}
+                {(() => {
+                  const msrpNum = Number(formData.msrp);
+                  const tcNum = Number(formData.true_cost);
+                  const dNum = Number(formData.discount_expert);
+                  const valid = Number.isFinite(msrpNum) && Number.isFinite(dNum);
+                  const discPrice = valid ? msrpNum * (1 - (dNum / 100)) : undefined;
+                  const below = Number.isFinite(discPrice) && Number.isFinite(tcNum) && discPrice < tcNum;
+                  return (
+                    <div className="mt-1">
+                      {Number.isFinite(discPrice) && (
+                        <div className="text-xs text-[#818181]">Disc. Price: ${discPrice.toFixed(2)}</div>
+                      )}
+                      {below && (
+                        <div className="text-xs text-[#EB664D]">Warning: below cost (${tcNum.toFixed(2)})</div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
               <div>
@@ -1266,6 +1262,25 @@ const removeImage = () => {
                 {errors.discount_master && (
                   <p className="text-[#EB664D] text-xs mt-1">{errors.discount_master}</p>
                 )}
+                {/* Live discounted price and warning */}
+                {(() => {
+                  const msrpNum = Number(formData.msrp);
+                  const tcNum = Number(formData.true_cost);
+                  const dNum = Number(formData.discount_master);
+                  const valid = Number.isFinite(msrpNum) && Number.isFinite(dNum);
+                  const discPrice = valid ? msrpNum * (1 - (dNum / 100)) : undefined;
+                  const below = Number.isFinite(discPrice) && Number.isFinite(tcNum) && discPrice < tcNum;
+                  return (
+                    <div className="mt-1">
+                      {Number.isFinite(discPrice) && (
+                        <div className="text-xs text-[#818181]">Disc. Price: ${discPrice.toFixed(2)}</div>
+                      )}
+                      {below && (
+                        <div className="text-xs text-[#EB664D]">Warning: below cost (${tcNum.toFixed(2)})</div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Smart Brand Dropdown */}

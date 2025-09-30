@@ -23,12 +23,12 @@ const LandingPage = () => {
               <div className="absolute inset-0 bg-[#1B2150]/20 rounded-full blur-md"></div>
               <img
                 src="/logo192.png"
-                alt="Partner’s Marketplace Logo"
+                alt="Partner’s Portal Logo"
                 className="h-12 w-12 relative z-10 drop-shadow-lg"
               />
             </div>
             <span className="font-semibold text-base text-[#1B2150]">
-              Power Workplace Partner’s Marketplace
+              Power Workplace Partner’s Portal
             </span>
           </div>
           <Link to="/login">
@@ -57,7 +57,7 @@ const LandingPage = () => {
                 <div className="bg-white rounded-full p-8 w-full h-full flex items-center justify-center">
                   <img
                     src="/logo192.png"
-                    alt="Partner’s Marketplace Icon"
+                    alt="Partner’s Portal Icon"
                     className="h-24 w-24 drop-shadow-xl"
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -72,7 +72,7 @@ const LandingPage = () => {
             </div>
             <div>
               <h3 className="text-xl font-bold tracking-wider text-[#1B2150]">
-                Partner’s Marketplace
+                Partner’s Portal
               </h3>
               <div className="w-24 h-1 bg-[#1B2150] mx-auto mt-2 rounded-full"></div>
             </div>
@@ -85,7 +85,7 @@ const LandingPage = () => {
                 Welcome to
               </h1>
               <h2 className="text-5xl font-black text-[#1B2150]">
-                Partner’s Marketplace
+                Partner’s Portal
               </h2>
             </div>
             

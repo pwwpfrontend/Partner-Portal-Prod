@@ -121,10 +121,15 @@ api.interceptors.response.use(
 );
 
 // API calls
-export async function login(email, password) {
+export async function login(email, password, recaptchaToken = null) {
   console.log('Login attempt for:', email);
   try {
-    const response = await api.post("/auth/login", { email, password });
+    const payload = { email, password };
+    if (recaptchaToken) {
+      payload.recaptchaToken = recaptchaToken;
+      payload['g-recaptcha-response'] = recaptchaToken;
+    }
+    const response = await api.post("/login", payload);
     console.log('Login response:', response.data);
     const { accessToken, refreshToken, role } = response.data || {};
     

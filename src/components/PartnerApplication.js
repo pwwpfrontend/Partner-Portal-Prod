@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../services/auth";
 import { Building2, User, Upload, FileCheck, CheckCircle } from "lucide-react";
+
+// reCAPTCHA v2 configuration
+// IMPORTANT: Set your site key in env `REACT_APP_RECAPTCHA_SITE_KEY` for production.
+// The fallback is for local/dev only. Replace the endpoint in handleSubmit as needed.
+const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || "6Ld7QMwrAAAAANZke_5BTI-knhtlI2TQ33cYpbdA";
 
 const PartnerApplication = () => {
   const navigate = useNavigate();
@@ -23,12 +28,42 @@ const PartnerApplication = () => {
   const [ndaAgreed, setNdaAgreed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [recaptchaVerified, setRecaptchaVerified] = useState(false);
+  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
   const [recaptchaError, setRecaptchaError] = useState("");
+  const recaptchaRef = useRef(null);
+  const [recaptchaWidgetId, setRecaptchaWidgetId] = useState(null);
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const [recaptchaTimeout, setRecaptchaTimeout] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Load form data from localStorage on component mount
+  useEffect(() => {
+    const savedFormData = localStorage.getItem('partnerApplicationFormData');
+    if (savedFormData) {
+      try {
+        const parsedData = JSON.parse(savedFormData);
+        setFormData(parsedData);
+      } catch (error) {
+        console.error('Error parsing saved form data:', error);
+      }
+    }
+
+    const savedNdaAgreed = localStorage.getItem('partnerApplicationNdaAgreed');
+    if (savedNdaAgreed === 'true') {
+      setNdaAgreed(true);
+    }
+
+    const savedStep = localStorage.getItem('partnerApplicationStep');
+    if (savedStep) {
+      const stepNumber = parseInt(savedStep);
+      if (stepNumber >= 1 && stepNumber <= 4) {
+        setStep(stepNumber);
+      }
+    }
   }, []);
 
   // Check if NDA was accepted and set the checkbox, or handle step parameter
@@ -36,48 +71,161 @@ const PartnerApplication = () => {
     const urlParams = new URLSearchParams(location.search);
     if (urlParams.get('ndaAccepted') === 'true') {
       setNdaAgreed(true);
+      saveNdaAgreedToStorage(true);
       setStep(4); // Go to the agreement step
+      saveStepToStorage(4);
     } else if (urlParams.get('step')) {
       const stepNumber = parseInt(urlParams.get('step'));
       if (stepNumber >= 1 && stepNumber <= 4) {
         setStep(stepNumber);
+        saveStepToStorage(stepNumber);
       }
     }
   }, [location.search]);
 
-  // Load reCAPTCHA script and set up global callback
+  // Load reCAPTCHA v2 script and render widget
   useEffect(() => {
-    if (step === 4) {
+    const loadRecaptcha = () => {
+      if (window.grecaptcha) {
+        setRecaptchaLoaded(true);
+        setRecaptchaError("");
+        setRecaptchaTimeout(false);
+        console.debug("[recaptcha] grecaptcha already present");
+        return;
+      }
+
+      // Check if script is already being loaded
+      const existingScript = document.querySelector(`script[src*="recaptcha/api.js"]`);
+      if (existingScript) {
+        console.debug("[recaptcha] script already exists, waiting for load");
+        return;
+      }
+
+      // Set a timeout to handle cases where reCAPTCHA fails to load
+      const timeoutId = setTimeout(() => {
+        if (!window.grecaptcha) {
+          setRecaptchaTimeout(true);
+          setRecaptchaError("reCAPTCHA is taking too long to load. Please refresh the page or check your internet connection.");
+          console.debug("[recaptcha] timeout waiting for script to load");
+        }
+      }, 10000); // 10 second timeout
+
       const script = document.createElement('script');
-      script.src = 'https://www.google.com/recaptcha/api.js';
+      script.src = "https://www.google.com/recaptcha/api.js";
       script.async = true;
       script.defer = true;
+      script.onload = () => {
+        clearTimeout(timeoutId);
+        setRecaptchaLoaded(true);
+        setRecaptchaError("");
+        setRecaptchaTimeout(false);
+        console.debug("[recaptcha] v2 script loaded");
+      };
+      script.onerror = () => {
+        clearTimeout(timeoutId);
+        setRecaptchaError("Failed to load reCAPTCHA. Please check your internet connection and try again.");
+        setRecaptchaLoaded(false);
+        setRecaptchaTimeout(true);
+        console.debug("[recaptcha] script failed to load");
+      };
       document.head.appendChild(script);
+    };
 
-      // Set up global callback function
-      window.handleRecaptchaChange = (token) => {
-        if (token) {
-          setRecaptchaVerified(true);
-          setRecaptchaError("");
-        } else {
-          setRecaptchaVerified(false);
-        }
-      };
+    loadRecaptcha();
 
-      return () => {
-        // Cleanup script on unmount
-        const existingScript = document.querySelector('script[src="https://www.google.com/recaptcha/api.js"]');
-        if (existingScript) {
-          document.head.removeChild(existingScript);
+    return () => {
+      // Cleanup on unmount: reset widget and remove script
+      try {
+        if (window.grecaptcha && recaptchaWidgetId !== null) {
+          window.grecaptcha.reset(recaptchaWidgetId);
         }
-        // Cleanup global callback
-        delete window.handleRecaptchaChange;
-      };
+      } catch {}
+      const existingScript = document.querySelector(`script[src*="recaptcha/api.js"]`);
+      if (existingScript) {
+        document.head.removeChild(existingScript);
+      }
+    };
+  }, []);
+
+  // Render widget when step 4 is visible and script is loaded
+  useEffect(() => {
+    if (
+      step === 4 &&
+      recaptchaLoaded &&
+      window.grecaptcha &&
+      recaptchaRef.current &&
+      recaptchaWidgetId === null
+    ) {
+      // Add a small delay to ensure DOM is ready
+      const timer = setTimeout(() => {
+      try {
+          if (recaptchaRef.current && window.grecaptcha) {
+        const id = window.grecaptcha.render(recaptchaRef.current, {
+          sitekey: RECAPTCHA_SITE_KEY,
+          size: "normal",
+          callback: (token) => {
+            setRecaptchaToken(token);
+          },
+          "expired-callback": () => {
+            setRecaptchaToken(null);
+          }
+        });
+        setRecaptchaWidgetId(id);
+          }
+      } catch (err) {
+        console.debug('[recaptcha] deferred render error', err);
+          setRecaptchaError("Failed to render reCAPTCHA. Please refresh the page.");
+      }
+      }, 100);
+
+      return () => clearTimeout(timer);
     }
-  }, [step]);
+  }, [step, recaptchaLoaded, recaptchaWidgetId]);
+
+  // v2 checkbox flow does not require programmatic execution
+
+  // Function to save form data to localStorage
+  const saveFormDataToStorage = (data) => {
+    try {
+      localStorage.setItem('partnerApplicationFormData', JSON.stringify(data));
+    } catch (error) {
+      console.error('Error saving form data to localStorage:', error);
+    }
+  };
+
+  // Function to save step to localStorage
+  const saveStepToStorage = (stepNumber) => {
+    try {
+      localStorage.setItem('partnerApplicationStep', stepNumber.toString());
+    } catch (error) {
+      console.error('Error saving step to localStorage:', error);
+    }
+  };
+
+  // Function to save NDA agreement status to localStorage
+  const saveNdaAgreedToStorage = (agreed) => {
+    try {
+      localStorage.setItem('partnerApplicationNdaAgreed', agreed.toString());
+    } catch (error) {
+      console.error('Error saving NDA agreement to localStorage:', error);
+    }
+  };
+
+  // Function to clear all form data from localStorage
+  const clearFormDataFromStorage = () => {
+    try {
+      localStorage.removeItem('partnerApplicationFormData');
+      localStorage.removeItem('partnerApplicationNdaAgreed');
+      localStorage.removeItem('partnerApplicationStep');
+    } catch (error) {
+      console.error('Error clearing form data from localStorage:', error);
+    }
+  };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const newFormData = { ...formData, [e.target.name]: e.target.value };
+    setFormData(newFormData);
+    saveFormDataToStorage(newFormData);
     setSubmitError(""); // Clear error when user starts typing
   };
 
@@ -168,13 +316,17 @@ const PartnerApplication = () => {
 
   const handleNext = () => {
     if (validateStep(step)) {
-      setStep(step + 1);
+      const nextStep = step + 1;
+      setStep(nextStep);
+      saveStepToStorage(nextStep);
     }
   };
 
   const handlePrevious = () => {
     setSubmitError("");
-    setStep(step - 1);
+    const prevStep = step - 1;
+    setStep(prevStep);
+    saveStepToStorage(prevStep);
   };
 
   const handleBack = () => navigate(-1);
@@ -205,6 +357,7 @@ const PartnerApplication = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError("");
+    setRecaptchaError("");
 
     if (!certificateFile) {
       setSubmitError("Please upload your Business Registration Certificate.");
@@ -214,13 +367,28 @@ const PartnerApplication = () => {
       setSubmitError("Please agree to the NDA terms to continue.");
       return;
     }
-    if (!recaptchaVerified) {
-      setSubmitError("Please complete the reCAPTCHA verification to proceed.");
+    // For development, allow submission without reCAPTCHA if it fails to load
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    if (recaptchaTimeout && !isDevelopment) {
+      setSubmitError("reCAPTCHA failed to load. Please refresh the page and try again.");
+      return;
+    }
+    if (!recaptchaLoaded && !isDevelopment) {
+      setSubmitError("reCAPTCHA is still loading. Please wait a moment and try again.");
+      return;
+    }
+    if (!recaptchaToken && !isDevelopment) {
+      setSubmitError("Please complete the reCAPTCHA checkbox to verify you are human.");
       return;
     }
 
     try {
       setSubmitting(true);
+      console.debug("[submit] starting submission...");
+      
+      console.debug("[submit] got recaptcha token, preparing payload");
+      
       const fd = new FormData();
       fd.append("companyName", formData.companyName);
       fd.append("companyAddress", formData.companyAddress);
@@ -233,14 +401,33 @@ const PartnerApplication = () => {
       fd.append("password", formData.password);
       fd.append("position", formData.position);
       fd.append("certificate", certificateFile);
+      if (recaptchaToken) {
+      fd.append("recaptchaToken", recaptchaToken);
+      fd.append("g-recaptcha-response", recaptchaToken);
+      }
 
-      await api.post("/auth/register", fd, { headers: { "Content-Type": "multipart/form-data" } });
+      // TODO: Update the endpoint below to your actual backend handler for partner applications.
+      await api.post("/auth/register", fd);
       setStep(5);
+      // Clear form data from localStorage after successful submission
+      clearFormDataFromStorage();
+      // Reset reCAPTCHA after successful submission
+      try {
+        if (window.grecaptcha && recaptchaWidgetId !== null) {
+          window.grecaptcha.reset(recaptchaWidgetId);
+          setRecaptchaToken(null);
+        }
+      } catch {}
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to submit application";
-      setSubmitError(msg);
+      if (err.message && err.message.includes("reCAPTCHA")) {
+        setRecaptchaError(err.message);
+      } else {
+        const msg = err?.response?.data?.message || "Failed to submit application";
+        setSubmitError(msg);
+      }
     } finally {
       setSubmitting(false);
+      console.debug("[submit] submission finished");
     }
   };
 
@@ -268,8 +455,8 @@ const PartnerApplication = () => {
   return (
     <div className="bg-white min-h-screen font-sans text-[#818181]">
       {/* Animated background elements */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-[#1B2150]/5 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#5F6485]/10 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute top-20 left-10 w-96 h-96 bg-[#1B2150]/5 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#5F6485]/10 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
       
       {/* Header */}
       <header className="w-full border-b backdrop-blur-sm bg-white/90 sticky top-0 z-50 shadow-sm">
@@ -595,6 +782,9 @@ const PartnerApplication = () => {
                         </div>
                       </label>
                     </div>
+                    <div className="mt-2 text-xs text-[#818181] bg-blue-50 border border-blue-200 rounded-lg p-2">
+                      <strong>Note:</strong> If you navigate away and return, you'll need to re-upload your file as it cannot be saved automatically.
+                    </div>
                   </div>
 
                   {submitError && (
@@ -640,27 +830,39 @@ const PartnerApplication = () => {
                         id="nda" 
                         type="checkbox" 
                         checked={ndaAgreed} 
-                        onChange={(e) => setNdaAgreed(e.target.checked)} 
+                        onChange={(e) => {
+                          setNdaAgreed(e.target.checked);
+                          saveNdaAgreedToStorage(e.target.checked);
+                        }} 
+                        aria-required="true"
                         className="mt-1 h-4 w-4 text-[#1B2150] rounded focus:ring-[#1B2150]" 
                       />
                       <label htmlFor="nda" className="text-base text-[#818181] leading-relaxed">
-                        I agree to the terms of the <button type="button" onClick={() => navigate('/ndapage')} className="text-[#1B2150] underline font-semibold hover:text-[#EB664D] transition-colors">Non-Disclosure Agreement</button> and partnership terms. I understand that all shared information will be kept confidential and used solely for partnership evaluation purposes.
+                        I agree to the terms of the <button type="button" onClick={() => navigate('/nda')} className="text-[#1B2150] underline font-semibold hover:text-[#EB664D] transition-colors">Non-Disclosure Agreement</button> and partnership terms. I understand that all shared information will be kept confidential and used solely for partnership evaluation purposes.
                       </label>
                     </div>
                   </div>
 
-                  {/* reCAPTCHA */}
+                  {/* reCAPTCHA v2 Widget & Status */}
                   <div className="flex flex-col items-center space-y-2">
-                    <div 
-                      className="g-recaptcha" 
-                      data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
-                      data-callback="handleRecaptchaChange"
-                    ></div>
-                    <p className="text-xs text-[#818181] text-center">
-                      Note: This is a test reCAPTCHA. For production, replace with your actual reCAPTCHA site key.
-                    </p>
+                    <div ref={recaptchaRef} className="my-2" aria-hidden={!!recaptchaToken ? "false" : "true"}></div>
                     {recaptchaError && (
-                      <div className="text-[#EB664D] text-sm font-medium">{recaptchaError}</div>
+                      <div className="text-[#EB664D] text-sm font-medium text-center bg-[#EB664D]/10 border border-[#EB664D]/30 rounded-lg p-3">
+                        {recaptchaError}
+                        {recaptchaTimeout && (
+                          <button 
+                            onClick={() => window.location.reload()} 
+                            className="ml-2 underline hover:no-underline"
+                          >
+                            Refresh Page
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    {!recaptchaLoaded && !recaptchaError && !recaptchaTimeout && (
+                      <div className="text-[#818181] text-sm text-center">
+                        Loading reCAPTCHA...
+                      </div>
                     )}
                   </div>
 
@@ -672,9 +874,9 @@ const PartnerApplication = () => {
                         <span className="w-2 h-2 rounded-full bg-current"></span>
                         <span>✓ NDA Agreement accepted</span>
                       </div>
-                      <div className={`flex items-center space-x-2 ${recaptchaVerified ? 'text-green-600' : 'text-[#818181]'}`}>
+                      <div className={`flex items-center space-x-2 ${(recaptchaLoaded && recaptchaToken) ? 'text-green-600' : 'text-[#818181]'}`}>
                         <span className="w-2 h-2 rounded-full bg-current"></span>
-                        <span>✓ reCAPTCHA verification completed</span>
+                        <span>✓ reCAPTCHA ready for verification</span>
                       </div>
                     </div>
                   </div>
@@ -695,7 +897,7 @@ const PartnerApplication = () => {
                     </button>
                     <button 
                       type="submit" 
-                      disabled={submitting || !recaptchaVerified || !ndaAgreed} 
+                      disabled={submitting}
                       className="px-6 py-2 bg-[#1B2150] text-white rounded-xl text-base font-semibold hover:bg-[#EB664D] hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {submitting ? "Submitting..." : "Submit Application ✓"}
