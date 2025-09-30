@@ -60,10 +60,13 @@ const LoginPage = () => {
       script.defer = true;
       script.onload = () => {
         clearTimeout(timeoutId);
-        setRecaptchaLoaded(true);
-        setRecaptchaError("");
-        setRecaptchaTimeout(false);
-        console.debug("[recaptcha] v2 script loaded");
+        // Add a small delay to ensure grecaptcha is fully initialized
+        setTimeout(() => {
+          setRecaptchaLoaded(true);
+          setRecaptchaError("");
+          setRecaptchaTimeout(false);
+          console.debug("[recaptcha] v2 script loaded and ready");
+        }, 500);
       };
       script.onerror = () => {
         clearTimeout(timeoutId);
@@ -103,7 +106,7 @@ const LoginPage = () => {
       // Add a small delay to ensure DOM is ready
       const timer = setTimeout(() => {
         try {
-          if (recaptchaRef.current && window.grecaptcha) {
+          if (recaptchaRef.current && window.grecaptcha && typeof window.grecaptcha.render === 'function') {
             const id = window.grecaptcha.render(recaptchaRef.current, {
               sitekey: RECAPTCHA_SITE_KEY,
               size: "normal",
@@ -115,6 +118,29 @@ const LoginPage = () => {
               }
             });
             setRecaptchaWidgetId(id);
+          } else {
+            console.debug('[recaptcha] grecaptcha.render not available yet, retrying...');
+            // Retry after a longer delay
+            setTimeout(() => {
+              if (recaptchaRef.current && window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+                try {
+                  const id = window.grecaptcha.render(recaptchaRef.current, {
+                    sitekey: RECAPTCHA_SITE_KEY,
+                    size: "normal",
+                    callback: (token) => {
+                      setRecaptchaToken(token);
+                    },
+                    "expired-callback": () => {
+                      setRecaptchaToken(null);
+                    }
+                  });
+                  setRecaptchaWidgetId(id);
+                } catch (retryErr) {
+                  console.debug('[recaptcha] retry render error', retryErr);
+                  setRecaptchaError("Failed to render reCAPTCHA. Please refresh the page.");
+                }
+              }
+            }, 1000);
           }
         } catch (err) {
           console.debug('[recaptcha] deferred render error', err);
@@ -142,18 +168,16 @@ const LoginPage = () => {
     setError("");
     setRecaptchaError("");
 
-    // For development, allow submission without reCAPTCHA if it fails to load
-    const isDevelopment = process.env.NODE_ENV === 'development';
-    
-    if (recaptchaTimeout && !isDevelopment) {
+    // Validate reCAPTCHA (always required)
+    if (recaptchaTimeout) {
       setError("reCAPTCHA failed to load. Please refresh the page and try again.");
       return;
     }
-    if (!recaptchaLoaded && !isDevelopment) {
+    if (!recaptchaLoaded) {
       setError("reCAPTCHA is still loading. Please wait a moment and try again.");
       return;
     }
-    if (!recaptchaToken && !isDevelopment) {
+    if (!recaptchaToken) {
       setError("Please complete the reCAPTCHA checkbox to verify you are human.");
       return;
     }
@@ -292,7 +316,7 @@ const LoginPage = () => {
 
             {/* reCAPTCHA v2 Widget & Status */}
             <div className="flex flex-col items-center space-y-2">
-              <div ref={recaptchaRef} className="my-2" aria-hidden={!!recaptchaToken ? "false" : "true"}></div>
+              <div ref={recaptchaRef} className="my-2"></div>
               {recaptchaError && (
                 <div className="text-[#EB664D] text-sm font-medium text-center bg-[#EB664D]/10 border border-[#EB664D]/30 rounded-lg p-3">
                   {recaptchaError}

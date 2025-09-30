@@ -249,7 +249,7 @@ const AdminUsers = () => {
         fd.append("position", addUserForm.position || 'Not specified');
         fd.append("country", addUserForm.country || 'Not specified');
 
-        registerResponse = await api.post("/partners/auth/register_no_recaptcha", fd, { 
+        registerResponse = await api.post("/auth/register_no_recaptcha", fd, { 
           headers: { "Content-Type": "multipart/form-data" } 
         });
         
@@ -272,7 +272,7 @@ const AdminUsers = () => {
           role: 'pending' // Start as pending, then approve
         };
 
-        registerResponse = await api.post("/partners/auth/register_no_recaptcha", jsonPayload, {
+        registerResponse = await api.post("/auth/register_no_recaptcha", jsonPayload, {
           headers: { "Content-Type": "application/json" }
         });
         

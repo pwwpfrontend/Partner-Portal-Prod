@@ -407,7 +407,7 @@ const RequestQuote = () => {
       // Prepare mail data with user schema format - Fixed field mapping for mail
       const mailData = {
         _id: userDetails.id || userDetails._id,
-        companyName: userDetails.companyName || userDetails.name,
+        companyName: userDetails.name || userDetails.contactPersonName || userDetails.companyName,
         companyAddress: userDetails.address || userDetails.companyAddress || '',
         companyCountry: userDetails.country || userDetails.companyCountry || '',
         businessType: userDetails.businessType || 'integrator',
@@ -735,7 +735,7 @@ const RequestQuote = () => {
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
                     onClick={createNewQuote}
-                    className="bg-[#1B2150] text-white px-6 py-3 rounded-lg hover:bg-[#EB664D] transition-colors duration-200 font-medium"
+                    className="bg-[#1B2150] text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium text-center"
                   >
                     Create New Quote
                   </button>
@@ -747,7 +747,7 @@ const RequestQuote = () => {
                   </a>
                   <a
                     href="/dashboard"
-                    className="bg-[#1B2150] text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium text-center"
+                        className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium text-base"
                   >
                     View Dashboard
                   </a>
@@ -907,7 +907,7 @@ const RequestQuote = () => {
                     {cartItems.length === 0 && (
                       <a
                         href="/products"
-                        className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-[#EB664D] transition-colors duration-200 font-medium text-base"
+                        className="bg-[#1B2150] text-white px-5 py-2.5 rounded-lg hover:bg-green-600 transition-colors duration-200 font-medium text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                       >
                         Browse Products
                       </a>
@@ -1100,7 +1100,7 @@ const RequestQuote = () => {
                     <button
                       onClick={handleSubmitQuote}
                       disabled={loading || !isAuthenticated}
-                      className="w-full max-w-sm bg-[#1B2150] text-white py-3 rounded-lg hover:bg-[#EB664D] transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium mx-auto"
+                      className="w-full max-w-sm bg-[#1B2150] text-white py-3 rounded-lg hover:bg-green-600 transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium mx-auto"
                     >
                       {loading ? (
                         <>

@@ -129,20 +129,59 @@ export async function login(email, password, recaptchaToken = null) {
       payload.recaptchaToken = recaptchaToken;
       payload['g-recaptcha-response'] = recaptchaToken;
     }
-    const response = await api.post("/login", payload);
+    const response = await api.post("/auth/login", payload);
     console.log('Login response:', response.data);
-    const { accessToken, refreshToken, role } = response.data || {};
     
-    // Use only accessToken, remove fallback
-    if (!accessToken) {
+    // Handle various possible response formats from backend
+    const responseData = response.data || {};
+    const { 
+      accessToken, 
+      refreshToken, 
+      role, 
+      token,
+      access_token,
+      refresh_token,
+      user
+    } = responseData;
+    
+    // Try different token field names
+    const authToken = accessToken || token || access_token;
+    const authRefreshToken = refreshToken || refresh_token;
+    const userRole = role || user?.role;
+    
+    if (!authToken) {
+      console.error('No token found in response. Available fields:', Object.keys(responseData));
       throw new Error("No access token received from server");
     }
     
-    setAuthData({ token: accessToken, refreshToken, role, email });
-    console.log('Auth data set:', { token: !!accessToken, refreshToken: !!refreshToken, role, email });
-    return { token: accessToken, refreshToken, role };
+    setAuthData({ 
+      token: authToken, 
+      refreshToken: authRefreshToken, 
+      role: userRole, 
+      email 
+    });
+    
+    console.log('Auth data set:', { 
+      token: !!authToken, 
+      refreshToken: !!authRefreshToken, 
+      role: userRole, 
+      email 
+    });
+    
+    return { 
+      token: authToken, 
+      refreshToken: authRefreshToken, 
+      role: userRole 
+    };
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error details:', {
+      message: error.message,
+      status: error?.response?.status,
+      statusText: error?.response?.statusText,
+      data: error?.response?.data,
+      url: error?.config?.url,
+      method: error?.config?.method
+    });
     throw error;
   }
 }
