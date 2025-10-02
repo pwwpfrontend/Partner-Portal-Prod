@@ -448,60 +448,69 @@ const RequestQuote = () => {
       console.log('Submitting quote to database:', quoteData);
       console.log('Submitting quote to mail:', mailData);
 
-      // Submit to both APIs simultaneously
-      const [quoteResponse, mailResponse] = await Promise.allSettled([
-        // Submit to quotes database API
-        fetchWithAuth(
-          'https://njs-01.optimuslab.space/partners/quotes',
-          {
-            method: 'POST',
-            body: JSON.stringify(quoteData),
-            signal: AbortSignal.timeout(50000)
-          }
-        ),
-        // Submit to mail API with different schema
+      // Submit to database API first
+      const quoteResponse = await fetchWithAuth(
+        'https://njs-01.optimuslab.space/partners/quotes',
+        {
+          method: 'POST',
+          body: JSON.stringify(quoteData),
+          signal: AbortSignal.timeout(50000)
+        }
+      );
+      
+      // Check quotes API response
+      if (!quoteResponse.ok) {
+        const errorText = await quoteResponse.text().catch(() => 'Unable to read error response');
+        console.error('Quote database submission failed:', quoteResponse.status, errorText);
+        throw new Error(`Failed to submit quote request to database. Status: ${quoteResponse.status}. ${errorText || ''}`);
+      }
+      
+      // Get the quote result from database API
+      const quoteResult = await quoteResponse.json();
+      console.log('Quote submitted successfully to database:', quoteResult);
+      
+      // Use the actual quote number from backend for email
+      const finalQuoteNumber = quoteResult.quoteNumber || shortQuoteNumber;
+      console.log('Using final quote number for email:', finalQuoteNumber);
+      
+      // Update mailData with the correct quote number from backend
+      const updatedMailData = {
+        ...mailData,
+        quote_id: finalQuoteNumber,
+        cart: {
+          ...mailData.cart,
+          quoteNumber: finalQuoteNumber
+        }
+      };
+      
+      // Now submit to mail API with updated quote number
+      const mailResponse = await Promise.allSettled([
         fetchWithAuth(
           'http://optimus-india-njs-01.netbird.cloud:3006/partners/mail',
           {
             method: 'POST',
-            body: JSON.stringify(mailData),
+            body: JSON.stringify(updatedMailData),
             signal: AbortSignal.timeout(50000)
           }
         )
       ]);
 
-      // Check quotes API response
-      if (quoteResponse.status === 'rejected') {
-        console.error('Quote submission to database failed:', quoteResponse.reason);
-        throw new Error(`Failed to submit quote to database: ${quoteResponse.reason.message}`);
-      }
-
-      if (!quoteResponse.value.ok) {
-        const errorText = await quoteResponse.value.text().catch(() => 'Unable to read error response');
-        console.error('Quote database submission failed:', quoteResponse.value.status, errorText);
-        throw new Error(`Failed to submit quote request to database. Status: ${quoteResponse.value.status}. ${errorText || ''}`);
-      }
-
       // Check mail API response
-      if (mailResponse.status === 'rejected') {
-        console.warn('Mail submission failed:', mailResponse.reason);
+      if (mailResponse[0].status === 'rejected') {
+        console.warn('Mail submission failed:', mailResponse[0].reason);
         // Don't throw error for mail failure - log warning but continue
-      } else if (!mailResponse.value.ok) {
-        const mailErrorText = await mailResponse.value.text().catch(() => 'Unable to read mail error response');
-        console.warn('Mail API submission failed:', mailResponse.value.status, mailErrorText);
+      } else if (!mailResponse[0].value.ok) {
+        const mailErrorText = await mailResponse[0].value.text().catch(() => 'Unable to read mail error response');
+        console.warn('Mail API submission failed:', mailResponse[0].value.status, mailErrorText);
         // Don't throw error for mail failure - log warning but continue
       } else {
         console.log('Mail sent successfully');
       }
 
-      // Get the quote result from database API
-      const quoteResult = await quoteResponse.value.json();
-      console.log('Quote submitted successfully to database:', quoteResult);
-
       // Log mail result if successful
-      if (mailResponse.status === 'fulfilled' && mailResponse.value.ok) {
+      if (mailResponse[0].status === 'fulfilled' && mailResponse[0].value.ok) {
         try {
-          const mailResult = await mailResponse.value.json();
+          const mailResult = await mailResponse[0].value.json();
           console.log('Mail API response:', mailResult);
         } catch (e) {
           console.log('Mail sent successfully (no JSON response)');
@@ -509,8 +518,12 @@ const RequestQuote = () => {
       }
 
       // Use the actual quote ID from the backend response or fallback to our generated number
-      const actualQuoteId = quoteResult.id || quoteResult._id || quoteResult.quoteNumber || shortQuoteNumber;
+      const actualQuoteId = quoteResult.id || quoteResult._id || shortQuoteNumber;
+      
+      // Use the final quote number that was sent to email
+      const actualQuoteNumber = finalQuoteNumber;
       console.log('Actual quote ID from backend:', actualQuoteId);
+      console.log('Actual quote number (consistent with email):', actualQuoteNumber);
 
       // Fetch the complete quote details from backend if we have an ID
       let completeQuoteDetails = null;
@@ -522,7 +535,7 @@ const RequestQuote = () => {
       const submittedQuoteDetails = completeQuoteDetails || {
         id: actualQuoteId,
         _id: actualQuoteId,
-        quoteNumber: shortQuoteNumber,
+        quoteNumber: actualQuoteNumber,
         submittedAt: new Date().toISOString(),
         userDetails: userDetails,
         items: [...cartItems],
@@ -813,7 +826,7 @@ const RequestQuote = () => {
                       {currentUser && (
                         <div className="mt-2 inline-flex items-center px-3 py-1 bg-[#1B2150]/10 rounded-md text-sm">
                           <span className="text-[#1B2150] font-medium">
-                            Submitting as: {currentUser.name || currentUser.companyName} ({currentUser.role || currentRole})
+                            Submitting as: {currentUser.name || currentUser.contactPersonName || currentUser.contactName || currentUser.fullName || currentUser.companyName} ({currentUser.role || currentRole})
                           </span>
                         </div>
                       )}

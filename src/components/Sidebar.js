@@ -176,18 +176,34 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     }
   }, [isAuthenticated]);
 
-  // Fixed display logic to show name and email properly from API or localStorage
+  // Fixed display logic to prioritize actual user name over company name
   const displayName = useMemo(() => {
-    // Priority: API data > localStorage name > fallback
-    if (currentUser?.name && currentUser.name.trim()) {
-      return currentUser.name.trim();
+    console.log('DisplayName calculation - currentUser:', currentUser);
+    
+    // Priority: Try multiple name fields before falling back to company name
+    const possibleNames = [
+      currentUser?.name,
+      currentUser?.contactPersonName,
+      currentUser?.contactName,
+      currentUser?.fullName,
+      storedName
+    ];
+    
+    // Find the first valid name that's not empty or just whitespace
+    for (const name of possibleNames) {
+      if (name && typeof name === 'string' && name.trim() && name.trim() !== 'User') {
+        console.log('Using name:', name.trim());
+        return name.trim();
+      }
     }
+    
+    // Only fall back to company name if no actual person name is found
     if (currentUser?.companyName && currentUser.companyName.trim()) {
+      console.log('Falling back to company name:', currentUser.companyName.trim());
       return currentUser.companyName.trim();
     }
-    if (storedName && storedName.trim()) {
-      return storedName.trim();
-    }
+    
+    console.log('Using default fallback: User');
     return 'User'; // Default fallback
   }, [currentUser, storedName]);
 

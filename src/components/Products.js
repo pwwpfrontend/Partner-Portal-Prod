@@ -755,7 +755,7 @@ const handleDownload = async (product) => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button 
                   onClick={() => window.location.reload()} 
-                  className="px-6 py-3 bg-[#1B2150] text-white rounded-xl hover:bg-[#E22400] transition-all duration-300 font-semibold"
+                  className="px-6 py-3 bg-[#1B2150] text-white rounded-xl hover:bg-green-600 transition-all duration-300 font-semibold"
                 >
                   Try Again
                 </button>
@@ -811,9 +811,9 @@ const handleDownload = async (product) => {
                 <div className="relative">
                   <button
                     onClick={handleQuoteCartClick}
-                    className="group bg-[#1B2150] text-white px-4 sm:px-6 py-3 rounded-xl hover:bg-[#E22400] transition-all duration-300 flex items-center gap-2 sm:gap-3 font-semibold relative overflow-hidden text-sm sm:text-base"
+                    className="group bg-[#1B2150] text-white px-4 sm:px-6 py-3 rounded-xl hover:bg-green-600 transition-all duration-300 flex items-center gap-2 sm:gap-3 font-semibold relative overflow-hidden text-sm sm:text-base"
                   >
-                    <div className="absolute inset-0 bg-[#E22400] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
                     <span className="relative z-10 hidden sm:inline">Quote Cart</span>
                     <span className="relative z-10 sm:hidden">Cart</span>
@@ -876,7 +876,9 @@ const handleDownload = async (product) => {
                     {selectedProduct.description && (
                       <div className="mb-2">
                         <h3 className="text-sm font-semibold mb-1">Description</h3>
-                        <p className="text-sm text-[#818181] leading-relaxed">{selectedProduct.description}</p>
+                        <div className="text-sm text-[#818181] leading-relaxed">
+                          <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{__html: selectedProduct.description.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\r/g, '<br>')}} />
+                        </div>
                       </div>
                     )}
 
@@ -935,7 +937,7 @@ const handleDownload = async (product) => {
                       <button
                         onClick={() => handleAddToCart(selectedProduct)}
                         disabled={addToCartLoading === selectedProduct.id}
-                        className="flex items-center justify-center gap-1 w-full px-3 py-1.5 bg-[#1B2150] text-white rounded text-sm hover:bg-[#E22400] transition-colors disabled:opacity-50"
+                        className="flex items-center justify-center gap-1 w-full px-3 py-1.5 bg-[#1B2150] text-white rounded text-sm hover:bg-green-600 transition-colors disabled:opacity-50"
                       >
                         {addToCartLoading === selectedProduct.id ? (
                           <>
@@ -1137,10 +1139,10 @@ const handleDownload = async (product) => {
                                   )}
                                 </div>
                                 <div className="text-xs text-[#818181] leading-relaxed">
-                                  {product.description.length > 50 
+                                  <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{__html: (product.description.length > 50 
                                     ? `${product.description.substring(0, 50)}...`
                                     : product.description
-                                  }
+                                  ).replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\r/g, '<br>')}} />
                                 </div>
                                 {product.duration && (
                                   <div className="text-xs text-[#818181] mt-1">
@@ -1183,7 +1185,7 @@ const handleDownload = async (product) => {
                                 className={`group flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg transition-all duration-300 font-semibold shadow-md disabled:opacity-50 ${
                                   isInCart 
                                     ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 hover:from-green-200 hover:to-green-300 hover:shadow-lg' 
-                                    : 'bg-[#1B2150] hover:bg-[#E22400] text-white'
+                                    : 'bg-[#1B2150] hover:bg-green-600 text-white'
                                 }`}
                                 title={isInCart ? 'Add More' : 'Add to Quote'}
                               >
@@ -1270,12 +1272,12 @@ const handleDownload = async (product) => {
                               <span className="bg-gray-100 px-2 py-1 rounded">{product.category}</span>
                             </div>
                             
-                            <p className="text-sm text-gray-600 leading-relaxed mb-3">
-                              {product.description.length > 80 
+                            <div className="text-sm text-gray-600 leading-relaxed mb-3">
+                              <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{__html: (product.description.length > 80 
                                 ? `${product.description.substring(0, 80)}...`
                                 : product.description
-                              }
-                            </p>
+                              ).replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\r/g, '<br>')}} />
+                            </div>
                           </div>
 
                           {/* Pricing on Mobile */}
