@@ -893,7 +893,8 @@ const AdminProductFormModal = ({ visible, mode, initialValues, existingBrands, e
     discount_master: initialValues?.discount_master || '',
     description: initialValues?.description || '',
     brand: initialValues?.brand || '',
-    category: initialValues?.category || ''
+    category: initialValues?.category || '',
+    product_datasheet: initialValues?.product_datasheet || ''
   });
 
   const [files, setFiles] = useState({

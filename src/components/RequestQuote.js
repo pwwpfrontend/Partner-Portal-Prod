@@ -406,7 +406,7 @@ const RequestQuote = () => {
 
       // Prepare mail data with user schema format - Fixed field mapping for mail
       const mailData = {
-        _id: userDetails.id || userDetails._id,
+        _id: shortQuoteNumber, // Map the short quote ID to _id for email consistency
         companyName: userDetails.name || userDetails.contactPersonName || userDetails.companyName,
         companyAddress: userDetails.address || userDetails.companyAddress || '',
         companyCountry: userDetails.country || userDetails.companyCountry || '',
@@ -421,11 +421,11 @@ const RequestQuote = () => {
         date: new Date().toISOString(),
         status: 'New',
         client_message: additionalMessage || '',
-        quote_id: shortQuoteNumber,
+        quote_id: shortQuoteNumber, // Using the same quote ID for consistency
         cart: {
           type: 'cart',
           status: 'New',
-          quoteNumber: shortQuoteNumber,
+          quoteNumber: shortQuoteNumber, // Using the same quote ID for consistency
           items: cartItems.map(item => ({
             productId: item.productId || item.id,
             name: item.name,
@@ -469,27 +469,16 @@ const RequestQuote = () => {
       const quoteResult = await quoteResponse.json();
       console.log('Quote submitted successfully to database:', quoteResult);
       
-      // Use the actual quote number from backend for email
-      const finalQuoteNumber = quoteResult.quoteNumber || shortQuoteNumber;
-      console.log('Using final quote number for email:', finalQuoteNumber);
+      // Use the same quote number throughout the entire process for consistency
+      console.log('Using consistent quote number for email:', shortQuoteNumber);
       
-      // Update mailData with the correct quote number from backend
-      const updatedMailData = {
-        ...mailData,
-        quote_id: finalQuoteNumber,
-        cart: {
-          ...mailData.cart,
-          quoteNumber: finalQuoteNumber
-        }
-      };
-      
-      // Now submit to mail API with updated quote number
+      // Now submit to mail API with the same quote number
       const mailResponse = await Promise.allSettled([
         fetchWithAuth(
           'http://optimus-india-njs-01.netbird.cloud:3006/partners/mail',
           {
             method: 'POST',
-            body: JSON.stringify(updatedMailData),
+            body: JSON.stringify(mailData),
             signal: AbortSignal.timeout(50000)
           }
         )
@@ -520,8 +509,8 @@ const RequestQuote = () => {
       // Use the actual quote ID from the backend response or fallback to our generated number
       const actualQuoteId = quoteResult.id || quoteResult._id || shortQuoteNumber;
       
-      // Use the final quote number that was sent to email
-      const actualQuoteNumber = finalQuoteNumber;
+      // Use the same quote number that was sent to email
+      const actualQuoteNumber = shortQuoteNumber;
       console.log('Actual quote ID from backend:', actualQuoteId);
       console.log('Actual quote number (consistent with email):', actualQuoteNumber);
 
@@ -566,13 +555,77 @@ const RequestQuote = () => {
       setAdditionalMessage('');
 
       setSuccess(true);
+      console.log('Quote submitted successfully with ID:', shortQuoteNumber);
       
-      // Auto-hide success message after 10 seconds
+      // Enhanced success message with animation
+      const successMessage = document.createElement('div');
+      successMessage.className = 'fixed top-4 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-lg z-50';
+      successMessage.style.animation = 'fadeIn 0.3s ease-in-out';
+      successMessage.innerHTML = `
+        <div class="flex items-center">
+          <div class="py-1 mr-3"><svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
+          <div>
+            <p class="font-bold">Success!</p>
+            <p class="text-sm">Quote #${shortQuoteNumber} submitted successfully.</p>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(successMessage);
+      
+      // Add CSS for animations if not already present
+      if (!document.getElementById('toast-animations')) {
+        const style = document.createElement('style');
+        style.id = 'toast-animations';
+        style.textContent = `
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      // Remove after 5 seconds
+      setTimeout(() => {
+        successMessage.style.animation = 'fadeOut 0.3s ease-in-out';
+        setTimeout(() => {
+          document.body.removeChild(successMessage);
+        }, 300);
+      }, 5000);
+      
+      // Auto-hide original success message after 10 seconds
       setTimeout(() => setSuccess(false), 10000);
       
     } catch (err) {
       console.error('Error submitting quote:', err);
       setError(err.message || 'An error occurred while submitting your quote. Please try again.');
+      
+      // Enhanced error message with animation
+      const errorMessage = document.createElement('div');
+      errorMessage.className = 'fixed top-4 right-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-lg z-50';
+      errorMessage.style.animation = 'fadeIn 0.3s ease-in-out';
+      errorMessage.innerHTML = `
+        <div class="flex items-center">
+          <div class="py-1 mr-3"><svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div>
+          <div>
+            <p class="font-bold">Error!</p>
+            <p class="text-sm">${err.message || 'An error occurred while submitting your quote. Please try again.'}</p>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(errorMessage);
+      
+      // Remove after 5 seconds
+      setTimeout(() => {
+        errorMessage.style.animation = 'fadeOut 0.3s ease-in-out';
+        setTimeout(() => {
+          document.body.removeChild(errorMessage);
+        }, 300);
+      }, 5000);
     } finally {
       setLoading(false);
     }
