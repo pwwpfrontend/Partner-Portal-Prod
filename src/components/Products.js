@@ -39,6 +39,61 @@ const Products = () => {
   const [downloadLoading, setDownloadLoading] = useState(null);
   const itemsPerPage = 25;
 
+  // Handle datasheet download
+  const handleDownloadDatasheet = async (product, e) => {
+    e.stopPropagation();
+    if (!product.product_datasheet) return;
+    
+    setDownloadLoading(product.id);
+    
+    try {
+      const token = getToken();
+      const response = await fetch(product.product_datasheet, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to download datasheet: ${response.status}`);
+      }
+      
+      // Get the blob from the response
+      const blob = await response.blob();
+      
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(blob);
+      
+      // Create a temporary anchor element
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      
+      // Set the file name from the Content-Disposition header or use a default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const fileName = contentDisposition 
+        ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+        : `${product.name.replace(/\s+/g, '_')}_datasheet.pdf`;
+      
+      a.download = fileName;
+      
+      // Append to the document, click and remove
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      showToast(`Datasheet downloaded successfully!`);
+    } catch (error) {
+      console.error('Error downloading datasheet:', error);
+      showToast('Failed to download datasheet. Please try again.', 'error');
+    } finally {
+      setDownloadLoading(null);
+    }
+  };
+
   // Load animation trigger
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -879,6 +934,26 @@ const handleDownload = async (product) => {
                         <div className="text-sm text-[#818181] leading-relaxed">
                           <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{__html: selectedProduct.description.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\r/g, '<br>')}} />
                         </div>
+                      </div>
+                    )}
+                    
+                    {/* Download Datasheet Button */}
+                    {selectedProduct.product_datasheet && (
+                      <div className="mb-3 mt-3">
+                        <button
+                          onClick={(e) => handleDownloadDatasheet(selectedProduct, e)}
+                          disabled={downloadLoading === selectedProduct.id}
+                          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 hover:from-blue-100 hover:to-blue-200 border border-blue-200 shadow-sm hover:shadow-md disabled:opacity-50"
+                        >
+                          {downloadLoading === selectedProduct.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
+                          ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                          )}
+                          Download Datasheet
+                        </button>
                       </div>
                     )}
 
