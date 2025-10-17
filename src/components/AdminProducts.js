@@ -1,45 +1,262 @@
-import { useState, useMemo } from 'react';
-import { Sidebar, Header, AlertTriangle } from 'components';
-import { apiCreateProduct, apiUpdateProduct } from 'services';
-import MessageCard from './MessageCard';
+import React, { useState, useEffect, useMemo } from 'react';
+import Sidebar from './Sidebar';
+import Header from './Header';
+import { 
+  Package, 
+  Search, 
+  Filter, 
+  Eye,
+  EyeOff,
+  AlertTriangle,
+  FileText,
+  DollarSign,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  Plus,
+  X,
+  Edit,
+  Trash2,
+  Upload,
+  Check
+} from 'lucide-react';
+import useAuth from '../hooks/useAuth';
 
-const AdminProducts = ({ authLoading, currentRole, loading, error, products, searchTerm, categoryFilter, brandFilter, sortBy, currentPage, itemsPerPage, toggleSidebar, setProducts }) => {
+const AdminProducts = () => {
+  const { currentRole, loading: authLoading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [brandFilter, setBrandFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('name');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [messageCard, setMessageCard] = useState({ show: false, message: '', type: 'success' });
+  const itemsPerPage = 10;
 
-  const showMessageCard = (message, type = 'success') => {
-    setMessageCard({ show: true, message, type });
-    setTimeout(() => {
-      setMessageCard({ show: false, message: '', type: 'success' });
-    }, 3000);
+  // Normalize description text by converting escaped line breaks to real newlines
+  const normalizeDescription = (text) => {
+    const raw = String(text || '');
+    return raw.replace(/\\r\\n|\\n|\\r/g, '\n');
   };
 
-  const handleEditProduct = (product) => {
-    setShowEditModal(true);
-    setEditingProduct(product);
+  // API Base URL
+  // const BASE_URL = 'http://optimus-india-njs-01.netbird.cloud:3006';
+  const BASE_URL = 'https://njs-01.optimuslab.space/partners';
+
+  // Get token from auth service
+  const getToken = () => {
+    return localStorage.getItem('token');
   };
 
-  const handleDeleteProduct = (productId) => {
-    setProducts(prev => prev.filter(p => p._id !== productId));
+  // Refresh access token helper (same behavior as other pages)
+  const refreshAccessToken = async () => {
+    try {
+      const storedRefreshToken = localStorage.getItem('refreshToken');
+      if (!storedRefreshToken) throw new Error('No refresh token available');
+
+      const response = await fetch(`${BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: storedRefreshToken })
+      });
+      if (!response.ok) throw new Error(`Token refresh failed: ${response.status}`);
+
+      const data = await response.json();
+      if (!data.accessToken) throw new Error('No access token in refresh response');
+      localStorage.setItem('token', data.accessToken);
+      return data.accessToken;
+    } catch (err) {
+      console.error('AdminProducts refresh token error:', err);
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      throw err;
+    }
   };
 
-  const filteredProducts = useMemo(() => {
-    const filtered = products.filter(product => {
-      const isSelected = selectedProduct?._id === product._id;
-      return (
-        (product.product_name?.toLowerCase() || product.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (product.brand?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (product.category?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-        (product['sku/model']?.toLowerCase() || product.sku?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-      ) && 
-      (!categoryFilter || product.category === categoryFilter) &&
-      (!brandFilter || product.brand === brandFilter);
-    });
+  // Fetch with auth helper
+  const fetchWithAuth = async (path, options = {}) => {
+    const token = getToken();
+    const headers = new Headers(options.headers || {});
+    if (!headers.has('Authorization') && token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+    // If the body is FormData, DO NOT set Content-Type; browser will set boundary.
+    const isFormData = options.body instanceof FormData;
+    if (isFormData) {
+      headers.delete('Content-Type');
+    }
+
+    const doFetch = async () => fetch(`${BASE_URL}${path}`, { ...options, headers });
+
+    let res = await doFetch();
+    if (res.status === 401 || res.status === 403) {
+      try {
+        const newToken = await refreshAccessToken();
+        headers.set('Authorization', `Bearer ${newToken}`);
+        res = await doFetch();
+      } catch (e) {
+        // bubble up to caller; page-level error UI will handle
+        throw e;
+      }
+    }
+    return res;
+  };
+
+  // API Functions
+  const apiGetProducts = async () => {
+    const res = await fetchWithAuth('/products', { method: 'GET' });
+    if (!res.ok) throw new Error('Failed to fetch products');
+    return res.json();
+  };
+
+  const buildProductFormData = (values, files) => {
+    const fd = new FormData();
+    // Text/number fields as strings
+    fd.append('product_name', values.product_name ?? '');
+    fd.append('sku/model', values['sku/model'] ?? values.skuModel ?? '');
+    fd.append('msrp', values.msrp != null ? String(values.msrp) : '');
+    fd.append('true_cost', values.true_cost != null ? String(values.true_cost) : '');
+    fd.append('discount_expert', values.discount_expert != null ? String(values.discount_expert) : '');
+    fd.append('discount_professional', values.discount_professional != null ? String(values.discount_professional) : '');
+    fd.append('discount_master', values.discount_master != null ? String(values.discount_master) : '');
+    fd.append('description', values.description ?? '');
+    fd.append('brand', values.brand ?? '');
+    fd.append('category', values.category ?? '');
+
+    // Files — append ONLY if present
+    if (files?.picture) {
+      // Use the field name the backend persists as (product_image)
+      fd.append('product_image', files.picture);
+    }
+
+    if (files?.product_datasheet) {
+      fd.append('product_datasheet', files.product_datasheet);
+    }
+
+    return fd;
+  };
+
+  const apiCreateProduct = async (values, files) => {
+    const body = buildProductFormData(values, files);
+    const res = await fetchWithAuth('/products', { method: 'POST', body });
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`Create failed: ${res.status} ${txt}`);
+    }
+    return res.json();
+  };
+
+  const apiUpdateProduct = async (id, values, files) => {
+    const body = buildProductFormData(values, files);
+    const res = await fetchWithAuth(`/products/${id}`, { method: 'PUT', body });
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`Update failed: ${res.status} ${txt}`);
+    }
+    return res.json();
+  };
+
+  const apiDeleteProduct = async (id) => {
+    const res = await fetchWithAuth(`/products/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Delete failed');
+    return res.json();
+  };
+
+
+  // Handle product selection
+  const handleProductClick = (product, event) => {
+    if (event.target.closest('button')) {
+      return;
+    }
     
-    // Sort the filtered products
-    return filtered.sort((a, b) => {
+    setSelectedProduct(selectedProduct?._id === product._id ? null : product);
+    
+    if (selectedProduct?._id !== product._id) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Handle single delete
+  const handleDeleteProduct = async (productId) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        await apiDeleteProduct(productId);
+        setProducts(prev => prev.filter(p => p._id !== productId));
+        alert('Product deleted successfully');
+      } catch (err) {
+        console.error('Delete error:', err);
+        alert('Failed to delete product: ' + err.message);
+      }
+    }
+  };
+
+  // Handle edit
+  const handleEditProduct = (product) => {
+    setEditingProduct(product);
+    setShowEditModal(true);
+  };
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await apiGetProducts();
+        console.log('Products fetched successfully:', data);
+        
+        // Use the products array directly from API response
+        const processedProducts = data.products.map(product => ({
+          ...product,
+          // Ensure we have the correct field names for display
+          name: product.product_name || product.name,
+          sku: product['sku/model'] || product.sku,
+          picture: product.product_image || product.picture,
+        }));
+
+        setProducts(processedProducts);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Filter and search products - exactly matching Products.js logic
+  const filteredProducts = useMemo(() => {
+    let filtered = products.filter(product => {
+      const matchesSearch = 
+        (product.product_name || product.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.brand || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product['sku/model'] || product.sku || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.category || '').toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesCategory = categoryFilter === 'all' || 
+        (product.category || '').toLowerCase() === categoryFilter.toLowerCase();
+      
+      const matchesBrand = brandFilter === 'all' || 
+        (product.brand || '').toLowerCase() === brandFilter.toLowerCase();
+      
+      return matchesSearch && matchesCategory && matchesBrand;
+    });
+
+    // Sort products
+    filtered.sort((a, b) => {
       switch (sortBy) {
         case 'name':
           return (a.product_name || a.name || '').localeCompare(b.product_name || b.name || '');
@@ -155,42 +372,6 @@ const AdminProducts = ({ authLoading, currentRole, loading, error, products, sea
     <div className="min-h-screen bg-[#FAFAFB]">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <Header toggleSidebar={toggleSidebar} />
-      
-      {/* Message Card */}
-      {messageCard.show && (
-        <MessageCard
-          message={messageCard.message}
-          type={messageCard.type}
-          onClose={() => setMessageCard({ show: false, message: '', type: 'success' })}
-          autoCloseTime={3000}
-          showIcon={true}
-        />
-      )}
-      
-      {/* Toast Notification */}
-      {toast && (
-        <div className={`fixed top-20 right-4 z-50 flex items-center p-4 mb-4 max-w-xs text-gray-500 bg-white rounded-lg shadow-lg border-l-4 ${
-          toast.type === 'success' ? 'border-green-500' : 'border-red-500'
-        } transition-all duration-300 transform translate-x-0 animate-fade-in-right`}>
-          <div className={`inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg ${
-            toast.type === 'success' ? 'text-green-500 bg-green-100' : 'text-red-500 bg-red-100'
-          }`}>
-            {toast.type === 'success' ? (
-              <Check className="w-5 h-5" />
-            ) : (
-              <X className="w-5 h-5" />
-            )}
-          </div>
-          <div className="ml-3 text-sm font-normal">{toast.message}</div>
-          <button 
-            type="button" 
-            className="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg p-1.5 inline-flex h-8 w-8"
-            onClick={() => setToast(null)}
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-      )}
 
       <main className="pt-16">
         {/* Page Header - Updated with right-aligned actions */}
@@ -263,7 +444,9 @@ const AdminProducts = ({ authLoading, currentRole, loading, error, products, sea
                   {selectedProduct.description && (
                     <div className="mb-3">
                       <h3 className="text-sm font-semibold mb-1">Description</h3>
-                      <p className="text-sm text-[#818181] leading-relaxed line-clamp-3">{selectedProduct.description}</p>
+                      <div className="text-sm text-[#818181] leading-relaxed">
+                        <div className="whitespace-pre-wrap">{normalizeDescription(selectedProduct.description)}</div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -452,7 +635,7 @@ const AdminProducts = ({ authLoading, currentRole, loading, error, products, sea
                                 {product.product_name || product.name}
                               </div>
                               <div className="text-xs text-[#818181] truncate">
-                                {(product.description || '').substring(0, 60)}...
+                                {normalizeDescription(product.description || '').substring(0, 60)}...
                               </div>
                             </div>
                           </div>
@@ -541,7 +724,7 @@ const AdminProducts = ({ authLoading, currentRole, loading, error, products, sea
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-[#1B2150] truncate">{product.product_name || product.name}</div>
-                        <div className="text-xs text-[#818181] truncate">{product.description || ''}</div>
+                        <div className="text-xs text-[#818181] truncate">{normalizeDescription(product.description || '')}</div>
                         <div className="flex flex-wrap gap-1 mt-2 text-[10px] text-[#1B2150]">
                           <span className="bg-[#FAFAFB] px-2 py-0.5 rounded">{product.brand}</span>
                           <span className="bg-[#FAFAFB] px-2 py-0.5 rounded">{product['sku/model'] || product.sku}</span>
@@ -671,45 +854,10 @@ const AdminProducts = ({ authLoading, currentRole, loading, error, products, sea
               const newProduct = await apiCreateProduct(values, files);
               setProducts(prev => [newProduct, ...prev]);
               setShowAddModal(false);
-              // Show styled message card instead of basic alert
-              const messageElement = document.createElement('div');
-              messageElement.className = 'fixed top-1/4 left-1/2 transform -translate-x-1/2 z-50 bg-white rounded-lg shadow-xl border-l-4 border-green-500 p-4 w-96 animate-fade-in';
-              messageElement.innerHTML = `
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-green-100 rounded-full p-2">
-                      <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                    </div>
-                    <div class="ml-3">
-                      <p class="text-sm font-medium text-gray-900">Product created successfully</p>
-                    </div>
-                  </div>
-                  <button type="button" class="text-gray-400 hover:text-gray-500 focus:outline-none">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </button>
-                </div>
-              `;
-              document.body.appendChild(messageElement);
-              
-              // Add click event to close button
-              const closeButton = messageElement.querySelector('button');
-              closeButton.addEventListener('click', () => {
-                document.body.removeChild(messageElement);
-              });
-              
-              // Auto-remove after 3 seconds
-              setTimeout(() => {
-                if (document.body.contains(messageElement)) {
-                  document.body.removeChild(messageElement);
-                }
-              }, 3000);
+              alert('Product created successfully');
             } catch (err) {
               console.error('Create error:', err);
-              showMessageCard('Failed to create product: ' + err.message, 'error');
+              alert('Failed to create product: ' + err.message);
             }
           }}
         />
@@ -733,46 +881,10 @@ const AdminProducts = ({ authLoading, currentRole, loading, error, products, sea
               setProducts(prev => prev.map(p => p._id === editingProduct._id ? updatedProduct : p));
               setShowEditModal(false);
               setEditingProduct(null);
-              
-              // Show styled message card instead of basic alert
-              const messageElement = document.createElement('div');
-              messageElement.className = 'fixed top-1/4 left-1/2 transform -translate-x-1/2 z-50 bg-white rounded-lg shadow-xl border-l-4 border-blue-500 p-4 w-96 animate-fade-in';
-              messageElement.innerHTML = `
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-blue-100 rounded-full p-2">
-                      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                    </div>
-                    <div class="ml-3">
-                      <p class="text-sm font-medium text-gray-900">Product updated successfully</p>
-                    </div>
-                  </div>
-                  <button type="button" class="text-gray-400 hover:text-gray-500 focus:outline-none">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </button>
-                </div>
-              `;
-              document.body.appendChild(messageElement);
-              
-              // Add click event to close button
-              const closeButton = messageElement.querySelector('button');
-              closeButton.addEventListener('click', () => {
-                document.body.removeChild(messageElement);
-              });
-              
-              // Auto-remove after 3 seconds
-              setTimeout(() => {
-                if (document.body.contains(messageElement)) {
-                  document.body.removeChild(messageElement);
-                }
-              }, 3000);
+              alert('Product updated successfully');
             } catch (err) {
               console.error('Update error:', err);
-              showMessageCard('Failed to update product: ' + err.message, 'error');
+              alert('Failed to update product: ' + err.message);
             }
           }}
         />
@@ -793,19 +905,16 @@ const AdminProductFormModal = ({ visible, mode, initialValues, existingBrands, e
     discount_master: initialValues?.discount_master || '',
     description: initialValues?.description || '',
     brand: initialValues?.brand || '',
-    category: initialValues?.category || '',
-    product_datasheet: initialValues?.product_datasheet || ''
+    category: initialValues?.category || ''
   });
 
   const [files, setFiles] = useState({
     picture: null,
-    datasheet: null
+    product_datasheet: null
   });
+
   const [imagePreview, setImagePreview] = useState(
     initialValues?.product_image || initialValues?.picture || null
-  );
-  const [datasheetName, setDatasheetName] = useState(
-    initialValues?.product_datasheet ? initialValues.product_datasheet.split('/').pop() : null
   );
 
   const [errors, setErrors] = useState({});
@@ -883,28 +992,11 @@ const AdminProductFormModal = ({ visible, mode, initialValues, existingBrands, e
       reader.readAsDataURL(file);
     }
   };
-  
+
   const handleDatasheetUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Store the file for form submission
-      setFiles(prev => ({ ...prev, datasheet: file }));
-      setDatasheetName(file.name);
-      
-      // Clear any existing product_datasheet value since we're uploading a new file
-      setFormData(prev => ({ ...prev, product_datasheet: '' }));
-    }
-  };
-  
-  const removeDatasheet = () => {
-    setFiles(prev => ({ ...prev, datasheet: null }));
-    setDatasheetName(null);
-    // Clear the product_datasheet value from formData
-    setFormData(prev => ({ ...prev, product_datasheet: '' }));
-    // Reset the file input
-    const fileInput = document.querySelector('input[type="file"][accept="application/pdf"]');
-    if (fileInput) {
-      fileInput.value = '';
+      setFiles(prev => ({ ...prev, product_datasheet: file }));
     }
   };
 
@@ -1015,48 +1107,6 @@ const removeImage = () => {
   </div>
 </div>
 
-{/* Datasheet Upload */}
-<div>
-  <label className="block text-sm font-medium text-[#1B2150] mb-2">
-    Product Datasheet (PDF)
-  </label>
-  <div className="border-2 border-dashed border-[#FAFAFB] rounded-lg p-6 text-center bg-white shadow-sm">
-    {datasheetName ? (
-      <div className="relative flex items-center justify-center">
-        <div className="flex items-center bg-gray-100 px-4 py-3 rounded-lg">
-          <FileText className="h-6 w-6 text-[#1B2150] mr-2" />
-          <span className="text-sm font-medium text-[#1B2150] truncate max-w-xs">{datasheetName}</span>
-        </div>
-        <button
-          type="button"
-          onClick={removeDatasheet}
-          className="ml-2 bg-[#EB664D] text-white rounded-full p-1 hover:bg-[#EB664D]/80"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-    ) : (
-      <div>
-        <FileText className="mx-auto h-12 w-12 text-[#818181]" />
-        <div className="mt-4">
-          <label className="cursor-pointer bg-[#1B2150] text-white px-4 py-2 rounded-lg hover:bg-[#EB664D] transition-colors">
-            Upload Datasheet
-            <input
-              type="file"
-              accept="application/pdf"
-              onChange={handleDatasheetUpload}
-              className="hidden"
-            />
-          </label>
-        </div>
-        <p className="text-sm text-[#818181] mt-2">
-          PDF files only, up to 10MB
-        </p>
-      </div>
-    )}
-  </div>
-</div>
-
             {/* Product Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -1068,16 +1118,12 @@ const removeImage = () => {
                   name="product_name"
                   value={formData.product_name}
                   onChange={handleChange}
-                  required
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
-                    errors.product_name ? 'border-[#EB664D]' : 'border-[#FAFAFB] bg-white shadow-sm'
-                  } placeholder-gray-400`}
-                  placeholder="Enter product name"
+                    errors.product_name ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
+                  }`}
                 />
                 {errors.product_name && (
-                  <p className="text-[#EB664D] text-xs mt-1">
-                    {errors.product_name}
-                  </p>
+                  <p className="text-[#EB664D] text-xs mt-1">{errors.product_name}</p>
                 )}
               </div>
 
@@ -1090,11 +1136,9 @@ const removeImage = () => {
                   name="sku/model"
                   value={formData['sku/model']}
                   onChange={handleChange}
-                  required
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
-                    errors['sku/model'] ? 'border-[#EB664D]' : 'border-[#FAFAFB] bg-white shadow-sm'
-                  } placeholder-gray-400`}
-                  placeholder="Enter SKU/Model"
+                    errors['sku/model'] ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
+                  }`}
                 />
                 {errors['sku/model'] && (
                   <p className="text-[#EB664D] text-xs mt-1">{errors['sku/model']}</p>
@@ -1113,9 +1157,8 @@ const removeImage = () => {
                   min="0"
                   step="0.01"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
-                    errors.msrp ? 'border-[#EB664D]' : 'border-[#FAFAFB] bg-white shadow-sm'
-                  } placeholder-gray-400`}
-                  placeholder="Enter MSRP"
+                    errors.msrp ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
+                  }`}
                 />
                 {errors.msrp && (
                   <p className="text-[#EB664D] text-xs mt-1">{errors.msrp}</p>
@@ -1135,14 +1178,32 @@ const removeImage = () => {
                   step="0.01"
                   required
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
-                    errors.true_cost ? 'border-[#EB664D]' : 'border-[#FAFAFB] bg-white shadow-sm'
-                  } placeholder-gray-400`}
-                  placeholder="Enter true cost"
+                    errors.true_cost ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
+                  }`}
                 />
                 {errors.true_cost && (
                   <p className="text-[#EB664D] text-xs mt-1">{errors.true_cost}</p>
                 )}
               </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#1B2150] mb-2">
+                Official Datasheet (PDF)
+              </label>
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={handleDatasheetUpload}
+                className="w-full px-3 py-2 border border-[#FAFAFB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent"
+              />
+              <p className="text-xs text-[#818181] mt-1">Upload a PDF to be used as the official datasheet.</p>
+              {files.product_datasheet && (
+                <div className="text-xs text-[#1B2150] mt-1 flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  {files.product_datasheet.name}
+                </div>
+              )}
+            </div>
 
               <div>
                 <label className="block text-sm font-medium text-[#1B2150] mb-2">
@@ -1156,9 +1217,8 @@ const removeImage = () => {
                   min="0"
                   step="0.01"
                   className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B2150] focus:border-transparent ${
-                    errors.discount_professional ? 'border-[#EB664D]' : 'border-[#FAFAFB] bg-white shadow-sm'
-                  } placeholder-gray-400`}
-                  placeholder="Enter discount percentage"
+                    errors.discount_professional ? 'border-[#EB664D]' : 'border-[#FAFAFB]'
+                  }`}
                 />
                 {errors.discount_professional && (
                   <p className="text-[#EB664D] text-xs mt-1">{errors.discount_professional}</p>
@@ -1347,3 +1407,29 @@ const removeImage = () => {
               {errors.description && (
                 <p className="text-[#EB664D] text-xs mt-1">{errors.description}</p>
               )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-4 pt-6 border-t border-[#FAFAFB]">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-[#818181] bg-[#FAFAFB] rounded-lg hover:bg-[#818181] hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-[#1B2150] text-white rounded-lg hover:bg-[#EB664D] transition-colors"
+              >
+                {mode === 'create' ? 'Add Product' : 'Update Product'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminProducts;

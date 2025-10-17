@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { getAllUsers, approveUserRole, deleteUser, getToken, getRole, api } from '../services/auth';
-import MessageCard from './MessageCard';
 import { 
   Users, 
   Search, 
@@ -29,14 +28,6 @@ const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [messageCard, setMessageCard] = useState({ show: false, message: '', type: 'success' });
-
-  const showMessageCard = (message, type = 'success') => {
-    setMessageCard({ show: true, message, type });
-    setTimeout(() => {
-      setMessageCard({ show: false, message: '', type: 'success' });
-    }, 3000);
-  };
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [roleFilter, setRoleFilter] = useState('all');
@@ -144,7 +135,7 @@ const AdminUsers = () => {
     } catch (error) {
       console.error('Error approving user:', error);
       const errorMsg = error?.response?.data?.message || 'Failed to approve user. Please try again.';
-      showMessageCard(errorMsg, 'error');
+      alert(errorMsg);
     } finally {
       setActionLoading(false);
     }
@@ -165,7 +156,7 @@ const AdminUsers = () => {
       console.log(`User ${userId} rejected`);
     } catch (error) {
       console.error('Error rejecting user:', error);
-      showMessageCard('Failed to reject user. Please try again.', 'error');
+      alert('Failed to reject user. Please try again.');
     } finally {
       setActionLoading(false);
     }
@@ -191,7 +182,7 @@ const AdminUsers = () => {
     } catch (error) {
       console.error('Error updating user role:', error);
       const errorMsg = error?.response?.data?.message || 'Failed to update user role. Please try again.';
-      showMessageCard(errorMsg, 'error');
+      alert(errorMsg);
     } finally {
       setActionLoading(false);
     }

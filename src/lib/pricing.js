@@ -1,12 +1,32 @@
 // Pricing configuration storage keys
 const DEFAULT_DISCOUNTS_KEY = 'pricing_default_discounts';
 const BRAND_OVERRIDES_KEY = 'pricing_brand_overrides';
+const EXTRA_DISCOUNT_KEY = 'pricing_extra_discount';
 
 // Default discount rates
 const DEFAULT_DISCOUNTS = {
-  level1: 10, // Professional - 10%
-  level2: 20, // Expert - 20%
-  level3: 30, // Master - 30%
+  level1: 0, // Professional - 0%
+  level2: 0, // Expert - 0%
+  level3: 0, // Master - 0%
+};
+
+// Brand-specific discount rates
+const BRAND_DISCOUNTS = {
+  'Humly': {
+    level1: 5,  // Professional - 5%
+    level2: 5,  // Expert - 5%
+    level3: 10, // Master - 10%
+  },
+  'Milesight': {
+    level1: 35, // Professional - 35%
+    level2: 40, // Expert - 40%
+    level3: 50, // Master - 50%
+  },
+  'Optimus': {
+    level1: 0,  // Professional - 0%
+    level2: 0,  // Expert - 0%
+    level3: 0,  // Master - 0%
+  }
 };
 
 /**
@@ -113,18 +133,8 @@ export const resetBrandOverrides = () => {
  */
 export const getNetPrice = (msrp, role, brand = null) => {
   try {
-    // Get default discounts
-    const defaultDiscounts = getDefaultDiscounts();
-    
-    // Check for brand-specific override
-    let discountRate = defaultDiscounts[role] || 0;
-    
-    if (brand) {
-      const brandDiscounts = getBrandDiscounts(brand);
-      if (brandDiscounts && brandDiscounts[role] !== undefined) {
-        discountRate = brandDiscounts[role];
-      }
-    }
+    // Get discount rate using the updated getDiscountPercentage function
+    const discountRate = getDiscountPercentage(role, brand);
     
     // Calculate net price: MSRP × (1 - discount)
     const netPrice = msrp * (1 - discountRate / 100);
@@ -134,6 +144,32 @@ export const getNetPrice = (msrp, role, brand = null) => {
   } catch (error) {
     console.error('Error calculating net price:', error);
     return msrp; // Return MSRP if calculation fails
+  }
+};
+
+/**
+ * Get extra discount status
+ * @returns {boolean} Whether extra discount is applied
+ */
+export const getExtraDiscountStatus = () => {
+  try {
+    const stored = localStorage.getItem(EXTRA_DISCOUNT_KEY);
+    return stored ? JSON.parse(stored) : false;
+  } catch (error) {
+    console.error('Error getting extra discount status:', error);
+    return false;
+  }
+};
+
+/**
+ * Set extra discount status
+ * @param {boolean} status - Whether to apply extra discount
+ */
+export const setExtraDiscountStatus = (status) => {
+  try {
+    localStorage.setItem(EXTRA_DISCOUNT_KEY, JSON.stringify(!!status));
+  } catch (error) {
+    console.error('Error setting extra discount status:', error);
   }
 };
 
@@ -151,11 +187,23 @@ export const getDiscountPercentage = (role, brand = null) => {
     // Check for brand-specific override
     let discountRate = defaultDiscounts[role] || 0;
     
+    // Apply brand-specific discounts if available
     if (brand) {
-      const brandDiscounts = getBrandDiscounts(brand);
-      if (brandDiscounts && brandDiscounts[role] !== undefined) {
-        discountRate = brandDiscounts[role];
+      // First check BRAND_DISCOUNTS constant
+      if (BRAND_DISCOUNTS[brand] && BRAND_DISCOUNTS[brand][role] !== undefined) {
+        discountRate = BRAND_DISCOUNTS[brand][role];
+      } else {
+        // Fall back to user-defined overrides
+        const brandDiscounts = getBrandDiscounts(brand);
+        if (brandDiscounts && brandDiscounts[role] !== undefined) {
+          discountRate = brandDiscounts[role];
+        }
       }
+    }
+    
+    // Apply extra 5% discount if enabled
+    if (getExtraDiscountStatus()) {
+      discountRate += 5;
     }
     
     return discountRate;
